@@ -62,6 +62,9 @@ def create_or_update_environment(ssh, git_repo_name):
     :param ssh: paramiko.SSHClient class
     :return: None
     """
+    stdin, stdout, stderr = ssh.exec_command(f"conda update conda")
+    print(stdout.read())
+    print(stderr.read())
 
     repo_path = 'group_hw_1/code/'
 

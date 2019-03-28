@@ -7,7 +7,7 @@ user = "ec2-user"
 key_file = "/.AWSkp/r0mer0mOregon.pem"
 
 git_repo_name = "product-analytics-group-project-deepvision"
-git_user_id = "MSDS698"
+git_user_id = "MSDS698" # repo creator
 
 orig_coord = '37.7909,-122.3925'
 dest_coord = '37.7765,-122.4506'
