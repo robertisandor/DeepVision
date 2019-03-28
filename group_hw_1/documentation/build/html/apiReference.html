@@ -99,15 +99,17 @@
 
 <dl class="function">
 <dt id="deploy_script.set_crontab">
-<code class="descclassname">deploy_script.</code><code class="descname">set_crontab</code><span class="sig-paren">(</span><em>ssh</em>, <em>file_location</em>, <em>time_code='* * * * *'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/deploy_script.html#set_crontab"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#deploy_script.set_crontab" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
+<code class="descclassname">deploy_script.</code><code class="descname">set_crontab</code><span class="sig-paren">(</span><em>ssh</em>, <em>time_code='* * * * *'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/deploy_script.html#set_crontab"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#deploy_script.set_crontab" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set job periodically according to time_code.</p>
+<table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>ssh</strong> – paramiko.SSHClient class</li>
+<li><strong>ssh</strong> – paramiko.SSHClient class.</li>
 <li><strong>file_location</strong> – (str) location of the file
-from the root directory</li>
+from the root directory.</li>
+<li><strong>file_location</strong> – (str) code for the crontab.</li>
 </ul>
 </td>
 </tr>

@@ -69,16 +69,25 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">stdin</span><span class="p">,</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="n">ssh</span><span class="o">.</span><span class="n">exec_command</span><span class="p">(</span><span class="s2">&quot;git --version&quot;</span><span class="p">)</span>
 
+
+    <span class="n">stdin</span><span class="p">,</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="n">ssh</span><span class="o">.</span><span class="n">exec_command</span><span class="p">(</span><span class="s2">&quot;git config --global credential.helper store&quot;</span><span class="p">)</span>
+
     <span class="c1"># Try cloning the repo</span>
     <span class="k">if</span> <span class="p">(</span><span class="sa">b</span><span class="s2">&quot;&quot;</span> <span class="ow">is</span> <span class="n">stderr</span><span class="o">.</span><span class="n">read</span><span class="p">()):</span>
-        <span class="n">git_clone_command</span> <span class="o">=</span> <span class="s2">&quot;git clone https://github.com/&quot;</span> <span class="o">+</span> \
+        <span class="n">git_clone_command</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;git clone https://</span><span class="si">{git_user}</span><span class="s2">:</span><span class="si">{git_password}</span><span class="s2">@github.com/&quot;</span> <span class="o">+</span> \
                             <span class="n">git_user_id</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">git_repo_name</span> <span class="o">+</span> <span class="s2">&quot;.git&quot;</span>
+
         <span class="n">stdin</span><span class="p">,</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="n">ssh</span><span class="o">.</span><span class="n">exec_command</span><span class="p">(</span><span class="n">git_clone_command</span><span class="p">)</span>
+        <span class="c1"># print(stdout.read())</span>
+        <span class="c1"># print(stderr.read())</span>
 
     <span class="c1"># Pull if already exists</span>
     <span class="k">if</span> <span class="p">(</span><span class="sa">b</span><span class="s1">&#39;already exists&#39;</span> <span class="ow">in</span> <span class="n">stderr</span><span class="o">.</span><span class="n">read</span><span class="p">()):</span>
         <span class="n">git_pull_command</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;cd </span><span class="si">{git_repo_name}</span><span class="s2"> ; git pull&quot;</span>
-        <span class="n">ssh</span><span class="o">.</span><span class="n">exec_command</span><span class="p">(</span><span class="n">git_pull_command</span><span class="p">)</span></div>
+        <span class="n">stdin</span><span class="p">,</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="n">ssh</span><span class="o">.</span><span class="n">exec_command</span><span class="p">(</span><span class="n">git_pull_command</span><span class="p">)</span></div>
+        <span class="c1">#</span>
+        <span class="c1"># print(stdout.read())</span>
+        <span class="c1"># print(stderr.read())</span>
 
 
 <div class="viewcode-block" id="create_or_update_environment"><a class="viewcode-back" href="../apiReference.html#deploy_script.create_or_update_environment">[docs]</a><span class="k">def</span> <span class="nf">create_or_update_environment</span><span class="p">(</span><span class="n">ssh</span><span class="p">,</span> <span class="n">git_repo_name</span><span class="p">):</span>
@@ -88,33 +97,57 @@
 <span class="sd">    :param ssh: paramiko.SSHClient class</span>
 <span class="sd">    :return: None</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">stdin</span><span class="p">,</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="n">ssh</span><span class="o">.</span><span class="n">exec_command</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;conda env create -f </span><span class="se">\</span>
-<span class="s2">    ~/</span><span class="si">{git_repo_name}</span><span class="s2">/environment.yml&quot;</span><span class="p">)</span>
+    <span class="n">stdin</span><span class="p">,</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="n">ssh</span><span class="o">.</span><span class="n">exec_command</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;conda update conda&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">stdout</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">stderr</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
 
+    <span class="n">repo_path</span> <span class="o">=</span> <span class="s1">&#39;group_hw_1/code/&#39;</span>
+
+    <span class="n">stdin</span><span class="p">,</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="n">ssh</span><span class="o">.</span><span class="n">exec_command</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;conda env create -f </span><span class="se">\</span>
+<span class="s2">    ~/</span><span class="si">{git_repo_name}</span><span class="s2">/</span><span class="si">{repo_path}</span><span class="s2">environment.yml&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">stdout</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">stderr</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
     <span class="k">if</span> <span class="p">(</span><span class="sa">b</span><span class="s1">&#39;already exists&#39;</span> <span class="ow">in</span> <span class="n">stderr</span><span class="o">.</span><span class="n">read</span><span class="p">()):</span>
         <span class="n">stdin</span><span class="p">,</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="n">ssh</span><span class="o">.</span><span class="n">exec_command</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;conda env update </span><span class="se">\</span>
-<span class="s2">        -f ~/</span><span class="si">{git_repo_name}</span><span class="s2">/environment.yml&quot;</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="n">stdout</span><span class="o">.</span><span class="n">read</span><span class="p">())</span></div>
+<span class="s2">        -f ~/</span><span class="si">{git_repo_name}</span><span class="s2">/</span><span class="si">{repo_path}</span><span class="s2">environment.yml&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">stdout</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">stderr</span><span class="o">.</span><span class="n">read</span><span class="p">())</span></div>
 
 
-<div class="viewcode-block" id="set_crontab"><a class="viewcode-back" href="../apiReference.html#deploy_script.set_crontab">[docs]</a><span class="k">def</span> <span class="nf">set_crontab</span><span class="p">(</span><span class="n">ssh</span><span class="p">,</span> <span class="n">file_location</span><span class="p">,</span> <span class="n">time_code</span><span class="o">=</span><span class="s1">&#39;* * * * *&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="set_crontab"><a class="viewcode-back" href="../apiReference.html#deploy_script.set_crontab">[docs]</a><span class="k">def</span> <span class="nf">set_crontab</span><span class="p">(</span><span class="n">ssh</span><span class="p">,</span> <span class="n">time_code</span><span class="o">=</span><span class="s1">&#39;* * * * *&#39;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Set job periodically according to time_code.</span>
 
-<span class="sd">    :param ssh: paramiko.SSHClient class</span>
+<span class="sd">    :param ssh: paramiko.SSHClient class.</span>
 <span class="sd">    :param file_location: (str) location of the file</span>
-<span class="sd">                          from the root directory</span>
+<span class="sd">                          from the root directory.</span>
+<span class="sd">    :param file_location: (str) code for the crontab.</span>
 <span class="sd">    :return: None</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">use_python</span> <span class="o">=</span> <span class="s1">&#39;~/.conda/envs/MSDS603/bin/python &#39;</span>
 
+    <span class="n">file_location</span> <span class="o">=</span> <span class="s1">&#39;/group_hw_1/code/calculate_driving_time.py&#39;</span>
+
     <span class="n">file_complete_location</span> <span class="o">=</span> <span class="n">expanduser</span><span class="p">(</span><span class="s2">&quot;~&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="n">file_location</span>
 
-    <span class="n">command</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;crontab -e ; &#39;</span> <span class="o">+</span> <span class="n">time_code</span> <span class="o">+</span>
-               <span class="n">use_python</span> <span class="o">+</span> <span class="n">file_complete_location</span><span class="p">)</span>
 
-    <span class="n">ssh</span><span class="o">.</span><span class="n">exec_command</span><span class="p">(</span><span class="n">command</span><span class="p">)</span></div>
+    <span class="n">command</span> <span class="o">=</span> <span class="n">time_code</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="n">use_python</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="n">file_complete_location</span>
 
+    <span class="n">stdin</span><span class="p">,</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="n">ssh</span><span class="o">.</span><span class="n">exec_command</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;echo &#39;</span><span class="si">{command}</span><span class="s2">&#39; &gt;&gt; tmp_job&quot;</span><span class="p">)</span>
+    <span class="c1">#</span>
+    <span class="c1"># print(stdout.read())</span>
+    <span class="c1"># print(stderr.read())</span>
+
+    <span class="n">stdin</span><span class="p">,</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="n">ssh</span><span class="o">.</span><span class="n">exec_command</span><span class="p">(</span><span class="s1">&#39;crontab tmp_job&#39;</span><span class="p">)</span>
+
+    <span class="c1"># print(stdout.read())</span>
+    <span class="c1"># print(stderr.read())</span>
+
+    <span class="n">stdin</span><span class="p">,</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="n">ssh</span><span class="o">.</span><span class="n">exec_command</span><span class="p">(</span><span class="s1">&#39;rm tmp_job&#39;</span><span class="p">)</span></div>
+
+    <span class="c1"># print(stdout.read())</span>
+    <span class="c1"># print(stderr.read())</span>
 
 <div class="viewcode-block" id="close"><a class="viewcode-back" href="../apiReference.html#deploy_script.close">[docs]</a><span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="n">ssh</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -141,7 +174,7 @@
     <span class="n">ssh_connection</span><span class="p">(</span><span class="n">ssh</span><span class="p">,</span> <span class="n">ec2_address</span><span class="p">,</span> <span class="n">user</span><span class="p">,</span> <span class="n">key_file</span><span class="p">)</span>
     <span class="n">git_clone_pull</span><span class="p">(</span><span class="n">ssh</span><span class="p">,</span> <span class="n">git_user_id</span><span class="p">,</span> <span class="n">git_repo_name</span><span class="p">)</span>
     <span class="n">create_or_update_environment</span><span class="p">(</span><span class="n">ssh</span><span class="p">,</span> <span class="n">git_repo_name</span><span class="p">)</span>
-    <span class="n">set_crontab</span><span class="p">(</span><span class="n">ssh</span><span class="p">,</span> <span class="n">file_location</span><span class="p">)</span>
+    <span class="n">set_crontab</span><span class="p">(</span><span class="n">ssh</span><span class="p">)</span>
     <span class="n">close</span><span class="p">(</span><span class="n">ssh</span><span class="p">)</span></div>
 
 
