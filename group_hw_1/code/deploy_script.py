@@ -34,16 +34,25 @@ def git_clone_pull(ssh, git_user_id, git_repo_name):
     """
     stdin, stdout, stderr = ssh.exec_command("git --version")
 
+
+    stdin, stdout, stderr = ssh.exec_command("git config --global credential.helper store")
+
     # Try cloning the repo
     if (b"" is stderr.read()):
-        git_clone_command = "git clone https://github.com/" + \
+        git_clone_command = f"git clone https://{git_user}:{git_password}@github.com/" + \
                             git_user_id + "/" + git_repo_name + ".git"
+
         stdin, stdout, stderr = ssh.exec_command(git_clone_command)
+        # print(stdout.read())
+        # print(stderr.read())
 
     # Pull if already exists
     if (b'already exists' in stderr.read()):
         git_pull_command = f"cd {git_repo_name} ; git pull"
-        ssh.exec_command(git_pull_command)
+        stdin, stdout, stderr = ssh.exec_command(git_pull_command)
+        #
+        # print(stdout.read())
+        # print(stderr.read())
 
 
 def create_or_update_environment(ssh, git_repo_name):
@@ -53,33 +62,54 @@ def create_or_update_environment(ssh, git_repo_name):
     :param ssh: paramiko.SSHClient class
     :return: None
     """
-    stdin, stdout, stderr = ssh.exec_command(f"conda env create -f \
-    ~/{git_repo_name}/environment.yml")
 
+    repo_path = 'group_hw_1/code/'
+
+    stdin, stdout, stderr = ssh.exec_command(f"conda env create -f \
+    ~/{git_repo_name}/{repo_path}environment.yml")
+    print(stdout.read())
+    print(stderr.read())
     if (b'already exists' in stderr.read()):
         stdin, stdout, stderr = ssh.exec_command(f"conda env update \
-        -f ~/{git_repo_name}/environment.yml")
+        -f ~/{git_repo_name}/{repo_path}environment.yml")
         print(stdout.read())
+        print(stderr.read())
 
 
-def set_crontab(ssh, file_location, time_code='* * * * *'):
+def set_crontab(ssh, time_code='* * * * *'):
     """
+    Set job periodically according to time_code.
 
-    :param ssh: paramiko.SSHClient class
+    :param ssh: paramiko.SSHClient class.
     :param file_location: (str) location of the file
-                          from the root directory
+                          from the root directory.
+    :param file_location: (str) code for the crontab.
     :return: None
     """
 
     use_python = '~/.conda/envs/MSDS603/bin/python '
 
+    file_location = '/group_hw_1/code/calculate_driving_time.py'
+
     file_complete_location = expanduser("~") + file_location
 
-    command = ('crontab -e ; ' + time_code +
-               use_python + file_complete_location)
 
-    ssh.exec_command(command)
+    command = time_code + ' ' + use_python + ' ' + file_complete_location
 
+    stdin, stdout, stderr = ssh.exec_command(f"echo '{command}' >> tmp_job")
+    #
+    # print(stdout.read())
+    # print(stderr.read())
+
+    stdin, stdout, stderr = ssh.exec_command('crontab tmp_job')
+
+    # print(stdout.read())
+    # print(stderr.read())
+
+    stdin, stdout, stderr = ssh.exec_command('rm tmp_job')
+
+    # print(stdout.read())
+    # print(stderr.read())
 
 def close(ssh):
     """
@@ -106,7 +136,7 @@ def main():
     ssh_connection(ssh, ec2_address, user, key_file)
     git_clone_pull(ssh, git_user_id, git_repo_name)
     create_or_update_environment(ssh, git_repo_name)
-    set_crontab(ssh, file_location)
+    set_crontab(ssh)
     close(ssh)
 
 

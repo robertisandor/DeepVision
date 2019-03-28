@@ -1,6 +1,7 @@
+from getpass import getpass
 
 
-ec2_address = "ec2-12-123-123-123.us-west-2.compute.amazonaws.com"
+ec2_address = "ec2-54-201-196-51.us-west-2.compute.amazonaws.com"
 
 user = "ec2-user"
 key_file = "/.AWSkp/r0mer0mOregon.pem"
@@ -13,3 +14,6 @@ dest_coord = '37.7765,-122.4506'
 output_file_name = 'output.txt'
 
 apikey = "sdfgjlkdfasdfasdffasdfsdf"
+
+git_user = input('Introduce your git user:\n')
+git_password = getpass('Introduce your git user:\n')
