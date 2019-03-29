@@ -5,7 +5,7 @@ ec2_address = "ec2-35-160-123-177.us-west-2.compute.amazonaws.com"
 
 key_file = "/.AWSkp/r0mer0mOregon.pem"
 
-apikey = "sdfgjlkdfasdfasdffasdfsdf"
+apikey = "AIzaSyBRy6kfXZwbSLc0YZUfiG5IZmwWfAUjglU-E"
 
 user = "ec2-user"
 
