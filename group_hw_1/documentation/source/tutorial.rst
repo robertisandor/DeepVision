@@ -2,6 +2,6 @@ Tutorial
 =========
 Run with $ python deploy_script.py
 
-Introduce your github username
+Input your github username
 
-Introduce your github password
+Input your github password
