@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Parason Software - Contact</title>
-	<link rel="icon" href="img/Fevicon.png" type="image/png">
+    <link rel="icon" href="img/Fevicon.png" type="image/png">
 
   <link rel="stylesheet" href="vendors/bootstrap/bootstrap.min.css">
   <link rel="stylesheet" href="vendors/fontawesome/css/all.min.css">
@@ -23,7 +23,7 @@
       <nav class="navbar navbar-expand-lg navbar-light">
         <div class="container box_1620">
           <!-- Brand and toggle get grouped for better mobile display -->
-          <a class="navbar-brand logo_h" href="index.html"><img src="img/logo.png" alt=""></a>
+          <!-- <a class="navbar-brand logo_h" href="index.html"><img src="img/logo.png" alt=""></a>-->
           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
@@ -48,7 +48,7 @@
 
             <ul class="navbar-right">
               <li class="nav-item">
-                <button class="button button-header bg">Sign up</button>
+                <button class="button button-header bg"><a href="signin.html">Sign In</button></a>
               </li>
             </ul>
           </div> 
@@ -82,7 +82,7 @@
         <div id="map" style="height: 420px;"></div>
         <script>
           function initMap() {
-            var uluru = {lat: -25.363, lng: 131.044};
+            var uluru = {lat: 37.774929, lng: -122.419418};
             var grayStyles = [
               {
                 featureType: "all",
@@ -94,7 +94,7 @@
               {elementType: 'labels.text.fill', stylers: [{color: '#A3A3A3'}]}
             ];
             var map = new google.maps.Map(document.getElementById('map'), {
-              center: {lat: -31.197, lng: 150.744},
+              center: {lat: 37.790900, lng: -122.392520},
               zoom: 9,
               styles: grayStyles,
               scrollwheel:  false
@@ -113,7 +113,9 @@
             <span class="contact-info__icon"><i class="ti-home"></i></span>
             <div class="media-body">
               <h3>California United States</h3>
-              <p>Santa monica bullevard</p>
+              <p>101 Howard Street,
+              <br>
+                 San Francisco</p>
             </div>
           </div>
           <div class="media contact-info">
@@ -126,7 +128,7 @@
           <div class="media contact-info">
             <span class="contact-info__icon"><i class="ti-email"></i></span>
             <div class="media-body">
-              <h3><a href="mailto:support@colorlib.com">support@colorlib.com</a></h3>
+              <h3><a href="mailto:support@colorlib.com">deepvision@gmail.com</a></h3>
               <p>Send us your query anytime!</p>
             </div>
           </div>

@@ -34,25 +34,30 @@ def git_clone_pull(ssh, git_user_id, git_repo_name):
     """
     stdin, stdout, stderr = ssh.exec_command("git --version")
 
+    git_user, git_password = git_credentials()
 
     stdin, stdout, stderr = ssh.exec_command("git config --global credential.helper store")
 
+    stdin, stdout, stderr = ssh.exec_command(f"cd {git_repo_name}")
+
     # Try cloning the repo
-    if (b"" is stderr.read()):
+    if b"" == stderr.read():
+
+        git_pull_command = f"cd {git_repo_name} ; git pull"
+        stdin, stdout, stderr = ssh.exec_command(git_pull_command)
+        #
+        print(stdout.read())
+        print(stderr.read())
+
+    else:
         git_clone_command = f"git clone https://{git_user}:{git_password}@github.com/" + \
                             git_user_id + "/" + git_repo_name + ".git"
 
         stdin, stdout, stderr = ssh.exec_command(git_clone_command)
-        # print(stdout.read())
-        # print(stderr.read())
+        print(stdout.read())
+        print(stderr.read())
 
-    # Pull if already exists
-    if (b'already exists' in stderr.read()):
-        git_pull_command = f"cd {git_repo_name} ; git pull"
-        stdin, stdout, stderr = ssh.exec_command(git_pull_command)
-        #
-        # print(stdout.read())
-        # print(stderr.read())
+        # Pull if already exists
 
 
 def create_or_update_environment(ssh, git_repo_name):
@@ -67,13 +72,14 @@ def create_or_update_environment(ssh, git_repo_name):
 
     stdin, stdout, stderr = ssh.exec_command(f"conda env create -f \
     ~/{git_repo_name}/{repo_path}environment.yml")
-    print(stdout.read())
-    print(stderr.read())
+    # print(stdout.read())
+    # print(stderr.read())
+
     if (b'already exists' in stderr.read()):
         stdin, stdout, stderr = ssh.exec_command(f"conda env update \
         -f ~/{git_repo_name}/{repo_path}environment.yml")
-        print(stdout.read())
-        print(stderr.read())
+        # print(stdout.read())
+        # print(stderr.read())
 
 
 def set_crontab(ssh, time_code='* * * * *'):
@@ -89,7 +95,7 @@ def set_crontab(ssh, time_code='* * * * *'):
 
     use_python = '~/.conda/envs/MSDS603/bin/python '
 
-    file_location = f'/{git_repo_name}/group_hw_1/code/calculate_driving_time.py'
+    file_location = f'~/{git_repo_name}/group_hw_1/code/calculate_driving_time.py'
 
     # file_location = expanduser("~") + file_location
 
