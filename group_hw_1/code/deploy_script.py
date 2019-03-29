@@ -91,10 +91,10 @@ def set_crontab(ssh, time_code='* * * * *'):
 
     file_location = f'/{git_repo_name}/group_hw_1/code/calculate_driving_time.py'
 
-    file_complete_location = expanduser("~") + file_location
+    # file_location = expanduser("~") + file_location
 
 
-    command = time_code + ' ' + use_python + ' ' + file_complete_location
+    command = time_code + ' ' + use_python + ' ' + file_location
 
     stdin, stdout, stderr = ssh.exec_command(f"echo '{command}' >> tmp_job")
     #
