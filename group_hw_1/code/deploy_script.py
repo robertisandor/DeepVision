@@ -36,7 +36,9 @@ def git_clone_pull(ssh, git_user_id, git_repo_name):
 
     git_user, git_password = git_credentials()
 
-    stdin, stdout, stderr = ssh.exec_command("git config --global credential.helper store")
+    stdin, stdout, stderr = ssh.exec_command("git config " +
+                                             "--global " +
+                                             "credential.helper store")
 
     stdin, stdout, stderr = ssh.exec_command(f"cd {git_repo_name}")
 
@@ -50,7 +52,8 @@ def git_clone_pull(ssh, git_user_id, git_repo_name):
         print(stderr.read())
 
     else:
-        git_clone_command = f"git clone https://{git_user}:{git_password}@github.com/" + \
+        git_clone_command = f"git clone https://{git_user}:{git_password}" +\
+                            "@github.com/" + \
                             git_user_id + "/" + git_repo_name + ".git"
 
         stdin, stdout, stderr = ssh.exec_command(git_clone_command)
@@ -95,10 +98,10 @@ def set_crontab(ssh, time_code='* * * * *'):
 
     use_python = '~/.conda/envs/MSDS603/bin/python '
 
-    file_location = f'~/{git_repo_name}/group_hw_1/code/calculate_driving_time.py'
+    file_location = f'~/{git_repo_name}/group_hw_1/' + \
+                    'code/calculate_driving_time.py'
 
     # file_location = expanduser("~") + file_location
-
 
     command = time_code + ' ' + use_python + ' ' + file_location
 
@@ -116,6 +119,7 @@ def set_crontab(ssh, time_code='* * * * *'):
 
     # print(stdout.read())
     # print(stderr.read())
+
 
 def close(ssh):
     """
