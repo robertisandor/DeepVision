@@ -62,9 +62,6 @@ def create_or_update_environment(ssh, git_repo_name):
     :param ssh: paramiko.SSHClient class
     :return: None
     """
-    # stdin, stdout, stderr = ssh.exec_command(f"conda update conda")
-    # print(stdout.read())
-    # print(stderr.read())
 
     repo_path = 'group_hw_1/code/'
 
@@ -130,10 +127,6 @@ def main():
 
     :return:  None
     """
-
-    # ec2_address = "ec2-12-123-123-123.us-west-2.compute.amazonaws.com"
-    # user = "ec2-user"
-    # key_file = "/.ssh/msan603.pem"
 
     ssh = ssh_client()
     ssh_connection(ssh, ec2_address, user, key_file)
