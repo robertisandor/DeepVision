@@ -15,5 +15,5 @@ output_file_name = 'output.txt'
 
 apikey = "sdfgjlkdfasdfasdffasdfsdf"
 
-git_user = input('Introduce your git user:\n')
-git_password = getpass('Introduce your git user:\n')
+git_user = input('Input your git user:\n')
+git_password = getpass('Input your git password:\n')
