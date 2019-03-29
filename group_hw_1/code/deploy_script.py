@@ -34,11 +34,22 @@ def git_clone_pull(ssh, git_user_id, git_repo_name):
     """
     stdin, stdout, stderr = ssh.exec_command("git --version")
 
+    git_user, git_password = git_credentials()
 
     stdin, stdout, stderr = ssh.exec_command("git config --global credential.helper store")
 
+    stdin, stdout, stderr = ssh.exec_command(f"cd {git_repo_name}")
+
     # Try cloning the repo
-    if (b"" is stderr.read()):
+    if b"" in stderr.read():
+
+        git_pull_command = f"cd {git_repo_name} ; git pull"
+        stdin, stdout, stderr = ssh.exec_command(git_pull_command)
+        #
+        print(stdout.read())
+        print(stderr.read())
+
+    else:
         git_clone_command = f"git clone https://{git_user}:{git_password}@github.com/" + \
                             git_user_id + "/" + git_repo_name + ".git"
 
@@ -46,13 +57,7 @@ def git_clone_pull(ssh, git_user_id, git_repo_name):
         # print(stdout.read())
         # print(stderr.read())
 
-    # Pull if already exists
-    if (b'already exists' in stderr.read()):
-        git_pull_command = f"cd {git_repo_name} ; git pull"
-        stdin, stdout, stderr = ssh.exec_command(git_pull_command)
-        #
-        # print(stdout.read())
-        # print(stderr.read())
+        # Pull if already exists
 
 
 def create_or_update_environment(ssh, git_repo_name):

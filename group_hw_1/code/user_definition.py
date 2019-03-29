@@ -1,7 +1,7 @@
 from getpass import getpass
 
 
-ec2_address = "ec2-54-201-196-51.us-west-2.compute.amazonaws.com"
+ec2_address = "ec2-35-160-123-177.us-west-2.compute.amazonaws.com"
 
 key_file = "/.AWSkp/r0mer0mOregon.pem"
 
@@ -16,6 +16,7 @@ orig_coord = '37.7909,-122.3925'
 dest_coord = '37.7765,-122.4506'
 output_file_name = 'output.txt'
 
-
-git_user = input('Input your git user:\n')
-git_password = getpass('Input your git password:\n')
+def git_credentials():
+    git_user = input('Input your git user:\n')
+    git_password = getpass('Input your git password:\n')
+    return git_user, git_password
