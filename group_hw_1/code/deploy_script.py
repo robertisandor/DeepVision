@@ -89,7 +89,7 @@ def set_crontab(ssh, time_code='* * * * *'):
 
     use_python = '~/.conda/envs/MSDS603/bin/python '
 
-    file_location = '/group_hw_1/code/calculate_driving_time.py'
+    file_location = f'/{git_repo_name}/group_hw_1/code/calculate_driving_time.py'
 
     file_complete_location = expanduser("~") + file_location
 
