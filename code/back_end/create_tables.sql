@@ -10,6 +10,7 @@ create table deepvision.users (
 	password        VARCHAR(20) NOT NULL, 
 	companyName     VARCHAR(50), 
 	account_created TIMESTAMP);
+commit;
 
 -- project table
 create table deepvision.projects (
@@ -17,15 +18,17 @@ create table deepvision.projects (
 	projectOwnerId  SERIAL REFERENCES deepvision.users(id),
 	projectName     VARCHAR(50), 
 	project_created TIMESTAMP);
+commit;
 
 -- user project table
-create table user_project(
+create table deepvision.user_project(
     projectId   SERIAL REFERENCES deepvision.projects(id),
     userId      SERIAL REFERENCES deepvision.users(id)
     );
+commit;
 
 -- project status table
-create table project_status(
+create table deepvision.project_status(
     id              SERIAL PRIMARY KEY,
     projectId       SERIAL REFERENCES deepvision.projects(id),
     last_accessed   TIMESTAMP,
@@ -33,6 +36,15 @@ create table project_status(
     cost            FLOAT,
     numPhoto        INT,
 	performance     FLOAT);
+commit;
+
+-- check schema
+select * from information_schema.schemata;
+
+-- check tables created
+SELECT * from information_schema.tables 
+where table_schema = 'deepvision';
+
 
 
 
