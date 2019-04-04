@@ -1,0 +1,29 @@
+
+	User:
+		User ID
+		User name (account)
+		Password
+		Company name
+
+	User - Project
+		User ID
+		Project ID
+
+	Project:
+		Project ID
+		Project owner ID
+		Project name
+		Date created
+		Number of photos
+		Price
+		Validation accuracy
+		Label name  (front-end: make sure that users have different label names)
+
+	Project status:
+		Status ID
+		Project ID
+		Last accessed
+		Timestamp
+		Cost
+		Performance
+		Number of photos
