@@ -15,6 +15,9 @@ db = SQLAlchemy(application)
 db.create_all()
 db.session.commit()
 
+# config login manager
+login_manager = LoginManager()
+login_manager.init_app(application)
 
 from app import routes
 from app import classes
