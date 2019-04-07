@@ -23,6 +23,7 @@ class RegistrationForm(FlaskForm):
 
 
 @application.route('/home')
+@application.route('/index')
 @application.route('/')
 def index():
     return render_template("index.html")
@@ -33,9 +34,9 @@ def blog():
     return render_template("blog.html")
 
 
-@application.route('/blog_details')
+@application.route('/blog-details')
 def blog_details():
-    return render_template("blog_details.html")
+    return render_template("blog-details.html")
 
 
 @application.route('/contact')
