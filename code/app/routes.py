@@ -16,10 +16,15 @@ from flask_login import current_user, login_user, login_required, logout_user
 
 # FORMS
 class RegistrationForm(FlaskForm):
-    username = TextField('Username')#, validators=[DataRequired()])
+    username = TextField('Username', validators=[DataRequired()])
     email = TextField('Email')#, validators=[DataRequired()])
     password = PasswordField('Password')#, validators=[DataRequired()])
     submit = SubmitField('Submit')
+
+class SigninForm(FlaskForm):
+	username = TextField('Username', validators=[DataRequired()])
+	password = PasswordField('Password')#, validators=[DataRequired()])
+	submit = SubmitField('Submit')
 
 
 @application.route('/home')
@@ -48,6 +53,7 @@ def contact():
 def feature():
     return render_template("feature.html")
 
+
 @application.route('/pricing')
 def pricing():
     return render_template("pricing.html")
@@ -56,63 +62,37 @@ def pricing():
 @application.route('/register', methods=['GET', 'POST'])
 def register():
 	form = RegistrationForm()
-	if form.validate_on_submit():
+	if request.method == "POST" and form.validate():
 		username = form.username.data
 		password = form.password.data
 		email = form.email.data
-		user = classes.User(username, email, password)
-		db.session.add(user)
-		db.session.commit()
-		return '<h1> Registered : ' + username + '</h1>'
-	return render_template("signup_2.html", form=form)
+
+		user_count = classes.User.query.filter_by(username=username).count() + \
+			classes.User.query.filter_by(email=email).count()
+
+		if user_count == 0:
+			user = classes.User(username, email, password)
+			db.session.add(user)
+			db.session.commit()
+			# return ('<h1> Registered : ' + username + '</h1>')
+			return redirect(url_for('index'))
+	# error_message = "Either wrong format or user already exists."
+	return render_template("signup_2.html", form=form, error_message=error_message)
 
 
-# class RegistrationForm(Form):
-#     username = TextField('Username', [validators.Length(min=4, max=20)])
-#     email = TextField('Email Address', [validators.Length(min=6, max=50)])
-#     password = PasswordField('New Password', [
-#         validators.Required(),
-#         validators.EqualTo('confirm', message='Passwords must match')
-#     ])
-#     confirm = PasswordField('Repeat Password')
+@application.route('/signin', methods=['GET', 'POST'])
+def signin():
+	form = SigninForm()
+	if request.method == "POST" and form.validate():
+		username = form.username.data
+		password = form.password.data
+		user = classes.User.query.filter_by(username=username).first()
 
+		if user is not None and user.check_password(password):
+			login_user(user)
+			return '<h1> Logged in : ' + username + '</h1>'
+			# return redirect(url_for('project'))
 
-# class RegistrationForm(FlaskForm):
-#     username = TextField('Username', validators=[DataRequired()])
-#     email = TextField('Email', validators=[DataRequired()])
-#     password = PasswordField('Password', validators=[DataRequired()])
-#     # recaptcha = RecaptchaField()
-#     submit = SubmitField('Submit')
-
-# @application.route("/register", methods=['GET', 'POST'])
-# def sign_up():
-#     # form = SignUpForm()
-#     form = RegistrationForm()
-#     if form.validate():
-#         username = form.username.data
-#         password = form.password.data
-#         email = form.email.data
-#         return f"signed up: {username}"
-#     return render_template("signup.html", form=form)
-
-
-# class SignUpForm(FlaskForm):
-# 	username = StringField('Username', validators=[DataRequired()])
-# 	email = StringField('Email', validators=[DataRequired()])
-# 	password = PasswordField('Password', validators=[DataRequired()])
-# 	recaptcha = RecaptchaField()
-
-
-# @application.route('/signup')
-# def register():
-#     username = 'diane'
-#     password = 'pwd'
-#     email='diane@gmail.com'
-
-#     user = classes.User(username, email, password)
-#     db.session.add(user)
-#     db.session.commit()
-
-#     return '<h1> Registered : ' + username + '</h1>'
+	return render_template("signin_2.html", form=form)
 
 
