@@ -28,6 +28,30 @@ def index():
     return render_template("index.html")
 
 
+@application.route('/blog')
+def blog():
+    return render_template("blog.html")
+
+
+@application.route('/blog_details')
+def blog_details():
+    return render_template("blog_details.html")
+
+
+@application.route('/contact')
+def contact():
+    return render_template("contact.html")
+
+
+@application.route('/feature')
+def feature():
+    return render_template("feature.html")
+
+@application.route('/pricing')
+def pricing():
+    return render_template("pricing.html")
+
+
 @application.route('/register', methods=['GET', 'POST'])
 def register():
 	form = RegistrationForm()
