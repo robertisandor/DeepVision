@@ -1,6 +1,8 @@
 import paramiko
+import os
 from os.path import expanduser
 from user_definition import *
+
 
 
 def ssh_client():
@@ -49,9 +51,6 @@ def git_clone_pull(ssh, git_user_id, git_repo_name):
 
         git_pull_command = f"cd {git_repo_name} ; git pull"
         stdin, stdout, stderr = ssh.exec_command(git_pull_command)
-        #
-        print(stdout.read())
-        print(stderr.read())
 
     else:
         git_clone_command = f"git clone https://{git_user}" +\
@@ -75,50 +74,51 @@ def create_or_update_environment(ssh, git_repo_name):
 
     stdin, stdout, stderr = ssh.exec_command(f"conda env create -f \
     ~/{git_repo_name}/{repo_path}environment.yml")
-    # print(stdout.read())
-    # print(stderr.read())
+
 
     if (b'already exists' in stderr.read()):
         stdin, stdout, stderr = ssh.exec_command(f"conda env update \
         -f ~/{git_repo_name}/{repo_path}environment.yml")
-        # print(stdout.read())
-        # print(stderr.read())
 
 
-def set_crontab(ssh, time_code='* * * * *'):
-    """
-    Set job periodically according to time_code.
 
-    :param ssh: paramiko.SSHClient class.
-    :param file_location: (str) location of the file
-                          from the root directory.
-    :param file_location: (str) code for the crontab.
+def print_port(ssh, server_path):
+    '''
+    Prints the port number in which the app runs according to the .flaskenv file.
+
+    :param ssh: paramiko ssh client (connected)
+    :param server_path: path to the application directory (where .flaskenv is located)
     :return: None
-    """
+    '''
 
-    use_python = '~/.conda/envs/MSDS603/bin/python '
+    stdin, stdout, stderr = ssh.exec_command(f"cat {os.path.join(server_path,'.flaskenv')}")
 
-    file_location = f'~/{git_repo_name}/group_hw_1/' + \
-                    'code/calculate_driving_time.py'
+    # print(stdout.read().decode("utf-8").split('\n'))
 
-    # file_location = expanduser("~") + file_location
+    for line in stdout.read().decode("utf-8").split('\n'):
+        if 'FLASK_RUN_PORT' in line: info = line; break
 
-    command = time_code + ' ' + use_python + ' ' + file_location
+    print(f"App running in port number {info.split('=')[1]}")
 
-    stdin, stdout, stderr = ssh.exec_command(f"echo '{command}' >> tmp_job")
-    #
-    # print(stdout.read())
-    # print(stderr.read())
 
-    stdin, stdout, stderr = ssh.exec_command('crontab tmp_job')
+def launch_application(ssh, server_path=f'~/{git_repo_name}/code'):
+    '''
+    Launch application server_path under the MSDS603 environment and print port.
 
-    # print(stdout.read())
-    # print(stderr.read())
+    :param ssh: paramiko ssh.Client (already connected)
+    :param server_path: path to directory where run_app.py is located.
+    :return: None
+    '''
 
-    stdin, stdout, stderr = ssh.exec_command('rm tmp_job')
+    first_command = 'conda activate MSDS603'
 
-    # print(stdout.read())
-    # print(stderr.read())
+    second_command = f'cd {server_path}'
+
+    third_command = 'sudo flask run'
+
+    stdin, stdout, stderr = ssh.exec_command(first_command + ' ; ' + second_command + ' ; ' + third_command)
+
+    print_port(ssh, server_path)
 
 
 def close(ssh):
@@ -142,7 +142,8 @@ def main():
     ssh_connection(ssh, ec2_address, user, key_file)
     git_clone_pull(ssh, git_user_id, git_repo_name)
     create_or_update_environment(ssh, git_repo_name)
-    set_crontab(ssh)
+    # set_crontab(ssh)
+    launch_application(ssh)
     close(ssh)
 
 
