@@ -71,7 +71,7 @@ def create_or_update_environment(ssh, git_repo_name):
     """
 
     repo_path = 'code/'
-    stdin, stdout, stderr = ssh.exec_command(f"cd {git_repo_name}")
+    stdin, stdout, stderr = ssh.exec_command(f"cd ~/.conda/envs/MSDS603")
 
     # Try cloning the repo
     if b"" == stderr.read():
