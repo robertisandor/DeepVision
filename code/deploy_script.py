@@ -110,13 +110,13 @@ def launch_application(ssh, server_path=f'~/{git_repo_name}/code'):
     :return: None
     '''
 
-    first_command = 'conda activate MSDS603'
+    #first_command = 'conda activate MSDS603'
 
     second_command = f'cd {server_path}'
 
-    third_command = 'sudo flask run'
+    third_command = 'sudo ~/.conda/envs/MSDS603/bin/flask run'
 
-    stdin, stdout, stderr = ssh.exec_command(first_command + ' ; ' + second_command + ' ; ' + third_command)
+    stdin, stdout, stderr = ssh.exec_command(second_command + ' ; ' + third_command)
 
     print(stdout.read())
     print(stderr.read())
