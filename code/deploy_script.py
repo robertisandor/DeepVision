@@ -118,6 +118,9 @@ def launch_application(ssh, server_path=f'~/{git_repo_name}/code'):
 
     stdin, stdout, stderr = ssh.exec_command(first_command + ' ; ' + second_command + ' ; ' + third_command)
 
+    print(stdout.read())
+    print(stderr.read())
+
     print_port(ssh, server_path)
 
 
