@@ -74,12 +74,16 @@ def create_or_update_environment(ssh, git_repo_name):
 
     stdin, stdout, stderr = ssh.exec_command(f"conda env create -f \
     ~/{git_repo_name}/{repo_path}environment.yml")
-
+ 
+    print(stdout.read())
+    print(stderr.read())
 
     if (b'already exists' in stderr.read()):
         stdin, stdout, stderr = ssh.exec_command(f"conda env update \
         -f ~/{git_repo_name}/{repo_path}environment.yml")
 
+        print(stdout.read())
+        print(stderr.read())
 
 
 def print_port(ssh, server_path):
