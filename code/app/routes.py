@@ -94,7 +94,6 @@ def signin():
 
 		if user is not None and user.check_password(password):
 			login_user(user)
-			# return '<h1> Logged in : ' + username + '</h1>'
 			return redirect(url_for('projects'))
 
 	return render_template("signin_2.html", form=form)
@@ -130,11 +129,11 @@ def projects():
 				" already exists. Please choose another name for your project."
 		else:
 			# insert into the Project table
-			db.session.add(classes.Project(project_name, current_user_id))
+			db.session.add(classes.Project(project_name, current_user.id))
 			
 			# get the project for the current user that was just added 
 			# (by using the creation date)
-			most_recent_project = classes.Project.query.filter_by(project_owner_id=current_user_id)\
+			most_recent_project = classes.Project.query.filter_by(project_owner_id=current_user.id)\
 							.order_by(classes.Project.project_creation_date.desc()).first()
 
 			# insert into the User_Project table
@@ -151,7 +150,7 @@ def projects():
 
 			# pass the list of projects (including the new project) 
 			# to the page so it can be shown to the user
-			projects = classes.User_Project.query.filter_by(user_id=int(current_user_id)).all()
+			projects = classes.User_Project.query.filter_by(user_id=int(current_user.id)).all()
 			# only commit the transactions once everything
 			# has been entered successfully.
 			db.session.commit()
