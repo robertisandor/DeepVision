@@ -86,7 +86,7 @@ def create_or_update_environment(ssh, git_repo_name):
         print(stderr.read())
 
 
-def get_port(ssh):
+def get_port(ssh, server_path):
 
     stdin, stdout, stderr = ssh.exec_command(f"cat {os.path.join(server_path,'.flaskenv')}")
 
