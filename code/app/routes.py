@@ -26,6 +26,11 @@ class SigninForm(FlaskForm):
 	password = PasswordField('Password')#, validators=[DataRequired()])
 	submit = SubmitField('Submit')
 
+class ProjectForm(FlaskForm):
+	project_name = TextField('Project Name', validators=[DataRequired()])
+	labels = TextField('Labels', validators=[DataRequired()])
+	submit = SubmitField('Submit')
+
 
 @application.route('/home')
 @application.route('/index')
@@ -74,9 +79,8 @@ def register():
 			user = classes.User(username, email, password)
 			db.session.add(user)
 			db.session.commit()
-			# return ('<h1> Registered : ' + username + '</h1>')
 			return redirect(url_for('index'))
-	# error_message = "Either wrong format or user already exists."
+	error_message = "Either wrong format or user already exists."
 	return render_template("signup_2.html", form=form, error_message=error_message)
 
 
@@ -90,9 +94,46 @@ def signin():
 
 		if user is not None and user.check_password(password):
 			login_user(user)
-			return '<h1> Logged in : ' + username + '</h1>'
-			# return redirect(url_for('project'))
+			# return '<h1> Logged in : ' + username + '</h1>'
+			return redirect(url_for('projects'))
 
 	return render_template("signin_2.html", form=form)
 
+# how would I make this work for adding projects?
+# an if statement that checks if it's POST?
+@application.route('/projects', methods=['GET', 'POST'])
+@login_required
+def projects():
+	# how do I get the user info?
+	# get_id
+	current_user_id = 1
+	#current_user_name = 'test'
+	form = ProjectForm()
+	if request.method == 'GET':	
+		projects = classes.User_Project.query.filter_by(user_id=int(current_user_id)).all()
+		#projects = classes.User_Project.query.filter_by(user_name=current_user_name)
+		print(type(projects), projects)
+		return render_template('projects.html', projects=list(projects))
+	elif request.method == 'POST':
+		project_name = form.project_name.data
+		labels = form.labels.data.split(',') 
+		print(labels)
+		db.session.add(classes.Project(project_name, current_user_id))
+		
+		# get the most recent project added
+		most_recent_project = classes.Project.query.filter_by(project_owner_id=current_user_id)\
+						.order_by(classes.Project.project_creation_date.desc()).first()
 
+		#most_recent_project = classes.User_Project.query.filter_by(user_id=int(current_user_id))
+		print(most_recent_project.project_creation_date)
+		db.session.add(classes.User_Project(current_user_id, 
+					   				most_recent_project.project_id, 
+					   				project_name))
+		for label in labels:
+			db.session.add(classes.Label(most_recent_project.project_id,
+										label))
+		projects = classes.User_Project.query.filter_by(user_id=int(current_user_id)).all()
+		db.session.commit()
+		return render_template('projects.html', projects=projects)
+		
+	
