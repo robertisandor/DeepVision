@@ -116,11 +116,20 @@ def launch_application(ssh, server_path=f'~/{git_repo_name}/code'):
 
     #first_command = 'conda activate MSDS603'
 
-    second_command = f'cd {server_path}'
+    # first_command = f'cd {server_path}'
+    #
+    # second_command = 'sudo ~/.conda/envs/MSDS603/bin/flask run'
+    #
+    # stdin, stdout, stderr = ssh.exec_command(first_command + ' ; ' + second_command)
 
-    third_command = 'sudo ~/.conda/envs/MSDS603/bin/flask run'
 
-    stdin, stdout, stderr = ssh.exec_command(second_command + ' ; ' + third_command)
+    # kill any process running from the app if any
+    command = "kill -9 `ps aux |grep gunicorn |grep app | awk '{ print $2 }'` "
+    stdin, stdout, stderr = ssh.exec_command(command)
+
+    # run the server with the last version
+    command = "gunicorn -D -w 2 --chdir product-analytics-group-project-deepvision/code/ app:application"
+    stdin, stdout, stderr = ssh.exec_command(command)
 
     print(stdout.read())
     print(stderr.read())
