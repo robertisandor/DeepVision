@@ -86,6 +86,17 @@ def create_or_update_environment(ssh, git_repo_name):
         print(stderr.read())
 
 
+def get_port(ssh):
+
+    stdin, stdout, stderr = ssh.exec_command(f"cat {os.path.join(server_path,'.flaskenv')}")
+
+    # print(stdout.read().decode("utf-8").split('\n'))
+
+    for line in stdout.read().decode("utf-8").split('\n'):
+        if 'FLASK_RUN_PORT' in line: info = line; break
+
+    return info.split('=')[1]
+
 def print_port(ssh, server_path):
     '''
     Prints the port number in which the app runs according to the .flaskenv file.
@@ -95,14 +106,9 @@ def print_port(ssh, server_path):
     :return: None
     '''
 
-    stdin, stdout, stderr = ssh.exec_command(f"cat {os.path.join(server_path,'.flaskenv')}")
+    port = get_port(ssh, server_path)
 
-    # print(stdout.read().decode("utf-8").split('\n'))
-
-    for line in stdout.read().decode("utf-8").split('\n'):
-        if 'FLASK_RUN_PORT' in line: info = line; break
-
-    print(f"App running in port number {info.split('=')[1]}")
+    print(f"App running in port number {port}")
 
 
 def launch_application(ssh, server_path=f'~/{git_repo_name}/code'):
@@ -127,8 +133,10 @@ def launch_application(ssh, server_path=f'~/{git_repo_name}/code'):
     command = "kill -9 `ps aux |grep gunicorn |grep app | awk '{ print $2 }'` "
     stdin, stdout, stderr = ssh.exec_command(command)
 
+    port = get_port(ssh, server_path)
+
     # run the server with the last version
-    command = ".conda/envs/MSDS603/bin/gunicorn -D -w 2 --chdir product-analytics-group-project-deepvision/code/ app:application"
+    command = f".conda/envs/MSDS603/bin/gunicorn -D -w 2 -b :{port} --chdir product-analytics-group-project-deepvision/code/ app:application"
     stdin, stdout, stderr = ssh.exec_command(command)
 
     print(stdout.read())
