@@ -128,7 +128,7 @@ def launch_application(ssh, server_path=f'~/{git_repo_name}/code'):
     stdin, stdout, stderr = ssh.exec_command(command)
 
     # run the server with the last version
-    command = "gunicorn -D -w 2 --chdir product-analytics-group-project-deepvision/code/ app:application"
+    command = ".conda/envs/MSDS603/bin/gunicorn -D -w 2 --chdir product-analytics-group-project-deepvision/code/ app:application"
     stdin, stdout, stderr = ssh.exec_command(command)
 
     print(stdout.read())
