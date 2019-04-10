@@ -104,36 +104,57 @@ def signin():
 @application.route('/projects', methods=['GET', 'POST'])
 @login_required
 def projects():
-	# how do I get the user info?
-	# get_id
-	current_user_id = 1
-	#current_user_name = 'test'
+	"""
+	This route displays the projects of a given user
+	and allows them the ability to add a project.
+	If a project using the same project_name already exists,
+	this will display an error to tell the user 
+	to pick another project name.
+	"""
 	form = ProjectForm()
+
 	if request.method == 'GET':	
-		projects = classes.User_Project.query.filter_by(user_id=int(current_user_id)).all()
-		#projects = classes.User_Project.query.filter_by(user_name=current_user_name)
-		print(type(projects), projects)
+		projects = classes.User_Project.query.filter_by(user_id=int(current_user.id)).all()
 		return render_template('projects.html', projects=list(projects))
 	elif request.method == 'POST':
 		project_name = form.project_name.data
 		labels = form.labels.data.split(',') 
-		print(labels)
-		db.session.add(classes.Project(project_name, current_user_id))
-		
-		# get the most recent project added
-		most_recent_project = classes.Project.query.filter_by(project_owner_id=current_user_id)\
-						.order_by(classes.Project.project_creation_date.desc()).first()
 
-		#most_recent_project = classes.User_Project.query.filter_by(user_id=int(current_user_id))
-		print(most_recent_project.project_creation_date)
-		db.session.add(classes.User_Project(current_user_id, 
-					   				most_recent_project.project_id, 
-					   				project_name))
-		for label in labels:
-			db.session.add(classes.Label(most_recent_project.project_id,
-										label))
-		projects = classes.User_Project.query.filter_by(user_id=int(current_user_id)).all()
-		db.session.commit()
-		return render_template('projects.html', projects=projects)
+		# query the Project table 
+		# to see if the project already exists
+		# if it does, tell the user
+		# to pick another project_name
+		projects_with_same_name = classes.User_Project.query.filter_by(project_name=project_name).all()
+		if len(projects_with_same_name) > 0:
+			return f"<h1> A project with the name: {project_name}" + \
+				" already exists. Please choose another name for your project."
+		else:
+			# insert into the Project table
+			db.session.add(classes.Project(project_name, current_user_id))
+			
+			# get the project for the current user that was just added 
+			# (by using the creation date)
+			most_recent_project = classes.Project.query.filter_by(project_owner_id=current_user_id)\
+							.order_by(classes.Project.project_creation_date.desc()).first()
+
+			# insert into the User_Project table
+			# so that the user is associated with a project
+			db.session.add(classes.User_Project(current_user_id, 
+										most_recent_project.project_id, 
+										project_name))
+			
+			# TODO: find a way to bulk insert
+			# insert all of the labels that the user entered
+			for label in labels:
+				db.session.add(classes.Label(most_recent_project.project_id,
+											label))
+
+			# pass the list of projects (including the new project) 
+			# to the page so it can be shown to the user
+			projects = classes.User_Project.query.filter_by(user_id=int(current_user_id)).all()
+			# only commit the transactions once everything
+			# has been entered successfully.
+			db.session.commit()
+		return render_template('projects.html', projects=list(projects))
 		
 	
