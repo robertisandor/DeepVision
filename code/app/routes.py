@@ -14,18 +14,18 @@ from werkzeug.security import check_password_hash
 from werkzeug.security import generate_password_hash
 from flask_login import current_user, login_user, login_required, logout_user
 
-# FORMS
-class RegistrationForm(FlaskForm):
-    username = TextField('Username', validators=[DataRequired()])
-    email = TextField('Email')#, validators=[DataRequired()])
-    companyname = TextField('Company Name')
-    password = PasswordField('Password')#, validators=[DataRequired()])
-    submit = SubmitField('Submit')
+# # FORMS
+# class RegistrationForm(FlaskForm):
+#     username = TextField('Username', validators=[DataRequired()])
+#     email = TextField('Email')#, validators=[DataRequired()])
+#     companyname = TextField('Company Name')
+#     password = PasswordField('Password')#, validators=[DataRequired()])
+#     submit = SubmitField('Submit')
 
-class SigninForm(FlaskForm):
-	username = TextField('Username', validators=[DataRequired()])
-	password = PasswordField('Password')#, validators=[DataRequired()])
-	submit = SubmitField('Submit')
+# class SigninForm(FlaskForm):
+# 	username = TextField('Username', validators=[DataRequired()])
+# 	password = PasswordField('Password')#, validators=[DataRequired()])
+# 	submit = SubmitField('Submit')
 
 class ProjectForm(FlaskForm):
 	project_name = TextField('Project Name', validators=[DataRequired()])
@@ -37,42 +37,55 @@ class ProjectForm(FlaskForm):
 @application.route('/index')
 @application.route('/')
 def index():
-    return render_template("index.html")
+	"""Route to the home page which can be accessed at 
+	/ or /index or /home."""
+	return render_template("index.html")
 
 
 @application.route('/blog')
 def blog():
-    return render_template("blog.html")
+	"""Route to the blog page."""
+	return render_template("blog.html")
 
 
 @application.route('/blog-details')
 def blog_details():
-    return render_template("blog-details.html")
+	"""Route to the blog details page."""
+	return render_template("blog-details.html")
 
 
 @application.route('/contact')
 def contact():
-    return render_template("contact.html")
+	"""Route to the statis page about contact information."""
+	return render_template("contact.html")
 
 
 @application.route('/feature')
 def feature():
-    return render_template("feature.html")
+	"""Route to the statis page about service information."""
+	return render_template("feature.html")
 
 
 @application.route('/pricing')
 def pricing():
-    return render_template("pricing.html")
+	"""Route to the statis page listing pricing information."""
+	return render_template("pricing.html")
 
 
 @application.route('/register', methods=['GET', 'POST'])
 def register():
-	form = RegistrationForm()
-	if request.method == "POST" and form.validate():
-		username = form.username.data
-		companyname = form.companyname.data
-		email = form.email.data
-		password = form.password.data
+	"""
+	This function uses method request to take user-input data from a regular
+	html form (not a FlaskForm object) then inserts the information of a
+	new user into the database using SQLAlchemy.
+	If data is valid, dedirect to log in page.
+	Oherwise, render the sign up form again.
+	"""
+	if request.method == "POST":
+		username = request.form['username']
+		companyname = request.form['companyname']
+		email = request.form['email']
+		password = request.form['password']
 
 		user_count = classes.User.query.filter_by(username=username).count() + \
 			classes.User.query.filter_by(email=email).count()
@@ -81,23 +94,31 @@ def register():
 			user = classes.User(username, email, companyname, password)
 			db.session.add(user)
 			db.session.commit()
-			return redirect(url_for('index'))
-	return render_template("signup_2.html", form=form)
+			return redirect(url_for('signin'))
+
+	return render_template("signup_3.html")
 
 
 @application.route('/signin', methods=['GET', 'POST'])
 def signin():
-	form = SigninForm()
-	if request.method == "POST" and form.validate():
-		username = form.username.data
-		password = form.password.data
+	"""
+	This function uses method request to take user-input data from a regular
+	html form (not a FlaskForm object) then queries user information in the database 
+	to log user in.
+	If user information is found, redirect the user to project page.
+	Otherwise, render the sign in form again.
+	"""
+	if request.method == 'POST':
+		username = request.form['username']
+		password = request.form['password']
 		user = classes.User.query.filter_by(username=username).first()
 
 		if user is not None and user.check_password(password):
 			login_user(user)
 			return redirect(url_for('projects'))
 
-	return render_template("signin_2.html", form=form)
+	return render_template("signin_3.html")
+
 
 # how would I make this work for adding projects?
 # an if statement that checks if it's POST?
