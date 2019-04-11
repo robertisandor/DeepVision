@@ -18,6 +18,7 @@ from flask_login import current_user, login_user, login_required, logout_user
 class RegistrationForm(FlaskForm):
     username = TextField('Username', validators=[DataRequired()])
     email = TextField('Email')#, validators=[DataRequired()])
+    companyname = TextField('Company Name')
     password = PasswordField('Password')#, validators=[DataRequired()])
     submit = SubmitField('Submit')
 
@@ -69,19 +70,19 @@ def register():
 	form = RegistrationForm()
 	if request.method == "POST" and form.validate():
 		username = form.username.data
-		password = form.password.data
+		companyname = form.companyname.data
 		email = form.email.data
+		password = form.password.data
 
 		user_count = classes.User.query.filter_by(username=username).count() + \
 			classes.User.query.filter_by(email=email).count()
 
 		if user_count == 0:
-			user = classes.User(username, email, password)
+			user = classes.User(username, email, companyname, password)
 			db.session.add(user)
 			db.session.commit()
 			return redirect(url_for('index'))
-	error_message = "Either wrong format or user already exists."
-	return render_template("signup_2.html", form=form, error_message=error_message)
+	return render_template("signup_2.html", form=form)
 
 
 @application.route('/signin', methods=['GET', 'POST'])
