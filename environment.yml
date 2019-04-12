@@ -18,7 +18,6 @@ dependencies:
   - cryptography=2.6.1
   - docutils=0.14
   - flask=1.0.2
-  - flask-bootstrap=3.3.7.0
   - flask-login=0.4.1
   - flask-sqlalchemy=2.3.2
   - flask-wtf=0.14.2
@@ -71,6 +70,7 @@ dependencies:
   - zlib=1.2.11
   - pip:
     - appnope==0.1.0
+    - flask-bootstrap=3.3.7
     - attrs==19.1.0
     - backcall==0.1.0
     - bleach==3.1.0
