@@ -51,7 +51,8 @@ def git_clone_pull(ssh, git_user_id, git_repo_name):
     stdin, stdout, stderr = ssh.exec_command('cd ' + git_repo_name)
 
     # Try cloning the repo
-    if b"" == stderr.read():
+    # if b"" == stderr.read():
+    try:
 
         git_pull_command = "cd " + git_repo_name + " ; git pull"
         stdin, stdout, stderr = ssh.exec_command(git_pull_command)
@@ -59,7 +60,8 @@ def git_clone_pull(ssh, git_user_id, git_repo_name):
         print(stdout.read())
         print(stderr.read())
 
-    else:
+    # else:
+    except:
         git_clone_command = "git clone https://" + git_user +\
                             "@github.com/" + \
                             git_user_id + "/" + git_repo_name + ".git"
