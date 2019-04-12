@@ -33,8 +33,252 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="code-documentation">
-<h1>Code Documentation<a class="headerlink" href="#code-documentation" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-deploy_script">
+<span id="code-documentation"></span><h1>Code Documentation<a class="headerlink" href="#module-deploy_script" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="deploy_script.close">
+<code class="descclassname">deploy_script.</code><code class="descname">close</code><span class="sig-paren">(</span><em>ssh</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/deploy_script.html#close"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#deploy_script.close" title="Permalink to this definition">¶</a></dt>
+<dd><p>Closes the SSH connection.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>ssh</strong> – paramiko.SSHClient class</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="deploy_script.create_or_update_environment">
+<code class="descclassname">deploy_script.</code><code class="descname">create_or_update_environment</code><span class="sig-paren">(</span><em>ssh</em>, <em>git_repo_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/deploy_script.html#create_or_update_environment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#deploy_script.create_or_update_environment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates/update python environment with the repo’s .yaml file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>ssh</strong> – paramiko.SSHClient class</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="deploy_script.get_port">
+<code class="descclassname">deploy_script.</code><code class="descname">get_port</code><span class="sig-paren">(</span><em>ssh</em>, <em>server_path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/deploy_script.html#get_port"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#deploy_script.get_port" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="deploy_script.git_clone_pull">
+<code class="descclassname">deploy_script.</code><code class="descname">git_clone_pull</code><span class="sig-paren">(</span><em>ssh</em>, <em>git_user_id</em>, <em>git_repo_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/deploy_script.html#git_clone_pull"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#deploy_script.git_clone_pull" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clone/Updates ‘git_repo_name’ repository.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>ssh</strong> – paramiko.SSHClient class</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="deploy_script.launch_application">
+<code class="descclassname">deploy_script.</code><code class="descname">launch_application</code><span class="sig-paren">(</span><em>ssh</em>, <em>server_path='~/product-analytics-group-project-deepvision/code'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/deploy_script.html#launch_application"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#deploy_script.launch_application" title="Permalink to this definition">¶</a></dt>
+<dd><p>Launch application server_path under the MSDS603 environment and print port.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>ssh</strong> – paramiko ssh.Client (already connected)</li>
+<li><strong>server_path</strong> – path to directory where run_app.py is located.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">None</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="deploy_script.main">
+<code class="descclassname">deploy_script.</code><code class="descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/deploy_script.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#deploy_script.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>Main function.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="deploy_script.print_port">
+<code class="descclassname">deploy_script.</code><code class="descname">print_port</code><span class="sig-paren">(</span><em>ssh</em>, <em>server_path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/deploy_script.html#print_port"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#deploy_script.print_port" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prints the port number in which the app runs according to the .flaskenv file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>ssh</strong> – paramiko ssh client (connected)</li>
+<li><strong>server_path</strong> – path to the application directory (where .flaskenv is located)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">None</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="deploy_script.ssh_client">
+<code class="descclassname">deploy_script.</code><code class="descname">ssh_client</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/deploy_script.html#ssh_client"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#deploy_script.ssh_client" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return ssh client object</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="deploy_script.ssh_connection">
+<code class="descclassname">deploy_script.</code><code class="descname">ssh_connection</code><span class="sig-paren">(</span><em>ssh</em>, <em>ec2_address</em>, <em>user</em>, <em>key_file</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/deploy_script.html#ssh_connection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#deploy_script.ssh_connection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Establish an ssh connection.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>ssh</strong> – paramiko.SSHClient class</li>
+<li><strong>ec2_address</strong> – (str) ec2 instance address</li>
+<li><strong>user</strong> – (str) ssh username</li>
+<li><strong>key_file</strong> – (str) location of the AWS
+key from the root directory</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">None</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<span class="target" id="module-app.classes"></span><dl class="class">
+<dt id="app.classes.Label">
+<em class="property">class </em><code class="descclassname">app.classes.</code><code class="descname">Label</code><span class="sig-paren">(</span><em>project_id</em>, <em>label_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/classes.html#Label"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.classes.Label" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt id="app.classes.Label.label_id">
+<code class="descname">label_id</code><a class="headerlink" href="#app.classes.Label.label_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="app.classes.Label.label_name">
+<code class="descname">label_name</code><a class="headerlink" href="#app.classes.Label.label_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="app.classes.Label.project_id">
+<code class="descname">project_id</code><a class="headerlink" href="#app.classes.Label.project_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="app.classes.Project">
+<em class="property">class </em><code class="descclassname">app.classes.</code><code class="descname">Project</code><span class="sig-paren">(</span><em>project_name</em>, <em>project_owner_id</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/classes.html#Project"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.classes.Project" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt id="app.classes.Project.project_creation_date">
+<code class="descname">project_creation_date</code><a class="headerlink" href="#app.classes.Project.project_creation_date" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="app.classes.Project.project_id">
+<code class="descname">project_id</code><a class="headerlink" href="#app.classes.Project.project_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="app.classes.Project.project_owner_id">
+<code class="descname">project_owner_id</code><a class="headerlink" href="#app.classes.Project.project_owner_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="app.classes.User">
+<em class="property">class </em><code class="descclassname">app.classes.</code><code class="descname">User</code><span class="sig-paren">(</span><em>username</em>, <em>email</em>, <em>companyname</em>, <em>password</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/classes.html#User"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.classes.User" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="app.classes.User.check_password">
+<code class="descname">check_password</code><span class="sig-paren">(</span><em>password</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/classes.html#User.check_password"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.classes.User.check_password" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="app.classes.User.companyname">
+<code class="descname">companyname</code><a class="headerlink" href="#app.classes.User.companyname" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="app.classes.User.email">
+<code class="descname">email</code><a class="headerlink" href="#app.classes.User.email" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="app.classes.User.id">
+<code class="descname">id</code><a class="headerlink" href="#app.classes.User.id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="app.classes.User.password_hash">
+<code class="descname">password_hash</code><a class="headerlink" href="#app.classes.User.password_hash" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="app.classes.User.set_password">
+<code class="descname">set_password</code><span class="sig-paren">(</span><em>password</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/classes.html#User.set_password"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.classes.User.set_password" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="app.classes.User.username">
+<code class="descname">username</code><a class="headerlink" href="#app.classes.User.username" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="app.classes.User_Project">
+<em class="property">class </em><code class="descclassname">app.classes.</code><code class="descname">User_Project</code><span class="sig-paren">(</span><em>user_id</em>, <em>project_id</em>, <em>project_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/classes.html#User_Project"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.classes.User_Project" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt id="app.classes.User_Project.project_id">
+<code class="descname">project_id</code><a class="headerlink" href="#app.classes.User_Project.project_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="app.classes.User_Project.project_name">
+<code class="descname">project_name</code><a class="headerlink" href="#app.classes.User_Project.project_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="app.classes.User_Project.user_id">
+<code class="descname">user_id</code><a class="headerlink" href="#app.classes.User_Project.user_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="app.classes.load_user">
+<code class="descclassname">app.classes.</code><code class="descname">load_user</code><span class="sig-paren">(</span><em>id</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/classes.html#load_user"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.classes.load_user" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </div>
 
 

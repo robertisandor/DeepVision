@@ -34,8 +34,10 @@
             
   <h1>Source code for deploy_script</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">paramiko</span>
+<span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="n">expanduser</span>
 <span class="kn">from</span> <span class="nn">user_definition</span> <span class="k">import</span> <span class="o">*</span>
+
 
 
 <div class="viewcode-block" id="ssh_client"><a class="viewcode-back" href="../apiReference.html#deploy_script.ssh_client">[docs]</a><span class="k">def</span> <span class="nf">ssh_client</span><span class="p">():</span>
@@ -69,16 +71,30 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">stdin</span><span class="p">,</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="n">ssh</span><span class="o">.</span><span class="n">exec_command</span><span class="p">(</span><span class="s2">&quot;git --version&quot;</span><span class="p">)</span>
 
-    <span class="c1"># Try cloning the repo</span>
-    <span class="k">if</span> <span class="p">(</span><span class="sa">b</span><span class="s2">&quot;&quot;</span> <span class="ow">is</span> <span class="n">stderr</span><span class="o">.</span><span class="n">read</span><span class="p">()):</span>
-        <span class="n">git_clone_command</span> <span class="o">=</span> <span class="s2">&quot;git clone https://github.com/&quot;</span> <span class="o">+</span> \
-                            <span class="n">git_user_id</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">git_repo_name</span> <span class="o">+</span> <span class="s2">&quot;.git&quot;</span>
-        <span class="n">stdin</span><span class="p">,</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="n">ssh</span><span class="o">.</span><span class="n">exec_command</span><span class="p">(</span><span class="n">git_clone_command</span><span class="p">)</span>
+    <span class="n">git_user</span> <span class="o">=</span> <span class="n">git_credentials</span><span class="p">()</span>
 
-    <span class="c1"># Pull if already exists</span>
-    <span class="k">if</span> <span class="p">(</span><span class="sa">b</span><span class="s1">&#39;already exists&#39;</span> <span class="ow">in</span> <span class="n">stderr</span><span class="o">.</span><span class="n">read</span><span class="p">()):</span>
-        <span class="n">git_pull_command</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;cd </span><span class="si">{git_repo_name}</span><span class="s2"> ; git pull&quot;</span>
-        <span class="n">ssh</span><span class="o">.</span><span class="n">exec_command</span><span class="p">(</span><span class="n">git_pull_command</span><span class="p">)</span></div>
+    <span class="n">stdin</span><span class="p">,</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="n">ssh</span><span class="o">.</span><span class="n">exec_command</span><span class="p">(</span><span class="s2">&quot;git config &quot;</span> <span class="o">+</span>
+                                             <span class="s2">&quot;--global &quot;</span> <span class="o">+</span>
+                                             <span class="s2">&quot;credential.helper store&quot;</span><span class="p">)</span>
+
+
+
+    <span class="n">stdin</span><span class="p">,</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="n">ssh</span><span class="o">.</span><span class="n">exec_command</span><span class="p">(</span><span class="s1">&#39;cd &#39;</span> <span class="o">+</span> <span class="n">git_repo_name</span><span class="p">)</span>
+
+    <span class="c1"># Try cloning the repo</span>
+    <span class="k">if</span> <span class="sa">b</span><span class="s2">&quot;&quot;</span> <span class="o">==</span> <span class="n">stderr</span><span class="o">.</span><span class="n">read</span><span class="p">():</span>
+
+        <span class="n">git_pull_command</span> <span class="o">=</span> <span class="s2">&quot;cd &quot;</span> <span class="o">+</span> <span class="n">git_repo_name</span> <span class="o">+</span> <span class="s2">&quot; ; git pull&quot;</span>
+        <span class="n">stdin</span><span class="p">,</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="n">ssh</span><span class="o">.</span><span class="n">exec_command</span><span class="p">(</span><span class="n">git_pull_command</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">git_clone_command</span> <span class="o">=</span> <span class="s2">&quot;git clone https://&quot;</span> <span class="o">+</span> <span class="n">git_user</span> <span class="o">+</span>\
+                            <span class="s2">&quot;@github.com/&quot;</span> <span class="o">+</span> \
+                            <span class="n">git_user_id</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">git_repo_name</span> <span class="o">+</span> <span class="s2">&quot;.git&quot;</span>
+
+        <span class="n">stdin</span><span class="p">,</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="n">ssh</span><span class="o">.</span><span class="n">exec_command</span><span class="p">(</span><span class="n">git_clone_command</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">stdout</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">stderr</span><span class="o">.</span><span class="n">read</span><span class="p">())</span></div>
 
 
 <div class="viewcode-block" id="create_or_update_environment"><a class="viewcode-back" href="../apiReference.html#deploy_script.create_or_update_environment">[docs]</a><span class="k">def</span> <span class="nf">create_or_update_environment</span><span class="p">(</span><span class="n">ssh</span><span class="p">,</span> <span class="n">git_repo_name</span><span class="p">):</span>
@@ -88,32 +104,80 @@
 <span class="sd">    :param ssh: paramiko.SSHClient class</span>
 <span class="sd">    :return: None</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">stdin</span><span class="p">,</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="n">ssh</span><span class="o">.</span><span class="n">exec_command</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;conda env create -f </span><span class="se">\</span>
-<span class="s2">    ~/</span><span class="si">{git_repo_name}</span><span class="s2">/environment.yml&quot;</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="p">(</span><span class="sa">b</span><span class="s1">&#39;already exists&#39;</span> <span class="ow">in</span> <span class="n">stderr</span><span class="o">.</span><span class="n">read</span><span class="p">()):</span>
-        <span class="n">stdin</span><span class="p">,</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="n">ssh</span><span class="o">.</span><span class="n">exec_command</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;conda env update </span><span class="se">\</span>
-<span class="s2">        -f ~/</span><span class="si">{git_repo_name}</span><span class="s2">/environment.yml&quot;</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="n">stdout</span><span class="o">.</span><span class="n">read</span><span class="p">())</span></div>
+    <span class="n">repo_path</span> <span class="o">=</span> <span class="s1">&#39;code/&#39;</span>
+    <span class="n">stdin</span><span class="p">,</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="n">ssh</span><span class="o">.</span><span class="n">exec_command</span><span class="p">(</span><span class="s2">&quot;cd ~/.conda/envs/MSDS603&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Try cloning the repo</span>
+    <span class="k">if</span> <span class="sa">b</span><span class="s2">&quot;&quot;</span> <span class="o">!=</span> <span class="n">stderr</span><span class="o">.</span><span class="n">read</span><span class="p">():</span>
+        <span class="n">stdin</span><span class="p">,</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="n">ssh</span><span class="o">.</span><span class="n">exec_command</span><span class="p">(</span><span class="s2">&quot;conda env create -f &quot;</span>\
+        <span class="o">+</span> <span class="s2">&quot;~/&quot;</span> <span class="o">+</span> <span class="n">git_repo_name</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">repo_path</span> <span class="o">+</span> <span class="s2">&quot;environment.yml&quot;</span><span class="p">)</span>
+ 
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">stdin</span><span class="p">,</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="n">ssh</span><span class="o">.</span><span class="n">exec_command</span><span class="p">(</span><span class="s2">&quot;conda env update &quot;</span>\
+        <span class="o">+</span> <span class="s2">&quot;-f ~/&quot;</span> <span class="o">+</span> <span class="n">git_repo_name</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">repo_path</span> <span class="o">+</span> <span class="s2">&quot;environment.yml&quot;</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="n">stdout</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">stderr</span><span class="o">.</span><span class="n">read</span><span class="p">())</span></div>
 
 
-<div class="viewcode-block" id="set_crontab"><a class="viewcode-back" href="../apiReference.html#deploy_script.set_crontab">[docs]</a><span class="k">def</span> <span class="nf">set_crontab</span><span class="p">(</span><span class="n">ssh</span><span class="p">,</span> <span class="n">file_location</span><span class="p">,</span> <span class="n">time_code</span><span class="o">=</span><span class="s1">&#39;* * * * *&#39;</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="get_port"><a class="viewcode-back" href="../apiReference.html#deploy_script.get_port">[docs]</a><span class="k">def</span> <span class="nf">get_port</span><span class="p">(</span><span class="n">ssh</span><span class="p">,</span> <span class="n">server_path</span><span class="p">):</span>
 
-<span class="sd">    :param ssh: paramiko.SSHClient class</span>
-<span class="sd">    :param file_location: (str) location of the file</span>
-<span class="sd">                          from the root directory</span>
+    <span class="n">stdin</span><span class="p">,</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="n">ssh</span><span class="o">.</span><span class="n">exec_command</span><span class="p">(</span><span class="s2">&quot;cat &quot;</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">server_path</span><span class="p">,</span><span class="s1">&#39;.flaskenv&#39;</span><span class="p">))</span>
+
+    <span class="c1"># print(stdout.read().decode(&quot;utf-8&quot;).split(&#39;\n&#39;))</span>
+
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">stdout</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="s1">&#39;FLASK_RUN_PORT&#39;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span> <span class="n">info</span> <span class="o">=</span> <span class="n">line</span><span class="p">;</span> <span class="k">break</span>
+
+    <span class="k">return</span> <span class="n">info</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="print_port"><a class="viewcode-back" href="../apiReference.html#deploy_script.print_port">[docs]</a><span class="k">def</span> <span class="nf">print_port</span><span class="p">(</span><span class="n">ssh</span><span class="p">,</span> <span class="n">server_path</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Prints the port number in which the app runs according to the .flaskenv file.</span>
+
+<span class="sd">    :param ssh: paramiko ssh client (connected)</span>
+<span class="sd">    :param server_path: path to the application directory (where .flaskenv is located)</span>
 <span class="sd">    :return: None</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    &#39;&#39;&#39;</span>
 
-    <span class="n">use_python</span> <span class="o">=</span> <span class="s1">&#39;~/.conda/envs/MSDS603/bin/python &#39;</span>
+    <span class="n">port</span> <span class="o">=</span> <span class="n">get_port</span><span class="p">(</span><span class="n">ssh</span><span class="p">,</span> <span class="n">server_path</span><span class="p">)</span>
 
-    <span class="n">file_complete_location</span> <span class="o">=</span> <span class="n">expanduser</span><span class="p">(</span><span class="s2">&quot;~&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="n">file_location</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;App running in port number &quot;</span> <span class="o">+</span> <span class="n">port</span><span class="p">)</span></div>
 
-    <span class="n">command</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;crontab -e ; &#39;</span> <span class="o">+</span> <span class="n">time_code</span> <span class="o">+</span>
-               <span class="n">use_python</span> <span class="o">+</span> <span class="n">file_complete_location</span><span class="p">)</span>
 
-    <span class="n">ssh</span><span class="o">.</span><span class="n">exec_command</span><span class="p">(</span><span class="n">command</span><span class="p">)</span></div>
+<div class="viewcode-block" id="launch_application"><a class="viewcode-back" href="../apiReference.html#deploy_script.launch_application">[docs]</a><span class="k">def</span> <span class="nf">launch_application</span><span class="p">(</span><span class="n">ssh</span><span class="p">,</span> <span class="n">server_path</span><span class="o">=</span><span class="s1">&#39;~/&#39;</span> <span class="o">+</span> <span class="n">git_repo_name</span> <span class="o">+</span> <span class="s1">&#39;/code&#39;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Launch application server_path under the MSDS603 environment and print port.</span>
+
+<span class="sd">    :param ssh: paramiko ssh.Client (already connected)</span>
+<span class="sd">    :param server_path: path to directory where run_app.py is located.</span>
+<span class="sd">    :return: None</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="c1">#first_command = &#39;conda activate MSDS603&#39;</span>
+
+    <span class="c1"># first_command = f&#39;cd {server_path}&#39;</span>
+    <span class="c1">#</span>
+    <span class="c1"># second_command = &#39;sudo ~/.conda/envs/MSDS603/bin/flask run&#39;</span>
+    <span class="c1">#</span>
+    <span class="c1"># stdin, stdout, stderr = ssh.exec_command(first_command + &#39; ; &#39; + second_command)</span>
+
+
+    <span class="c1"># kill any process running from the app if any</span>
+    <span class="n">command</span> <span class="o">=</span> <span class="s2">&quot;kill -9 `ps aux |grep gunicorn |grep app | awk &#39;{ print $2 }&#39;` &quot;</span>
+    <span class="n">stdin</span><span class="p">,</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="n">ssh</span><span class="o">.</span><span class="n">exec_command</span><span class="p">(</span><span class="n">command</span><span class="p">)</span>
+
+    <span class="n">port</span> <span class="o">=</span> <span class="n">get_port</span><span class="p">(</span><span class="n">ssh</span><span class="p">,</span> <span class="n">server_path</span><span class="p">)</span>
+
+    <span class="c1"># run the server with the last version</span>
+    <span class="n">command</span> <span class="o">=</span> <span class="s2">&quot;.conda/envs/MSDS603/bin/gunicorn -D -w 2 -b :&quot;</span> <span class="o">+</span> <span class="n">port</span> <span class="o">+</span> <span class="s2">&quot; --chdir product-analytics-group-project-deepvision/code/ app:application&quot;</span>
+    <span class="n">stdin</span><span class="p">,</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="n">ssh</span><span class="o">.</span><span class="n">exec_command</span><span class="p">(</span><span class="n">command</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="n">stdout</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">stderr</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+
+    <span class="n">print_port</span><span class="p">(</span><span class="n">ssh</span><span class="p">,</span> <span class="n">server_path</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="close"><a class="viewcode-back" href="../apiReference.html#deploy_script.close">[docs]</a><span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="n">ssh</span><span class="p">):</span>
@@ -133,15 +197,12 @@
 <span class="sd">    :return:  None</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="c1"># ec2_address = &quot;ec2-12-123-123-123.us-west-2.compute.amazonaws.com&quot;</span>
-    <span class="c1"># user = &quot;ec2-user&quot;</span>
-    <span class="c1"># key_file = &quot;/.ssh/msan603.pem&quot;</span>
-
     <span class="n">ssh</span> <span class="o">=</span> <span class="n">ssh_client</span><span class="p">()</span>
     <span class="n">ssh_connection</span><span class="p">(</span><span class="n">ssh</span><span class="p">,</span> <span class="n">ec2_address</span><span class="p">,</span> <span class="n">user</span><span class="p">,</span> <span class="n">key_file</span><span class="p">)</span>
     <span class="n">git_clone_pull</span><span class="p">(</span><span class="n">ssh</span><span class="p">,</span> <span class="n">git_user_id</span><span class="p">,</span> <span class="n">git_repo_name</span><span class="p">)</span>
     <span class="n">create_or_update_environment</span><span class="p">(</span><span class="n">ssh</span><span class="p">,</span> <span class="n">git_repo_name</span><span class="p">)</span>
-    <span class="n">set_crontab</span><span class="p">(</span><span class="n">ssh</span><span class="p">,</span> <span class="n">file_location</span><span class="p">)</span>
+    <span class="c1"># set_crontab(ssh)</span>
+    <span class="n">launch_application</span><span class="p">(</span><span class="n">ssh</span><span class="p">)</span>
     <span class="n">close</span><span class="p">(</span><span class="n">ssh</span><span class="p">)</span></div>
 
 

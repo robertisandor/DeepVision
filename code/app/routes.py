@@ -37,38 +37,50 @@ class ProjectForm(FlaskForm):
 @application.route('/index')
 @application.route('/')
 def index():
-	"""Route to the home page which can be accessed at 
-	/ or /index or /home."""
+	"""
+	Route to the home page which can be accessed at 
+	/ or /index or /home.
+	"""
 	return render_template("index.html")
 
 
 @application.route('/blog')
 def blog():
-	"""Route to the blog page."""
+	"""
+	Route to the blog page.
+	"""
 	return render_template("blog.html")
 
 
 @application.route('/blog-details')
 def blog_details():
-	"""Route to the blog details page."""
+	"""
+	Route to the blog details page.
+	"""
 	return render_template("blog-details.html")
 
 
 @application.route('/contact')
 def contact():
-	"""Route to the statis page about contact information."""
+	"""
+	Route to the statis page about contact information.
+	"""
 	return render_template("contact.html")
 
 
 @application.route('/feature')
 def feature():
-	"""Route to the statis page about service information."""
+	"""
+	Route to the statis page about service information.
+	"""
 	return render_template("feature.html")
 
 
 @application.route('/pricing')
 def pricing():
-	"""Route to the statis page listing pricing information."""
+	"""
+	Route to the statis page listing pricing information.
+	"""
 	return render_template("pricing.html")
 
 
@@ -147,7 +159,7 @@ def projects():
 		# to pick another project_name
 		projects_with_same_name = classes.User_Project.query.filter_by(project_name=project_name).all()
 		if len(projects_with_same_name) > 0:
-			return f"<h1> A project with the name: {project_name}" + \
+			return "<h1> A project with the name: " + project_name + \
 				" already exists. Please choose another name for your project."
 		else:
 			# insert into the Project table

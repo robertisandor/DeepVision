@@ -44,18 +44,18 @@ def git_clone_pull(ssh, git_user_id, git_repo_name):
 
 
 
-    stdin, stdout, stderr = ssh.exec_command(f"cd {git_repo_name}")
+    stdin, stdout, stderr = ssh.exec_command('cd ' + git_repo_name)
 
     # Try cloning the repo
     if b"" == stderr.read():
 
-        git_pull_command = f"cd {git_repo_name} ; git pull"
+        git_pull_command = "cd " + git_repo_name + " ; git pull"
         stdin, stdout, stderr = ssh.exec_command(git_pull_command)
 
     else:
-        git_clone_command = f"git clone https://{git_user}" +\
+        git_clone_command = "git clone https://" + git_user +\
                             "@github.com/" + \
-                            git_user_id + "/" + git_repo_name + f".git"
+                            git_user_id + "/" + git_repo_name + ".git"
 
         stdin, stdout, stderr = ssh.exec_command(git_clone_command)
         print(stdout.read())
@@ -71,16 +71,16 @@ def create_or_update_environment(ssh, git_repo_name):
     """
 
     repo_path = 'code/'
-    stdin, stdout, stderr = ssh.exec_command(f"cd ~/.conda/envs/MSDS603")
+    stdin, stdout, stderr = ssh.exec_command("cd ~/.conda/envs/MSDS603")
 
     # Try cloning the repo
     if b"" != stderr.read():
-        stdin, stdout, stderr = ssh.exec_command(f"conda env create -f \
-        ~/{git_repo_name}/{repo_path}environment.yml")
+        stdin, stdout, stderr = ssh.exec_command("conda env create -f "\
+        + "~/" + git_repo_name + "/" + repo_path + "environment.yml")
  
     else:
-        stdin, stdout, stderr = ssh.exec_command(f"conda env update \
-        -f ~/{git_repo_name}/{repo_path}environment.yml")
+        stdin, stdout, stderr = ssh.exec_command("conda env update "\
+        + "-f ~/" + git_repo_name + "/" + repo_path + "environment.yml")
 
         print(stdout.read())
         print(stderr.read())
@@ -88,7 +88,7 @@ def create_or_update_environment(ssh, git_repo_name):
 
 def get_port(ssh, server_path):
 
-    stdin, stdout, stderr = ssh.exec_command(f"cat {os.path.join(server_path,'.flaskenv')}")
+    stdin, stdout, stderr = ssh.exec_command("cat " + os.path.join(server_path,'.flaskenv'))
 
     # print(stdout.read().decode("utf-8").split('\n'))
 
@@ -108,10 +108,10 @@ def print_port(ssh, server_path):
 
     port = get_port(ssh, server_path)
 
-    print(f"App running in port number {port}")
+    print("App running in port number " + port)
 
 
-def launch_application(ssh, server_path=f'~/{git_repo_name}/code'):
+def launch_application(ssh, server_path='~/' + git_repo_name + '/code'):
     '''
     Launch application server_path under the MSDS603 environment and print port.
 
@@ -136,7 +136,7 @@ def launch_application(ssh, server_path=f'~/{git_repo_name}/code'):
     port = get_port(ssh, server_path)
 
     # run the server with the last version
-    command = f".conda/envs/MSDS603/bin/gunicorn -D -w 2 -b :{port} --chdir product-analytics-group-project-deepvision/code/ app:application"
+    command = ".conda/envs/MSDS603/bin/gunicorn -D -w 2 -b :" + port + " --chdir product-analytics-group-project-deepvision/code/ app:application"
     stdin, stdout, stderr = ssh.exec_command(command)
 
     print(stdout.read())
