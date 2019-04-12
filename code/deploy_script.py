@@ -6,7 +6,11 @@ from user_definition import *
 
 
 def ssh_client():
-    """Return ssh client object"""
+    '''
+    Return ssh client object
+
+    :return: paramiko.SShClient()
+    '''
     return paramiko.SSHClient()
 
 
@@ -87,7 +91,12 @@ def create_or_update_environment(ssh, git_repo_name):
 
 
 def get_port(ssh, server_path):
+    '''
 
+    :param ssh: paramiko.SSHClient class
+    :param server_path: path to the application directory (where ``.flaskenv`` is located)
+    :return: (str) port number
+    '''
     stdin, stdout, stderr = ssh.exec_command("cat " + os.path.join(server_path,'.flaskenv'))
 
     # print(stdout.read().decode("utf-8").split('\n'))
@@ -102,7 +111,7 @@ def print_port(ssh, server_path):
     Prints the port number in which the app runs according to the .flaskenv file.
 
     :param ssh: paramiko ssh client (connected)
-    :param server_path: path to the application directory (where .flaskenv is located)
+    :param server_path: path to the application directory (where ``.flaskenv`` is located)
     :return: None
     '''
 
@@ -120,15 +129,6 @@ def launch_application(ssh, server_path='~/' + git_repo_name + '/code'):
     :return: None
     '''
 
-    #first_command = 'conda activate MSDS603'
-
-    # first_command = f'cd {server_path}'
-    #
-    # second_command = 'sudo ~/.conda/envs/MSDS603/bin/flask run'
-    #
-    # stdin, stdout, stderr = ssh.exec_command(first_command + ' ; ' + second_command)
-
-
     # kill any process running from the app if any
     command = "kill -9 `ps aux |grep gunicorn |grep app | awk '{ print $2 }'` "
     stdin, stdout, stderr = ssh.exec_command(command)
@@ -138,9 +138,6 @@ def launch_application(ssh, server_path='~/' + git_repo_name + '/code'):
     # run the server with the last version
     command = ".conda/envs/MSDS603/bin/gunicorn -D -w 2 -b :" + port + " --chdir product-analytics-group-project-deepvision/code/ app:application"
     stdin, stdout, stderr = ssh.exec_command(command)
-
-    print(stdout.read())
-    print(stderr.read())
 
     print_port(ssh, server_path)
 
