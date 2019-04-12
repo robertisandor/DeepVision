@@ -41,7 +41,11 @@
 
 
 <div class="viewcode-block" id="ssh_client"><a class="viewcode-back" href="../apiReference.html#deploy_script.ssh_client">[docs]</a><span class="k">def</span> <span class="nf">ssh_client</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;Return ssh client object&quot;&quot;&quot;</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Return ssh client object</span>
+
+<span class="sd">    :return: paramiko.SShClient()</span>
+<span class="sd">    &#39;&#39;&#39;</span>
     <span class="k">return</span> <span class="n">paramiko</span><span class="o">.</span><span class="n">SSHClient</span><span class="p">()</span></div>
 
 
@@ -122,7 +126,12 @@
 
 
 <div class="viewcode-block" id="get_port"><a class="viewcode-back" href="../apiReference.html#deploy_script.get_port">[docs]</a><span class="k">def</span> <span class="nf">get_port</span><span class="p">(</span><span class="n">ssh</span><span class="p">,</span> <span class="n">server_path</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
 
+<span class="sd">    :param ssh: paramiko.SSHClient class</span>
+<span class="sd">    :param server_path: path to the application directory (where ``.flaskenv`` is located)</span>
+<span class="sd">    :return: (str) port number</span>
+<span class="sd">    &#39;&#39;&#39;</span>
     <span class="n">stdin</span><span class="p">,</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="n">ssh</span><span class="o">.</span><span class="n">exec_command</span><span class="p">(</span><span class="s2">&quot;cat &quot;</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">server_path</span><span class="p">,</span><span class="s1">&#39;.flaskenv&#39;</span><span class="p">))</span>
 
     <span class="c1"># print(stdout.read().decode(&quot;utf-8&quot;).split(&#39;\n&#39;))</span>
@@ -137,7 +146,7 @@
 <span class="sd">    Prints the port number in which the app runs according to the .flaskenv file.</span>
 
 <span class="sd">    :param ssh: paramiko ssh client (connected)</span>
-<span class="sd">    :param server_path: path to the application directory (where .flaskenv is located)</span>
+<span class="sd">    :param server_path: path to the application directory (where ``.flaskenv`` is located)</span>
 <span class="sd">    :return: None</span>
 <span class="sd">    &#39;&#39;&#39;</span>
 
@@ -155,15 +164,6 @@
 <span class="sd">    :return: None</span>
 <span class="sd">    &#39;&#39;&#39;</span>
 
-    <span class="c1">#first_command = &#39;conda activate MSDS603&#39;</span>
-
-    <span class="c1"># first_command = f&#39;cd {server_path}&#39;</span>
-    <span class="c1">#</span>
-    <span class="c1"># second_command = &#39;sudo ~/.conda/envs/MSDS603/bin/flask run&#39;</span>
-    <span class="c1">#</span>
-    <span class="c1"># stdin, stdout, stderr = ssh.exec_command(first_command + &#39; ; &#39; + second_command)</span>
-
-
     <span class="c1"># kill any process running from the app if any</span>
     <span class="n">command</span> <span class="o">=</span> <span class="s2">&quot;kill -9 `ps aux |grep gunicorn |grep app | awk &#39;{ print $2 }&#39;` &quot;</span>
     <span class="n">stdin</span><span class="p">,</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="n">ssh</span><span class="o">.</span><span class="n">exec_command</span><span class="p">(</span><span class="n">command</span><span class="p">)</span>
@@ -173,9 +173,6 @@
     <span class="c1"># run the server with the last version</span>
     <span class="n">command</span> <span class="o">=</span> <span class="s2">&quot;.conda/envs/MSDS603/bin/gunicorn -D -w 2 -b :&quot;</span> <span class="o">+</span> <span class="n">port</span> <span class="o">+</span> <span class="s2">&quot; --chdir product-analytics-group-project-deepvision/code/ app:application&quot;</span>
     <span class="n">stdin</span><span class="p">,</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="n">ssh</span><span class="o">.</span><span class="n">exec_command</span><span class="p">(</span><span class="n">command</span><span class="p">)</span>
-
-    <span class="nb">print</span><span class="p">(</span><span class="n">stdout</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">stderr</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
 
     <span class="n">print_port</span><span class="p">(</span><span class="n">ssh</span><span class="p">,</span> <span class="n">server_path</span><span class="p">)</span></div>
 

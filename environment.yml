@@ -1,6 +1,7 @@
 name: MSDS603
 channels:
   - derickl
+  - anaconda
   - defaults
 dependencies:
   - alabaster=0.7.12
@@ -30,7 +31,7 @@ dependencies:
   - libsodium=1.0.16
   - markupsafe=1.1.1
   - ncurses=6.1
-  - openssl=1.1.1b
+  - openssl=1.1.1
   - packaging=19.0
   - paramiko=2.4.2
   - pip=19.0.3

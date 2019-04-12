@@ -33,8 +33,21 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="module-deploy_script">
-<span id="code-documentation"></span><h1>Code Documentation<a class="headerlink" href="#module-deploy_script" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="code-documentation">
+<h1><a class="toc-backref" href="#id1">Code Documentation</a><a class="headerlink" href="#code-documentation" title="Permalink to this headline">¶</a></h1>
+<div class="contents topic" id="table-of-contents">
+<p class="topic-title first">Table of Contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#code-documentation" id="id1">Code Documentation</a><ul>
+<li><a class="reference internal" href="#module-deploy_script" id="id2">Deploy Script</a></li>
+<li><a class="reference internal" href="#module-app.classes" id="id3">Classes</a></li>
+<li><a class="reference internal" href="#module-app.routes" id="id4">Routes</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="module-deploy_script">
+<span id="deploy-script"></span><h2><a class="toc-backref" href="#id2">Deploy Script</a><a class="headerlink" href="#module-deploy_script" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="deploy_script.close">
 <code class="descclassname">deploy_script.</code><code class="descname">close</code><span class="sig-paren">(</span><em>ssh</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/deploy_script.html#close"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#deploy_script.close" title="Permalink to this definition">¶</a></dt>
@@ -70,7 +83,22 @@
 <dl class="function">
 <dt id="deploy_script.get_port">
 <code class="descclassname">deploy_script.</code><code class="descname">get_port</code><span class="sig-paren">(</span><em>ssh</em>, <em>server_path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/deploy_script.html#get_port"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#deploy_script.get_port" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>ssh</strong> – paramiko.SSHClient class</li>
+<li><strong>server_path</strong> – path to the application directory (where <code class="docutils literal notranslate"><span class="pre">.flaskenv</span></code> is located)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">(str) port number</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="deploy_script.git_clone_pull">
@@ -133,7 +161,7 @@
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>ssh</strong> – paramiko ssh client (connected)</li>
-<li><strong>server_path</strong> – path to the application directory (where .flaskenv is located)</li>
+<li><strong>server_path</strong> – path to the application directory (where <code class="docutils literal notranslate"><span class="pre">.flaskenv</span></code> is located)</li>
 </ul>
 </td>
 </tr>
@@ -148,6 +176,14 @@
 <dt id="deploy_script.ssh_client">
 <code class="descclassname">deploy_script.</code><code class="descname">ssh_client</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/deploy_script.html#ssh_client"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#deploy_script.ssh_client" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return ssh client object</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">paramiko.SShClient()</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
@@ -174,10 +210,15 @@ key from the root directory</li>
 </table>
 </dd></dl>
 
-<span class="target" id="module-app.classes"></span><dl class="class">
+</div>
+<div class="section" id="module-app.classes">
+<span id="classes"></span><h2><a class="toc-backref" href="#id3">Classes</a><a class="headerlink" href="#module-app.classes" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
 <dt id="app.classes.Label">
 <em class="property">class </em><code class="descclassname">app.classes.</code><code class="descname">Label</code><span class="sig-paren">(</span><em>project_id</em>, <em>label_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/classes.html#Label"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.classes.Label" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="attribute">
+<dd><p>This class inherits from db.Model and is used to create labels instances with multiple associated properties such as label id and project id. It is also used by <code class="docutils literal notranslate"><span class="pre">SQLALCHEMY</span></code> to store label records in the data base.</p>
+<p>It’s main functionality is mapping label names to labels index so they can change the names if they want to without affecting system.</p>
+<dl class="attribute">
 <dt id="app.classes.Label.label_id">
 <code class="descname">label_id</code><a class="headerlink" href="#app.classes.Label.label_id" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -197,7 +238,8 @@ key from the root directory</li>
 <dl class="class">
 <dt id="app.classes.Project">
 <em class="property">class </em><code class="descclassname">app.classes.</code><code class="descname">Project</code><span class="sig-paren">(</span><em>project_name</em>, <em>project_owner_id</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/classes.html#Project"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.classes.Project" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="attribute">
+<dd><p>This class inherits from db.Model and is used to create project instances with multiple associated properties such as project owner and creation date. It is also used by <code class="docutils literal notranslate"><span class="pre">SQLALCHEMY</span></code> to store project records in the data base.</p>
+<dl class="attribute">
 <dt id="app.classes.Project.project_creation_date">
 <code class="descname">project_creation_date</code><a class="headerlink" href="#app.classes.Project.project_creation_date" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -217,10 +259,22 @@ key from the root directory</li>
 <dl class="class">
 <dt id="app.classes.User">
 <em class="property">class </em><code class="descclassname">app.classes.</code><code class="descname">User</code><span class="sig-paren">(</span><em>username</em>, <em>email</em>, <em>companyname</em>, <em>password</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/classes.html#User"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.classes.User" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="method">
+<dd><p>This class inherits from db.Model, UserMixin and is used to create user instances with multiple associated properties such as username and email. It is also used by <code class="docutils literal notranslate"><span class="pre">SQLALCHEMY</span></code> to store user records in the data base.</p>
+<dl class="method">
 <dt id="app.classes.User.check_password">
 <code class="descname">check_password</code><span class="sig-paren">(</span><em>password</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/classes.html#User.check_password"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.classes.User.check_password" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Check if the introduced password matches the one in the records.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>password</strong> – (str) password (not hashed)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">(bool) True/False if it do/do not match.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="attribute">
 <dt id="app.classes.User.companyname">
@@ -245,7 +299,18 @@ key from the root directory</li>
 <dl class="method">
 <dt id="app.classes.User.set_password">
 <code class="descname">set_password</code><span class="sig-paren">(</span><em>password</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/classes.html#User.set_password"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.classes.User.set_password" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Transforms the introduced password to it’s hashed version and sotres it in the <code class="docutils literal notranslate"><span class="pre">password_hash</span></code> attribute.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>password</strong> – (str) transform the introduced password to it’s hashed version to store it.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="attribute">
 <dt id="app.classes.User.username">
@@ -257,7 +322,9 @@ key from the root directory</li>
 <dl class="class">
 <dt id="app.classes.User_Project">
 <em class="property">class </em><code class="descclassname">app.classes.</code><code class="descname">User_Project</code><span class="sig-paren">(</span><em>user_id</em>, <em>project_id</em>, <em>project_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/classes.html#User_Project"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.classes.User_Project" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="attribute">
+<dd><p>This class inherits from db.Model and is used to relate projects to users. To what projects do a user have access to ? .</p>
+<p>It is also used by <code class="docutils literal notranslate"><span class="pre">SQLALCHEMY</span></code> to store those relations records in the data base.</p>
+<dl class="attribute">
 <dt id="app.classes.User_Project.project_id">
 <code class="descname">project_id</code><a class="headerlink" href="#app.classes.User_Project.project_id" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -277,9 +344,23 @@ key from the root directory</li>
 <dl class="function">
 <dt id="app.classes.load_user">
 <code class="descclassname">app.classes.</code><code class="descname">load_user</code><span class="sig-paren">(</span><em>id</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/classes.html#load_user"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.classes.load_user" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Load the user record associated with <cite>id</cite> from the User table.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>id</strong> – (str) id of the user.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">(User) User record (class instance)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
-<span class="target" id="module-app.routes"></span><dl class="class">
+</div>
+<div class="section" id="module-app.routes">
+<span id="routes"></span><h2><a class="toc-backref" href="#id4">Routes</a><a class="headerlink" href="#module-app.routes" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
 <dt id="app.routes.ProjectForm">
 <em class="property">class </em><code class="descclassname">app.routes.</code><code class="descname">ProjectForm</code><span class="sig-paren">(</span><em>formdata=&lt;object object&gt;</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes.html#ProjectForm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.routes.ProjectForm" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="attribute">
@@ -367,6 +448,7 @@ Otherwise, render the sign in form again.</p>
 </dd></dl>
 
 </div>
+</div>
 
 
           </div>
@@ -391,7 +473,12 @@ Otherwise, render the sign in form again.</p>
 <li class="toctree-l1"><a class="reference internal" href="authors.html">Authors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="requirements.html">Requirements</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Code Documentation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Code Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-deploy_script">Deploy Script</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-app.classes">Classes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-app.routes">Routes</a></li>
+</ul>
+</li>
 </ul>
 
 <div class="relations">
