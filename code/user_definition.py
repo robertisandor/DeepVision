@@ -1,4 +1,4 @@
-ec2_address = "ec2-34-219-196-80.us-west-2.compute.amazonaws.com"
+ec2_address = "ec2-54-200-214-28.us-west-2.compute.amazonaws.com"
 
 key_file = "/.AWSkp/r0mer0mOregon.pem"
 

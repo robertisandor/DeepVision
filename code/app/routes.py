@@ -124,8 +124,8 @@ def projects():
 		# if it does, tell the user to pick another project_name
 		projects_with_same_name = classes.User_Project.query.filter_by(project_name=project_name).all()
 		if len(projects_with_same_name) > 0:
-			return f"<h1> A project with the name: {project_name}" + \
-				" already exists. Please choose another name for your project."
+			return ("<h1> A project with the name: " + project_name + " already exists." +
+                    " Please choose another name for your project.</h1> ")
 		else:
 			# insert into the Project table
 			db.session.add(classes.Project(project_name, int(current_user.id)))
