@@ -18,7 +18,7 @@ dependencies:
   - cryptography=2.6.1
   - docutils=0.14
   - flask=1.0.2
-#  - flask-bootstrap=3.3.7
+  - flask-bootstrap=3.3.7=0
   - flask-login=0.4.1
   - flask-sqlalchemy=2.3.2
   - flask-wtf=0.14.2
