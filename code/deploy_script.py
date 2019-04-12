@@ -74,12 +74,12 @@ def create_or_update_environment(ssh, git_repo_name):
     :return: None
     """
 
-    stdin, stdout, stderr = ssh.exec_command("cd ~/.conda/envs/MSDS603")
+    stdin, stdout, stderr = ssh.exec_command("cd ~/.conda/envs/deepVision")
 
     # Try cloning the repo
     if b"" != stderr.read():
         stdin, stdout, stderr = ssh.exec_command("conda env create -f "\
-        + "~/" + git_repo_name + "/" + "environment.yml")
+        + "~/" + git_repo_name + "/" + "environment.yml python=3.7")
 
         print(stdout.read())
         print(stderr.read())
@@ -87,7 +87,7 @@ def create_or_update_environment(ssh, git_repo_name):
  
     else:
         stdin, stdout, stderr = ssh.exec_command("conda env update "\
-        + "-f ~/" + git_repo_name + "/" + "environment.yml")
+        + "-f ~/" + git_repo_name + "/" + "environment.yml python=3.7")
 
         print(stdout.read())
         print(stderr.read())

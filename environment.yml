@@ -1,4 +1,4 @@
-name: MSDS603
+name: deepVision
 channels:
   - derickl
   - anaconda
