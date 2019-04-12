@@ -109,17 +109,20 @@
 <span class="sd">    :return: None</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">repo_path</span> <span class="o">=</span> <span class="s1">&#39;code/&#39;</span>
     <span class="n">stdin</span><span class="p">,</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="n">ssh</span><span class="o">.</span><span class="n">exec_command</span><span class="p">(</span><span class="s2">&quot;cd ~/.conda/envs/MSDS603&quot;</span><span class="p">)</span>
 
     <span class="c1"># Try cloning the repo</span>
     <span class="k">if</span> <span class="sa">b</span><span class="s2">&quot;&quot;</span> <span class="o">!=</span> <span class="n">stderr</span><span class="o">.</span><span class="n">read</span><span class="p">():</span>
         <span class="n">stdin</span><span class="p">,</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="n">ssh</span><span class="o">.</span><span class="n">exec_command</span><span class="p">(</span><span class="s2">&quot;conda env create -f &quot;</span>\
-        <span class="o">+</span> <span class="s2">&quot;~/&quot;</span> <span class="o">+</span> <span class="n">git_repo_name</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">repo_path</span> <span class="o">+</span> <span class="s2">&quot;environment.yml&quot;</span><span class="p">)</span>
+        <span class="o">+</span> <span class="s2">&quot;~/&quot;</span> <span class="o">+</span> <span class="n">git_repo_name</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="s2">&quot;environment.yml&quot;</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="n">stdout</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">stderr</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+
  
     <span class="k">else</span><span class="p">:</span>
         <span class="n">stdin</span><span class="p">,</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="n">ssh</span><span class="o">.</span><span class="n">exec_command</span><span class="p">(</span><span class="s2">&quot;conda env update &quot;</span>\
-        <span class="o">+</span> <span class="s2">&quot;-f ~/&quot;</span> <span class="o">+</span> <span class="n">git_repo_name</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">repo_path</span> <span class="o">+</span> <span class="s2">&quot;environment.yml&quot;</span><span class="p">)</span>
+        <span class="o">+</span> <span class="s2">&quot;-f ~/&quot;</span> <span class="o">+</span> <span class="n">git_repo_name</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="s2">&quot;environment.yml&quot;</span><span class="p">)</span>
 
         <span class="nb">print</span><span class="p">(</span><span class="n">stdout</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
         <span class="nb">print</span><span class="p">(</span><span class="n">stderr</span><span class="o">.</span><span class="n">read</span><span class="p">())</span></div>
