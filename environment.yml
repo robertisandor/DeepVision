@@ -70,7 +70,7 @@ dependencies:
   - zlib=1.2.11
   - pip:
     - appnope==0.1.0
-    - flask-bootstrap=3.3.7
+    - flask-bootstrap==3.3.7
     - attrs==19.1.0
     - backcall==0.1.0
     - bleach==3.1.0
