@@ -74,17 +74,16 @@ def create_or_update_environment(ssh, git_repo_name):
     :return: None
     """
 
-    repo_path = 'code/'
     stdin, stdout, stderr = ssh.exec_command("cd ~/.conda/envs/MSDS603")
 
     # Try cloning the repo
     if b"" != stderr.read():
         stdin, stdout, stderr = ssh.exec_command("conda env create -f "\
-        + "~/" + git_repo_name + "/" + repo_path + "environment.yml")
+        + "~/" + git_repo_name + "/" + "environment.yml")
  
     else:
         stdin, stdout, stderr = ssh.exec_command("conda env update "\
-        + "-f ~/" + git_repo_name + "/" + repo_path + "environment.yml")
+        + "-f ~/" + git_repo_name + "/" + "environment.yml")
 
         print(stdout.read())
         print(stderr.read())
