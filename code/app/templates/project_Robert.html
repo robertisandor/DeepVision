@@ -1,0 +1,14 @@
+{% block title %}
+{% for project in projects %}
+    <tr>
+        <th>{{ project.project_name }}</th>
+    </tr>
+{% endfor %}
+<form action="/projects" method="post">
+    <input type="text" name="project_name" id="project_name" placeholder="Project Name" required/>
+    <br>
+    <input type="text" name="labels" id="labels" placeholder="Labels" required/>
+    <br>
+    <h2 style="text-align:center;"><input type="submit" class="button" value="Add Project"/></h2>
+</form>
+{% endblock %}
