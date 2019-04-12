@@ -51,8 +51,7 @@ def git_clone_pull(ssh, git_user_id, git_repo_name):
     stdin, stdout, stderr = ssh.exec_command('cd ' + git_repo_name)
 
     # Try cloning the repo
-    # if b"" == stderr.read():
-    try:
+    if b"" == stderr.read():
 
         git_pull_command = "cd " + git_repo_name + " ; git pull"
         stdin, stdout, stderr = ssh.exec_command(git_pull_command)
@@ -60,8 +59,7 @@ def git_clone_pull(ssh, git_user_id, git_repo_name):
         print(stdout.read())
         print(stderr.read())
 
-    # else:
-    except:
+    else:
         git_clone_command = "git clone https://" + git_user +\
                             "@github.com/" + \
                             git_user_id + "/" + git_repo_name + ".git"
@@ -108,11 +106,17 @@ def get_port(ssh, server_path):
     stdin, stdout, stderr = ssh.exec_command("cat " + os.path.join(server_path,'.flaskenv'))
 
     # print(stdout.read().decode("utf-8").split('\n'))
+    # print('This is the output')
+    # print(stdout.read().decode("utf-8").split('=')[-1])
+    # print(stderr.read())
 
-    for line in stdout.read().decode("utf-8").split('\n'):
-        if 'FLASK_RUN_PORT' in line: info = line; break
+    info = stdout.read().decode("utf-8").split('=')[-1]
+    # for line in stdout.read().split(b'\n'):
+    #     # print(line)
+    #     if 'FLASK_RUN_PORT' in line.decode("utf-8"): info = line.decode("utf-8"); break
 
-    return info.split('=')[1]
+    # return info.split('=')[1]
+    return  info.strip()
 
 def print_port(ssh, server_path):
     '''
@@ -144,7 +148,8 @@ def launch_application(ssh, server_path='~/' + git_repo_name + '/code'):
     port = get_port(ssh, server_path)
 
     # run the server with the last version
-    command = ".conda/envs/deepVision/bin/gunicorn -w 2 -b :" + port + " --chdir product-analytics-group-project-deepvision/code/ app:application"
+    command = f".conda/envs/deepVision/bin/gunicorn -w 2 -b :{port} --chdir product-analytics-group-project-deepvision/code/ app:application"
+    print(command)
     stdin, stdout, stderr = ssh.exec_command(command)
 
     print(stdout.read())
