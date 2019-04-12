@@ -1,6 +1,6 @@
-ec2_address = "ec2-3-83-100-104.compute-1.amazonaws.com"
+ec2_address = "ec2-54-200-214-28.us-west-2.compute.amazonaws.com"
 
-key_file = "/Documents/Keys/msds603.pem"
+key_file = "/.AWSkp/r0mer0mOregon.pem"
 
 user = "ec2-user"
 
