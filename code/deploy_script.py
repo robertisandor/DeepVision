@@ -84,16 +84,16 @@ def create_or_update_environment(ssh, git_repo_name):
         stdin, stdout, stderr = ssh.exec_command("conda env create -f "\
         + "~/" + git_repo_name + "/" + "environment.yml")
 
-        print(stdout.read())
-        print(stderr.read())
+        # print(stdout.read())
+        # print(stderr.read())
 
  
     else:
         stdin, stdout, stderr = ssh.exec_command("conda env update "\
         + "-f ~/" + git_repo_name + "/" + "environment.yml")
 
-        print(stdout.read())
-        print(stderr.read())
+        # print(stdout.read())
+        # print(stderr.read())
 
 
 def get_port(ssh, server_path):
@@ -148,12 +148,12 @@ def launch_application(ssh, server_path='~/' + git_repo_name + '/code'):
     port = get_port(ssh, server_path)
 
     # run the server with the last version
-    command = f".conda/envs/deepVision/bin/gunicorn -w 2 -b :{port} --chdir product-analytics-group-project-deepvision/code/ app:application"
-    print(command)
+    command = f".conda/envs/deepVision/bin/gunicorn -D -w 2 -b :{port} --chdir product-analytics-group-project-deepvision/code/ app:application"
+
     stdin, stdout, stderr = ssh.exec_command(command)
 
-    print(stdout.read())
-    print(stderr.read())
+    # print(stdout.read())
+    # print(stderr.read())
 
     print_port(ssh, server_path)
 
