@@ -177,7 +177,7 @@ def projects():
 
             # insert into the User_Project table
             # so that the user is associated with a project
-            db.session.add(classes.User_Project(current_user_id,
+            db.session.add(classes.User_Project(current_user.id,
                                                 most_recent_project.project_id,
                                                 project_name))
 
