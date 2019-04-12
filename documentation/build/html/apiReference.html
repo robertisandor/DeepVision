@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Code Documentation &#8212; group-hw1-product-analytics  documentation</title>
+    <title>Code Documentation &#8212; DeepVision  documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -279,6 +279,93 @@ key from the root directory</li>
 <code class="descclassname">app.classes.</code><code class="descname">load_user</code><span class="sig-paren">(</span><em>id</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/classes.html#load_user"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.classes.load_user" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
+<span class="target" id="module-app.routes"></span><dl class="class">
+<dt id="app.routes.ProjectForm">
+<em class="property">class </em><code class="descclassname">app.routes.</code><code class="descname">ProjectForm</code><span class="sig-paren">(</span><em>formdata=&lt;object object&gt;</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes.html#ProjectForm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.routes.ProjectForm" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt id="app.routes.ProjectForm.labels">
+<code class="descname">labels</code><em class="property"> = &lt;UnboundField(TextField, ('Labels',), {'validators': [&lt;wtforms.validators.DataRequired object&gt;]})&gt;</em><a class="headerlink" href="#app.routes.ProjectForm.labels" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="app.routes.ProjectForm.project_name">
+<code class="descname">project_name</code><em class="property"> = &lt;UnboundField(TextField, ('Project Name',), {'validators': [&lt;wtforms.validators.DataRequired object&gt;]})&gt;</em><a class="headerlink" href="#app.routes.ProjectForm.project_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="app.routes.ProjectForm.submit">
+<code class="descname">submit</code><em class="property"> = &lt;UnboundField(SubmitField, ('Submit',), {})&gt;</em><a class="headerlink" href="#app.routes.ProjectForm.submit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="app.routes.blog">
+<code class="descclassname">app.routes.</code><code class="descname">blog</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes.html#blog"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.routes.blog" title="Permalink to this definition">¶</a></dt>
+<dd><p>Route to the blog page.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="app.routes.blog_details">
+<code class="descclassname">app.routes.</code><code class="descname">blog_details</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes.html#blog_details"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.routes.blog_details" title="Permalink to this definition">¶</a></dt>
+<dd><p>Route to the blog details page.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="app.routes.contact">
+<code class="descclassname">app.routes.</code><code class="descname">contact</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes.html#contact"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.routes.contact" title="Permalink to this definition">¶</a></dt>
+<dd><p>Route to the statis page about contact information.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="app.routes.feature">
+<code class="descclassname">app.routes.</code><code class="descname">feature</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes.html#feature"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.routes.feature" title="Permalink to this definition">¶</a></dt>
+<dd><p>Route to the statis page about service information.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="app.routes.index">
+<code class="descclassname">app.routes.</code><code class="descname">index</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes.html#index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.routes.index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Route to the home page which can be accessed at 
+/ or /index or /home.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="app.routes.pricing">
+<code class="descclassname">app.routes.</code><code class="descname">pricing</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes.html#pricing"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.routes.pricing" title="Permalink to this definition">¶</a></dt>
+<dd><p>Route to the statis page listing pricing information.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="app.routes.projects">
+<code class="descclassname">app.routes.</code><code class="descname">projects</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes.html#projects"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.routes.projects" title="Permalink to this definition">¶</a></dt>
+<dd><p>This route displays the projects of a given user
+and allows them the ability to add a project.
+If a project using the same project_name already exists,
+this will display an error to tell the user 
+to pick another project name.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="app.routes.register">
+<code class="descclassname">app.routes.</code><code class="descname">register</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes.html#register"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.routes.register" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function uses method request to take user-input data from a regular
+html form (not a FlaskForm object) then inserts the information of a
+new user into the database using SQLAlchemy.
+If data is valid, dedirect to log in page.
+Oherwise, render the sign up form again.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="app.routes.signin">
+<code class="descclassname">app.routes.</code><code class="descname">signin</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes.html#signin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.routes.signin" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function uses method request to take user-input data from a regular
+html form (not a FlaskForm object) then queries user information in the database 
+to log user in.
+If user information is found, redirect the user to project page.
+Otherwise, render the sign in form again.</p>
+</dd></dl>
+
 </div>
 
 
@@ -288,7 +375,7 @@ key from the root directory</li>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h1 class="logo"><a href="index.html">group-hw1-product-analytics</a></h1>
+<h1 class="logo"><a href="index.html">DeepVision</a></h1>
 
 
 
@@ -300,7 +387,7 @@ key from the root directory</li>
 <h3>Navigation</h3>
 <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="introduction.html">This is the introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="authors.html">Authors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="requirements.html">Requirements</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>

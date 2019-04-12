@@ -3,8 +3,8 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to group-hw1-product-analytics's documentation!
-=======================================================
+Welcome to Deep Vision's documentation!
+========================================
 
 .. toctree::
    :maxdepth: 2
@@ -22,3 +22,11 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
+
+
+.. image:: index.jpg
+   :width: 1000px
+   :height: 850px
+   :scale: 50 %
+   :alt: alternate text
+   :align: center

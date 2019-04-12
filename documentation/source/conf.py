@@ -19,7 +19,7 @@ sys.path.insert(0, os.path.abspath('../../code'))
 
 # -- Project information -----------------------------------------------------
 
-project = 'group-hw1-product-analytics'
+project = 'DeepVision'
 copyright = '2019, Miguel Romero, Robert Sandor, Hai Vu Le, Meng-Ting Chang, Zhi Li, Liying Li, Wenkun Xiao'
 author = 'Miguel Romero, Robert Sandor, Hai Vu Le, Meng-Ting Chang, Zhi Li, Liying Li, Wenkun Xiao'
 
