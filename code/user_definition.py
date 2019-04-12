@@ -1,6 +1,4 @@
-from getpass import getpass
-
-ec2_address = "ec2-54-201-236-18.us-west-2.compute.amazonaws.com"
+ec2_address = "ec2-34-210-43-216.us-west-2.compute.amazonaws.com"
 
 key_file = "/.AWSkp/r0mer0mOregon.pem"
 

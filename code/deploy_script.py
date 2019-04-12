@@ -80,6 +80,10 @@ def create_or_update_environment(ssh, git_repo_name):
     if b"" != stderr.read():
         stdin, stdout, stderr = ssh.exec_command("conda env create -f "\
         + "~/" + git_repo_name + "/" + "environment.yml")
+
+        print(stdout.read())
+        print(stderr.read())
+
  
     else:
         stdin, stdout, stderr = ssh.exec_command("conda env update "\
