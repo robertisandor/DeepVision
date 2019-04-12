@@ -125,7 +125,7 @@ def print_port(ssh, server_path):
 
 def launch_application(ssh, server_path='~/' + git_repo_name + '/code'):
     '''
-    Launch application server_path under the MSDS603 environment and print port.
+    Launch application server_path under the deepVision environment and print port.
 
     :param ssh: paramiko ssh.Client (already connected)
     :param server_path: path to directory where run_app.py is located.
@@ -139,7 +139,7 @@ def launch_application(ssh, server_path='~/' + git_repo_name + '/code'):
     port = get_port(ssh, server_path)
 
     # run the server with the last version
-    command = ".conda/envs/MSDS603/bin/gunicorn -D -w 2 -b :" + port + " --chdir product-analytics-group-project-deepvision/code/ app:application"
+    command = ".conda/envs/deepVision/bin/gunicorn -D -w 2 -b :" + port + " --chdir product-analytics-group-project-deepvision/code/ app:application"
     stdin, stdout, stderr = ssh.exec_command(command)
 
     print_port(ssh, server_path)
