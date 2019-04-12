@@ -56,6 +56,9 @@ def git_clone_pull(ssh, git_user_id, git_repo_name):
         git_pull_command = "cd " + git_repo_name + " ; git pull"
         stdin, stdout, stderr = ssh.exec_command(git_pull_command)
 
+        print(stdout.read())
+        print(stderr.read())
+
     else:
         git_clone_command = "git clone https://" + git_user +\
                             "@github.com/" + \
@@ -79,7 +82,7 @@ def create_or_update_environment(ssh, git_repo_name):
     # Try cloning the repo
     if b"" != stderr.read():
         stdin, stdout, stderr = ssh.exec_command("conda env create -f "\
-        + "~/" + git_repo_name + "/" + "environment.yml python=3.7")
+        + "~/" + git_repo_name + "/" + "environment.yml")
 
         print(stdout.read())
         print(stderr.read())
@@ -87,7 +90,7 @@ def create_or_update_environment(ssh, git_repo_name):
  
     else:
         stdin, stdout, stderr = ssh.exec_command("conda env update "\
-        + "-f ~/" + git_repo_name + "/" + "environment.yml python=3.7")
+        + "-f ~/" + git_repo_name + "/" + "environment.yml")
 
         print(stdout.read())
         print(stderr.read())
@@ -139,8 +142,11 @@ def launch_application(ssh, server_path='~/' + git_repo_name + '/code'):
     port = get_port(ssh, server_path)
 
     # run the server with the last version
-    command = ".conda/envs/deepVision/bin/gunicorn -D -w 2 -b :" + port + " --chdir product-analytics-group-project-deepvision/code/ app:application"
+    command = ".conda/envs/deepVision/bin/gunicorn -w 2 -b :" + port + " --chdir product-analytics-group-project-deepvision/code/ app:application"
     stdin, stdout, stderr = ssh.exec_command(command)
+
+    print(stdout.read())
+    print(stderr.read())
 
     print_port(ssh, server_path)
 
