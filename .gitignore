@@ -1,5 +1,5 @@
 .DS_Store
-
+code/deepvision.db
 # ignore pycache
 __pycache__*
 *__pycache__*
