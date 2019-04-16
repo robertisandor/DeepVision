@@ -93,7 +93,7 @@
                   required />
                 <br>
                 <button type="submit" class="button button-light">
-                  <a href="{{ url_for('projects') }}""><strong>Add Project</button></strong></a>
+                  <a href="{{ url_for('projects') }}"><strong>Add Project</button></strong></a>
             </form>
           </center>
           </div>
@@ -125,13 +125,13 @@
                           <div class="table100-body js-pscroll">
                             <table>
                               <tbody>
-                                <form action="" method="get">
+                                <form action="/project" method="get">
                                   {% for proj in projects %}
                                   <tr class="row100 body">
-                                    <td class="cell100 column1">{{ proj }}</td>
+                                    <td class="cell100 column1">{{ proj.project_name }}</td>
                                     <td class="cell100 column2">
-                                      <button type="submit" class="button button-dark">
-                                        <a href="#"">Upload Data</button></a></td>
+                                      <button type="submit" class="button button-dark" projId= {{ proj.project_id }} >
+                                        <a href="{{ url_for('project', projid = proj.project_id ) }}">Project Detail</button></a></td>
                                     <td class=" cell100 column3"></td>
                                     </th>
                                     {% endfor %}

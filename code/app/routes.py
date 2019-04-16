@@ -4,6 +4,7 @@ from app import application, classes, db
 from flask import render_template, redirect, url_for, request, flash
 
 # for building forms
+
 from flask_wtf import FlaskForm  # RecaptchaField
 from wtforms import SubmitField
 from wtforms import TextField, PasswordField
@@ -13,6 +14,10 @@ from wtforms.validators import DataRequired, Email, Length
 from werkzeug.security import check_password_hash
 from werkzeug.security import generate_password_hash
 from flask_login import current_user, login_user, login_required, logout_user
+
+# for upload to s3
+from boto.s3.key import Key
+import boto
 
 
 @application.route('/home')
@@ -95,9 +100,10 @@ def signin():
 		username = request.form['username']
 		password = request.form['password']
 		user = classes.User.query.filter_by(username=username).first()
-
+		# print(user, password)
 		if user is not None and user.check_password(password):
 			login_user(user)
+
 			return redirect(url_for('projects'))
 
 	return render_template("signin.html")
@@ -112,20 +118,24 @@ def projects():
 	this will display an error to tell the user 
 	to pick another project name.
 	"""
-	if request.method == 'GET':	
-		projects = db.session.query(classes.User_Project.project_name).filter_by(user_id=int(current_user.id)).all()
+	if request.method == 'GET':
+		projects = classes.User_Project.query.filter_by(user_id=int(current_user.id)).all()
+
+		# projects = db.session.query(classes.User_Project.project_name).filter_by(user_id=int(current_user.id)).all()
 		# return render_template('projects.html', projects=list(projects))
-		return render_template('projects.html', projects=[proj[0].strip(",") for proj in projects])
+		return render_template('projects.html', projects=projects) #[proj[0].strip(",") for proj in projects])
 	elif request.method == 'POST':
 		project_name = request.form['project_name']
 		labels = [label.strip() for label in request.form['labels'].split(',')]
+
+		# TODO: verify label_names to be unique within one project, right now can have same name but different labelid.
 
 		# query the Project table to see if the project already exists
 		# if it does, tell the user to pick another project_name
 		projects_with_same_name = classes.User_Project.query.filter_by(project_name=project_name).all()
 		if len(projects_with_same_name) > 0:
-			return ("<h1> A project with the name: " + project_name + " already exists." +
-                    " Please choose another name for your project.</h1> ")
+			return f"<h1> A project with the name: {project_name}" + \
+				" already exists. Please choose another name for your project."
 		else:
 			# insert into the Project table
 			db.session.add(classes.Project(project_name, int(current_user.id)))
@@ -149,17 +159,62 @@ def projects():
 			# pass the list of projects (including the new project) to the page so it can be shown to the user
 			projects = classes.User_Project.query.filter_by(user_id=int(current_user.id)).all()
 			# only commit the transactions once everything has been entered successfully.
+			print([p.project_id for p in projects])
 			db.session.commit()
 			
-			projects = db.session.query(classes.User_Project.project_name).filter_by(user_id=int(current_user.id)).all()
-			return render_template('projects.html', 
-									projects=[proj[0].strip(",") for proj in projects])
+			# projects = db.session.query(classes.User_Project.project_name).filter_by(user_id=int(current_user.id)).all()
+
+			return render_template('projects.html', projects=projects)#[proj[0].strip(",") for proj in projects])
 
 
+#
+#
+from flask_wtf.file import FileField, FileRequired
+from wtforms import SubmitField
+from werkzeug import secure_filename
+
+class UploadFileForm(FlaskForm):
+    """Class for uploading file when submitted"""
+    file_selector = FileField('File')#, validators=[FileRequired()])
+    submit = SubmitField('Submit')
+
+@application.route('/project/<projid>', methods=['GET', 'POST'])
+@login_required
+def project(projid):
+	labels = classes.Label.query.filter_by(project_id=projid).all()
+	projnm = classes.User_Project.query.filter_by(project_id=projid).first().project_name
+
+	file = UploadFileForm()  # file : UploadFileForm class instance
+	if file.validate_on_submit():  # Check if it is a POST request and if it is valid.
+		f = file.file_selector.data  # f : Data of FileField
+		filename = secure_filename(f.filename)
+		# filename : filename of FileField
+		# secure_filename secures a filename before storing it directly on the filesystem.
+		file_content = f.stream.read()
+
+		bucket_name = 'msds603-deep-vision'  # Change it to your bucket.
+		###
+		s3_connection = boto.connect_s3(aws_access_key_id='AKIAIQRI4EE5ENXNW6LQ', \
+										aws_secret_access_key='2gduLL4umVC9j7XXc2L1N8DfUVQQKcFmnezTYF8O')
+		bucket = s3_connection.get_bucket(bucket_name)
+		k = Key(bucket)
+		k.key = filename
+		k.set_contents_from_string(file_content)
+
+		return redirect(url_for('project', projid=projid))
+
+	return render_template('project_d.html', projnm=projnm, labels=labels, form=file)
+	# if request.method == 'POST':
+#
+
+
+
+
+
+#########
 @application.route('/logout')
 @login_required
 def logout():
 	logout_user()
 	flash('You have been logged out.')
 	return redirect(url_for('index'))
-
