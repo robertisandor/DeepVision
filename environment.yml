@@ -100,7 +100,7 @@ dependencies:
     - pickleshare==0.7.5
     - prometheus-client==0.6.0
     - prompt-toolkit==2.0.9
-#    - psycopg2==2.8.2
+    - psycopg2==2.8.2
     - ptyprocess==0.6.0
     - pyrsistent==0.14.11
     - pyzmq==18.0.1
