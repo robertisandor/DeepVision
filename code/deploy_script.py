@@ -26,8 +26,8 @@ def ssh_connection(ssh, ec2_address, user, key_file):
     :return: None
     """
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    ssh.connect(ec2_address, username=user,
-                key_filename=expanduser("~") + key_file)
+    ssh.connect(ec2_address, username=user, key_filename= key_file)
+                # key_filename=expanduser("~") + key_file)
     return ssh
 
 
