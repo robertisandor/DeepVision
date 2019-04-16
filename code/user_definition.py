@@ -1,5 +1,5 @@
 # ec2_address = "ec2-54-200-214-28.us-west-2.compute.amazonaws.com"
-ec2_address = "ec2-52-15-162-15.us-east-2.compute.amazonaws.com"
+ec2_address = "ec2-3-19-63-10.us-east-2.compute.amazonaws.com"
 
 # key_file = "/.AWSkp/r0mer0mOregon.pem"
 key_file = "./deepVision.pem"
