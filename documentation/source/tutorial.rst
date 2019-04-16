@@ -12,6 +12,8 @@ To run the application on your own instance:
 
     3. Input your GitHub username, which should be the same one stored on the remote machine. The webpage should be running on the specified ec2 address and the port specified by ``FLASK_RUN_PORT`` in ``.flaskenv``.
 
+    4. Make sure that you open port 8080 on your EC2. Then you can access the web application at http://{public_IP}:8080
+
 If you would like to run the instance on our EC2:
 
 	1. Keep the ``user_definition.py`` file as we provide. 
