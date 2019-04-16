@@ -20,7 +20,10 @@ If you would like to run the instance on our EC2:
 
 	3. When prompted for Github username, type 'haivule' as the Github user.
 
+	4. Then access the web application at http://52.15.162.15:8080/
+
 We assume that the conda environment points to a ``.conda`` file that is in the home directory of the user environment.
+
 
 
 
