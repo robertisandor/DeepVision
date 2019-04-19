@@ -146,11 +146,10 @@ def projects():
 				db.session.add(classes.Label(most_recent_project.project_id,
 											label))
 
-			# pass the list of projects (including the new project) to the page so it can be shown to the user
-			projects = classes.User_Project.query.filter_by(user_id=int(current_user.id)).all()
 			# only commit the transactions once everything has been entered successfully.
 			db.session.commit()
 			
+			# pass the list of projects (including the new project) to the page so it can be shown to the user
 			projects = db.session.query(classes.User_Project.project_name).filter_by(user_id=int(current_user.id)).all()
 			return render_template('projects.html', 
 									projects=[proj[0].strip(",") for proj in projects])
