@@ -77,7 +77,7 @@ def create_or_update_environment(ssh, git_repo_name):
     :return: None
     """
 
-    stdin, stdout, stderr = ssh.exec_command("cd ~/.conda/envs/deepVision")
+    stdin, stdout, stderr = ssh.exec_command("cd /opt/conda/envs/deepVision")
     print(stdout.read())
     print(stderr.read())
 
@@ -150,7 +150,7 @@ def launch_application(ssh, server_path='~/' + git_repo_name + '/code'):
     port = get_port(ssh, server_path)
 
     # run the server with the last version
-    command = f".conda/envs/deepVision/bin/gunicorn -D -w 2 -b :{port} --chdir product-analytics-group-project-deepvision/code/ app:application"
+    command = f"/opt/conda/envs/deepVision/bin/gunicorn -D -w 2 -b :{port} --chdir product-analytics-group-project-deepvision/code/ app:application"
 
     stdin, stdout, stderr = ssh.exec_command(command)
 
