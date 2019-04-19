@@ -198,9 +198,9 @@ def mobile_register():
 			user = classes.User(username, email, companyname, password)
 			db.session.add(user)
 			db.session.commit()
-			return jsonify(success=1)
+			return "1" # jsonify(success=1)
 
-	return jsonify(success=0)
+	return "0" # jsonify(success=0)
 
 
 @application.route('/mobile_signin', methods=['GET', 'POST'])
@@ -219,9 +219,9 @@ def mobile_signin():
 
 		if user is not None and user.check_password(password):
 			login_user(user)
-			return jsonify(success=1)
+			return "1" # jsonify(success=1)
 
-	return jsonify(success=0)
+	return "0" # jsonify(success=0)
 
 
 @application.route('/mobile_projects', methods=['GET', 'POST'])
@@ -238,7 +238,7 @@ def mobile_projects():
 		projects = db.session.query(classes.User_Project.project_name).filter_by(user_id=int(current_user.id)).all()
 		# return render_template('projects.html', projects=list(projects))
 		projects = [proj[0].strip(",") for proj in projects]
-		return jsonify(success=1, projects=json.dumps(projects))
+		return json.dumps(projects)# jsonify(success=1, projects=json.dumps(projects))
 
 	elif request.method == 'POST':
 
@@ -251,7 +251,7 @@ def mobile_projects():
 		projects_with_same_name = classes.User_Project.query.filter_by(project_name=project_name).all()
 
 		if len(projects_with_same_name) > 0:
-			return jsonify(success=0)
+			return json.dumps([]) #jsonify(success=0)
 		else:
 			# insert into the Project table
 			db.session.add(classes.Project(project_name, int(current_user.id)))
@@ -288,7 +288,7 @@ def mobile_projects():
 
 			projects = [proj[0].strip(",") for proj in projects]
 
-			return  jsonify(success=1, projects=json.dumps(projects))
+			return  json.dumps(projects) #jsonify(success=1, projects=json.dumps(projects))
 			# return render_template('projects.html',
 			# 					   projects=[proj[0].strip(",") for proj in projects])
 
@@ -298,5 +298,5 @@ def mobile_projects():
 def mobile_logout():
 	logout_user()
 	# flash('You have been logged out.')
-	return jsonify(success=1)
+	return "1" #jsonify(success=1)
 
