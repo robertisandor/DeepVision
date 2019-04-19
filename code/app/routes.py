@@ -205,8 +205,6 @@ def project(projid):
 		return redirect(url_for('project', projid=projid))
 
 	return render_template('project_d.html', projnm=projnm, labels=labels, form=file)
-	# if request.method == 'POST':
-#
 
 
 
