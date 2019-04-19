@@ -194,7 +194,8 @@ def project(projid):
 
 		bucket_name = 'msds603-deep-vision'  # Change it to your bucket.
 		###
-		s3_connection = boto.connect_s3(aws_access_key_id='', \ # machine's owner's pub key
+		# machine's owner's pub key
+		s3_connection = boto.connect_s3(aws_access_key_id='', \
 										aws_secret_access_key='') # machine's owner's private key
 		bucket = s3_connection.get_bucket(bucket_name)
 		k = Key(bucket)
