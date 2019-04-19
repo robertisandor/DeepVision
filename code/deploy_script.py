@@ -60,7 +60,7 @@ def git_clone_pull(ssh, git_user_id, git_repo_name):
         print(stderr.read())
 
     else:
-        git_clone_command = "git clone https://" + git_user +\
+        git_clone_command = "git clone -b wendys https://" + git_user +\
                             "@github.com/" + \
                             git_user_id + "/" + git_repo_name + ".git"
 
