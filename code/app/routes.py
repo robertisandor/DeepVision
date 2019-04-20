@@ -100,7 +100,7 @@ def signin():
 		username = request.form['username']
 		password = request.form['password']
 		user = classes.User.query.filter_by(username=username).first()
-		# print(user, password)
+		print(user, password)
 		if user is not None and user.check_password(password):
 			login_user(user)
 
@@ -119,11 +119,11 @@ def projects():
 	to pick another project name.
 	"""
 	if request.method == 'GET':
-		projects = classes.User_Project.query.filter_by(user_id=int(current_user.id)).all()
+		# projects = classes.User_Project.query.filter_by(user_id=int(current_user.id)).all()
 
-		# projects = db.session.query(classes.User_Project.project_name).filter_by(user_id=int(current_user.id)).all()
+		projects = db.session.query(classes.User_Project.project_name).filter_by(user_id=int(current_user.id)).all()
 		# return render_template('projects.html', projects=list(projects))
-		return render_template('projects.html', projects=projects) #[proj[0].strip(",") for proj in projects])
+		return render_template('projects.html', projects=[proj[0].strip(",") for proj in projects])
 	elif request.method == 'POST':
 		project_name = request.form['project_name']
 		labels = [label.strip() for label in request.form['labels'].split(',')]
