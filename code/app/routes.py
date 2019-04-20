@@ -21,7 +21,9 @@ from werkzeug.security import check_password_hash
 from werkzeug.security import generate_password_hash
 from flask_login import current_user, login_user, login_required, logout_user
 
-
+# for upload to s3
+from boto.s3.key import Key
+import boto
 ########### Web app backend ##############
 
 
@@ -123,9 +125,9 @@ def projects():
 	to pick another project name.
 	"""
 	if request.method == 'GET':	
-		projects = db.session.query(classes.User_Project.project_name).filter_by(user_id=int(current_user.id)).all()
+		projects = db.session.query(classes.User_Project.project_name, classes.User_Project.project_id).filter_by(user_id=int(current_user.id)).all()
 		# return render_template('projects.html', projects=list(projects))
-		return render_template('projects.html', projects=[proj[0].strip(",") for proj in projects])
+		return render_template('projects.html', projects=projects)
 	elif request.method == 'POST':
 		project_name = request.form['project_name']
 		labels = [label.strip() for label in request.form['labels'].split(',')]
@@ -300,11 +302,50 @@ def mobile_projects():
 			# 					   projects=[proj[0].strip(",") for proj in projects])
 
 
+from flask_wtf.file import FileField, FileRequired
+from wtforms import SubmitField
+from werkzeug import secure_filename
+
+
+class UploadFileForm(FlaskForm):
+    """Class for uploading file when submitted"""
+    file_selector = FileField('File')#, validators=[FileRequired()])
+    submit = SubmitField('Submit')
+
+
+@application.route('/project/<projid>', methods=['GET', 'POST'])
+@login_required
+def project(projid):
+	labels = classes.Label.query.filter_by(project_id=projid).all()
+	projnm = classes.User_Project.query.filter_by(project_id=projid).first().project_name
+
+	file = UploadFileForm()  # file : UploadFileForm class instance
+	if file.validate_on_submit():  # Check if it is a POST request and if it is valid.
+		f = file.file_selector.data  # f : Data of FileField
+		filename = secure_filename(f.filename)
+		# filename : filename of FileField
+		# secure_filename secures a filename before storing it directly on the filesystem.
+		file_content = f.stream.read()
+
+		bucket_name = 'msds603-deep-vision'  # Change it to your bucket.
+		###
+		s3_connection = boto.connect_s3(aws_access_key_id='AKIAIQRI4EE5ENXNW6LQ', \
+										aws_secret_access_key='2gduLL4umVC9j7XXc2L1N8DfUVQQKcFmnezTYF8O')
+		bucket = s3_connection.get_bucket(bucket_name)
+		k = Key(bucket)
+		k.key = projid + '/' + filename
+		k.set_contents_from_string(file_content)
+
+		return redirect(url_for('project', projid=projid))
+
+	return render_template('project_d.html', projnm=projnm, labels=labels, form=file)
+
+
 @application.route('/mobile_logout')
 @login_required
 def mobile_logout():
 	logout_user()
 	# flash('You have been logged out.')
-	# return "1"
- 	return jsonify(success=1)
+	# return "1"	
+	return jsonify(success=1)
 
