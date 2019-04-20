@@ -222,10 +222,10 @@ def mobile_signin():
 		if user is not None and user.check_password(password):
 			login_user(user)
 			# return "1"
-			return jsonify(success=1)
+			return json.dumps(jsonify(success=1))
 
 	# return "0"
-	return jsonify(success=0)
+	return json.dumps(jsonify(success=0))
 
 
 @application.route('/mobile_projects', methods=['GET', 'POST'])
