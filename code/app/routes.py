@@ -171,11 +171,10 @@ def projects():
                                             label))
 
             # pass the list of projects (including the new project) to the page so it can be shown to the user
-            projects = classes.User_Project.query.filter_by(user_id=int(current_user.id)).all()
             # only commit the transactions once everything has been entered successfully.
-            # print([p.project_id for p in projects])
-
             db.session.commit()
+
+            projects = classes.User_Project.query.filter_by(user_id=int(current_user.id)).all()
             proj_labs = {}
             for proj in projects:
                 proj_labs[proj.project_id] = classes.Label.query.filter_by(project_id=proj.project_id).all()
