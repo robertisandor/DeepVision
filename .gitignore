@@ -1,5 +1,6 @@
 .DS_Store
 code/deepvision.db
+.idea/
 # ignore pycache
 __pycache__*
 *__pycache__*

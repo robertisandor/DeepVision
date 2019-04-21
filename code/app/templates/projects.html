@@ -116,7 +116,8 @@
                                   <!-- The width of the table could be changed -->
                                   <th class="cell100 column1">Project Name</th>
                                   <th class="cell100 column2">Upload Data</th>
-                                  <th class="cell100 column3"></th>
+                                  <th class="cell100 column3">Model Action</th>
+                                  <th class="cell100 column4"></th>
                                 </tr>
                               </thead>
                             </table>
@@ -125,14 +126,18 @@
                           <div class="table100-body js-pscroll">
                             <table>
                               <tbody>
-                                <form action="" method="get">
+                                <form action="/project" method="get">
                                   {% for proj in projects %}
                                   <tr class="row100 body">
                                     <td class="cell100 column1">{{ proj.project_name }}</td>
                                     <td class="cell100 column2">
-                                      <button type="submit" class="button button-dark" projId= {{ proj[1] }} >
-                                        <a href="{{ url_for('project', projid = proj[1] ) }}">Project Detail</button></a></td>
-                                    <td class=" cell100 column3"></td>
+                                      {% for lab in proj_labs[proj.project_id] %}
+                                          <button type="submit" class="button button-dark" projId= {{ proj.project_id }} >
+                                            <a href="{{ url_for('upload', labid = lab.label_id ) }}">
+                                              {{ lab.label_name }} </button></a>
+                                      {% endfor %}</td>
+                                    <td class="cell100 column3">Model Action1, Model Action2</td>
+                                    <td class=" cell100 column4"></td>
                                     </th>
                                     {% endfor %}
                                 </form>

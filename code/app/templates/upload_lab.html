@@ -1,0 +1,11 @@
+<div class="container">
+    <form method="POST" enctype="multipart/form-data"> <!-- post : handle submission -->
+        <h2>Upload Data for Project  {{ projnm }}</h2>
+        <br/> Label: {{ labelnm }} <br/>
+        {{ form.csrf_token }} <!--  render the form's CSRF field like normal. -->
+        {{ form.file_selector }}
+        {{ form.submit }}
+        <br/>
+    </form>
+</div> <!-- /container -->
+
