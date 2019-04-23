@@ -247,10 +247,10 @@ def mobile_register():
             db.session.add(user)
             db.session.commit()
             # return "1" #
-            return json.dumps(jsonify(success=1))
+            return json.dumps({"success":"1"})
 
     # return "0"
-    return json.dumps(jsonify(success=0))
+    return json.dumps({"success":"0"})
 
 
 @application.route('/mobile_signin', methods=['GET', 'POST'])
@@ -280,43 +280,44 @@ def mobile_signin():
 @login_required
 def mobile_projects():
     """
-    This route displays the projects of a given user
-    and allows them the ability to add a project.
-    If a project using the same project_name already exists,
-    this will display an error to tell the user
-    to pick another project name.
-    """
+     This route displays the projects of a given user
+     and allows them the ability to add a project.
+     If a project using the same project_name already exists,
+     this will display an error to tell the user
+     to pick another project name.
+     """
     if request.method == 'GET':
-        projects = db.session.query(classes.User_Project.project_name).filter_by(user_id=int(current_user.id)).all()
-        # return render_template('projects.html', projects=list(projects))
-        projects = [proj[0].strip(",") for proj in projects]
-        # return json.dumps(projects)
-        return json.dumps(jsonify(success=1, projects=json.dumps(projects)))
+        projects = classes.User_Project.query.filter_by(user_id=int(current_user.id)).all()
+        # return objects to easily call by attribute names, rather than by indexes, please keep
+        proj_labs = {}
+        for proj in projects:
+            proj_labs[proj.project_id] = classes.Label.query.filter_by(project_id=proj.project_id).all()
+        # use dictionary to easily call by key which matches the ids, more secure than by indexes, please keep
+
+        # return render_template('projects.html', projects=projects, proj_labs=proj_labs)
+        return json.dumps({"success":"1", "projects": json.dumps(projects), "proj_labs":json.dumps(proj_labs)})
 
     elif request.method == 'POST':
-
-
-        # TODO: Adapt this to the format received from Android
         project_name = request.form['project_name']
         labels = [label.strip() for label in request.form['labels'].split(',')]
 
+        # TODO: verify label_names to be unique within one project, right now can have same name but different labelid.
 
+        # query the Project table to see if the project already exists
+        # if it does, tell the user to pick another project_name
         projects_with_same_name = classes.User_Project.query.filter_by(project_name=project_name).all()
-
         if len(projects_with_same_name) > 0:
-            # return json.dumps([])
-            return json.dumps(jsonify(success=0))
+            # return f"<h1> A project with the name: {project_name}" + \
+            #        " already exists. Please choose another name for your project."
+            return json.dumps({"success":"0"})
         else:
             # insert into the Project table
             db.session.add(classes.Project(project_name, int(current_user.id)))
 
             # get the project for the current user that was just added
             # (by using the creation date)
-            most_recent_project = (classes.Project.query
-                                   .filter_by(project_owner_id=current_user.id)
-                                   .order_by(classes.Project.project_creation_date.desc())
-                                   .first()
-                                   )
+            most_recent_project = classes.Project.query.filter_by(project_owner_id=current_user.id) \
+                .order_by(classes.Project.project_creation_date.desc()).first()
 
             # insert into the User_Project table so that the user is associated with a project
             db.session.add(classes.User_Project(int(current_user.id),
@@ -330,23 +331,16 @@ def mobile_projects():
                                              label))
 
             # pass the list of projects (including the new project) to the page so it can be shown to the user
-            # projects = classes.User_Project.query.filter_by(user_id=int(current_user.id)).all()
             # only commit the transactions once everything has been entered successfully.
             db.session.commit()
 
-            projects = (db.session
-                        .query(classes.User_Project.project_name)
-                        .filter_by(user_id=int(current_user.id))
-                        .all()
-                        )
+            projects = classes.User_Project.query.filter_by(user_id=int(current_user.id)).all()
+            proj_labs = {}
+            for proj in projects:
+                proj_labs[proj.project_id] = classes.Label.query.filter_by(project_id=proj.project_id).all()
 
-            projects = [proj[0].strip(",") for proj in projects]
-
-            # return  json.dumps(projects)
-            return json.dumps(jsonify(success=1, projects=json.dumps(projects)))
-            # return render_template('projects.html',
-            # 					   projects=[proj[0].strip(",") for proj in projects])
-
+            # return render_template('projects.html', projects=projects, proj_labs=proj_labs)
+            return json.dumps({"success":"1", "projects": json.dumps(projects), "proj_labs":json.dumps(proj_labs)})
 
 @application.route('/mobile_logout')
 @login_required
@@ -354,4 +348,6 @@ def mobile_logout():
     logout_user()
     # flash('You have been logged out.')
     # return "1"
-    return json.dumps(jsonify(success=1))
+    return json.dumps({"success":"1"})
+
+# TODO: mobile_upload
