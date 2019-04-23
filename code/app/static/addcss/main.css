@@ -184,20 +184,20 @@ th, td {
 
 /* useful */
 .column1 {
-  width: 35%;
+  width: 15%;
   padding-left: 40px;
 }
 
 .column2 {
-  width: 25%;
+  width: 70%;
 }
 
 .column3 {
-  width: 40%;
+  width: 15%;
 }
 
 .column4 {
-  width: 19%;
+  width: 0%;
 }
 
 .column5 {
