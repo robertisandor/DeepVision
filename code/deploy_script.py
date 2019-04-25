@@ -53,7 +53,7 @@ def git_clone_pull(ssh, git_user_id, git_repo_name):
     # Try cloning the repo
     if b"" == stderr.read():
 
-        git_pull_command = "cd " + git_repo_name + " ; git pull"
+        git_pull_command = "cd " + git_repo_name + " ; git stash; git pull"
         stdin, stdout, stderr = ssh.exec_command(git_pull_command)
 
         print(stdout.read())
