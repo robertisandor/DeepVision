@@ -1,12 +1,13 @@
 name: deepVision
 channels:
   - derickl
+  - conda-forge
   - anaconda
   - defaults
-  - conda-forge
 dependencies:
   - alabaster=0.7.12
   - asn1crypto=0.24.0
+  - autopep8=1.4.4
   - babel=2.6.0
   - bcrypt=3.1.6
   - boto3=1.9.111
@@ -35,11 +36,10 @@ dependencies:
   - libsodium=1.0.16
   - markupsafe=1.1.1
   - ncurses=6.1
-  - openssl=1.1.1
+  - openssl=1.1.1b
   - packaging=19.0
   - paramiko=2.4.2
   - pip=19.0.3
-  - psycopg2=2.7.6.1
   - pyasn1=0.4.5
   - pycodestyle=2.5.0
   - pycparser=2.19
