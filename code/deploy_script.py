@@ -44,7 +44,7 @@ def git_clone_pull(ssh, git_user_id, git_repo_name):
 
     stdin, stdout, stderr = ssh.exec_command("git config " +
                                              "--global " +
-                                             "credential.helper store")
+                                             "~/.")
 
 
 
@@ -84,8 +84,8 @@ def create_or_update_environment(ssh, git_repo_name):
         stdin, stdout, stderr = ssh.exec_command("conda env create -f "\
         + "~/" + git_repo_name + "/" + "environment.yml")
 
-        # print(stdout.read())
-        # print(stderr.read())
+        print(stdout.read())
+        print(stderr.read())
 
  
     else:
@@ -93,8 +93,8 @@ def create_or_update_environment(ssh, git_repo_name):
         stdin, stdout, stderr = ssh.exec_command("conda env update "\
         + "-f ~/" + git_repo_name + "/" + "environment.yml")
 
-        # print(stdout.read())
-        # print(stderr.read())
+        print(stdout.read())
+        print(stderr.read())
 
 
 def get_port(ssh, server_path):

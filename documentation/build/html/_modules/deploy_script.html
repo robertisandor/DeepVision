@@ -79,7 +79,7 @@
 
     <span class="n">stdin</span><span class="p">,</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="n">ssh</span><span class="o">.</span><span class="n">exec_command</span><span class="p">(</span><span class="s2">&quot;git config &quot;</span> <span class="o">+</span>
                                              <span class="s2">&quot;--global &quot;</span> <span class="o">+</span>
-                                             <span class="s2">&quot;credential.helper store&quot;</span><span class="p">)</span>
+                                             <span class="s2">&quot;~/.&quot;</span><span class="p">)</span>
 
 
 
@@ -88,7 +88,7 @@
     <span class="c1"># Try cloning the repo</span>
     <span class="k">if</span> <span class="sa">b</span><span class="s2">&quot;&quot;</span> <span class="o">==</span> <span class="n">stderr</span><span class="o">.</span><span class="n">read</span><span class="p">():</span>
 
-        <span class="n">git_pull_command</span> <span class="o">=</span> <span class="s2">&quot;cd &quot;</span> <span class="o">+</span> <span class="n">git_repo_name</span> <span class="o">+</span> <span class="s2">&quot; ; git pull&quot;</span>
+        <span class="n">git_pull_command</span> <span class="o">=</span> <span class="s2">&quot;cd &quot;</span> <span class="o">+</span> <span class="n">git_repo_name</span> <span class="o">+</span> <span class="s2">&quot; ; git stash; git pull&quot;</span>
         <span class="n">stdin</span><span class="p">,</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="n">ssh</span><span class="o">.</span><span class="n">exec_command</span><span class="p">(</span><span class="n">git_pull_command</span><span class="p">)</span>
 
         <span class="nb">print</span><span class="p">(</span><span class="n">stdout</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
@@ -119,16 +119,17 @@
         <span class="n">stdin</span><span class="p">,</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="n">ssh</span><span class="o">.</span><span class="n">exec_command</span><span class="p">(</span><span class="s2">&quot;conda env create -f &quot;</span>\
         <span class="o">+</span> <span class="s2">&quot;~/&quot;</span> <span class="o">+</span> <span class="n">git_repo_name</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="s2">&quot;environment.yml&quot;</span><span class="p">)</span>
 
-        <span class="c1"># print(stdout.read())</span>
-        <span class="c1"># print(stderr.read())</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">stdout</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">stderr</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
 
  
     <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Updating environment...&#39;</span><span class="p">)</span>
         <span class="n">stdin</span><span class="p">,</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="n">ssh</span><span class="o">.</span><span class="n">exec_command</span><span class="p">(</span><span class="s2">&quot;conda env update &quot;</span>\
-        <span class="o">+</span> <span class="s2">&quot;-f ~/&quot;</span> <span class="o">+</span> <span class="n">git_repo_name</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="s2">&quot;environment.yml&quot;</span><span class="p">)</span></div>
+        <span class="o">+</span> <span class="s2">&quot;-f ~/&quot;</span> <span class="o">+</span> <span class="n">git_repo_name</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="s2">&quot;environment.yml&quot;</span><span class="p">)</span>
 
-        <span class="c1"># print(stdout.read())</span>
-        <span class="c1"># print(stderr.read())</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">stdout</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">stderr</span><span class="o">.</span><span class="n">read</span><span class="p">())</span></div>
 
 
 <div class="viewcode-block" id="get_port"><a class="viewcode-back" href="../apiReference.html#deploy_script.get_port">[docs]</a><span class="k">def</span> <span class="nf">get_port</span><span class="p">(</span><span class="n">ssh</span><span class="p">,</span> <span class="n">server_path</span><span class="p">):</span>
@@ -183,7 +184,7 @@
     <span class="n">port</span> <span class="o">=</span> <span class="n">get_port</span><span class="p">(</span><span class="n">ssh</span><span class="p">,</span> <span class="n">server_path</span><span class="p">)</span>
 
     <span class="c1"># run the server with the last version</span>
-    <span class="n">command</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;.conda/envs/deepVision/bin/gunicorn -D -w 2 -b :</span><span class="si">{port}</span><span class="s2"> --chdir product-analytics-group-project-deepvision/code/ app:application&quot;</span>
+    <span class="n">command</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;.conda/envs/deepVision/bin/gunicorn -D -b :</span><span class="si">{port}</span><span class="s2"> --chdir product-analytics-group-project-deepvision/code/ app:application&quot;</span>
 
     <span class="n">stdin</span><span class="p">,</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="n">ssh</span><span class="o">.</span><span class="n">exec_command</span><span class="p">(</span><span class="n">command</span><span class="p">)</span>
 
@@ -221,6 +222,9 @@
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
     <span class="n">main</span><span class="p">()</span>
+
+<span class="c1">#</span>
+<span class="c1"># .conda/envs/deepVision/bin/gunicorn -b :8080 --chdir product-analytics-group-project-deepvision/code/ app:application</span>
 </pre></div>
 
           </div>

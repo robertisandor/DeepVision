@@ -360,6 +360,22 @@ key from the root directory</li>
 </div>
 <div class="section" id="module-app.routes">
 <span id="routes"></span><h2><a class="toc-backref" href="#id4">Routes</a><a class="headerlink" href="#module-app.routes" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="app.routes.UploadFileForm">
+<em class="property">class </em><code class="descclassname">app.routes.</code><code class="descname">UploadFileForm</code><span class="sig-paren">(</span><em>formdata=&lt;object object&gt;</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes.html#UploadFileForm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.routes.UploadFileForm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for uploading file when submitted</p>
+<dl class="attribute">
+<dt id="app.routes.UploadFileForm.file_selector">
+<code class="descname">file_selector</code><em class="property"> = &lt;UnboundField(MultipleFileField, ('File',), {})&gt;</em><a class="headerlink" href="#app.routes.UploadFileForm.file_selector" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="app.routes.UploadFileForm.submit">
+<code class="descname">submit</code><em class="property"> = &lt;UnboundField(SubmitField, ('Submit',), {})&gt;</em><a class="headerlink" href="#app.routes.UploadFileForm.submit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 <dl class="function">
 <dt id="app.routes.blog">
 <code class="descclassname">app.routes.</code><code class="descname">blog</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes.html#blog"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.routes.blog" title="Permalink to this definition">¶</a></dt>
@@ -396,6 +412,64 @@ key from the root directory</li>
 <dd></dd></dl>
 
 <dl class="function">
+<dt id="app.routes.mobile_logout">
+<code class="descclassname">app.routes.</code><code class="descname">mobile_logout</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes.html#mobile_logout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.routes.mobile_logout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Log out function for mobile phone
+:return: return dictionary with success “1”/”0” if success/failure</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="app.routes.mobile_projects">
+<code class="descclassname">app.routes.</code><code class="descname">mobile_projects</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes.html#mobile_projects"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.routes.mobile_projects" title="Permalink to this definition">¶</a></dt>
+<dd><p>This route is the backend for the project menu of a
+given user in the mobile phone.
+It allows for projects to be added.
+If a project using the same project_name already exists,
+this will display an error to tell the user
+to pick another project name.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">return dictionary with success “1”/”0” if success/failure and the list of projects</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="app.routes.mobile_register">
+<code class="descclassname">app.routes.</code><code class="descname">mobile_register</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes.html#mobile_register"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.routes.mobile_register" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function uses method post to register user information
+in the data base. This returns a message indicating the if
+the procedure has been successful or not.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">return dictionary with success “1”/”0” if success/failure</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="app.routes.mobile_signin">
+<code class="descclassname">app.routes.</code><code class="descname">mobile_signin</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes.html#mobile_signin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.routes.mobile_signin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mobile version of signin
+This function uses method post to take user-input data and check if exists
+and the credentials are correct.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">return dictionary with success “1”/”0” if success/failure</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
 <dt id="app.routes.pricing">
 <code class="descclassname">app.routes.</code><code class="descname">pricing</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes.html#pricing"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.routes.pricing" title="Permalink to this definition">¶</a></dt>
 <dd><p>Route to the statis page listing pricing information.</p>
@@ -407,7 +481,7 @@ key from the root directory</li>
 <dd><p>This route displays the projects of a given user
 and allows them the ability to add a project.
 If a project using the same project_name already exists,
-this will display an error to tell the user 
+this will display an error to tell the user
 to pick another project name.</p>
 </dd></dl>
 
@@ -425,11 +499,16 @@ Oherwise, render the sign up form again.</p>
 <dt id="app.routes.signin">
 <code class="descclassname">app.routes.</code><code class="descname">signin</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes.html#signin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.routes.signin" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function uses method request to take user-input data from a regular
-html form (not a FlaskForm object) then queries user information in the database 
+html form (not a FlaskForm object) then queries user information in the database
 to log user in.
 If user information is found, redirect the user to project page.
 Otherwise, render the sign in form again.</p>
 </dd></dl>
+
+<dl class="function">
+<dt id="app.routes.upload">
+<code class="descclassname">app.routes.</code><code class="descname">upload</code><span class="sig-paren">(</span><em>labid</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes.html#upload"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.routes.upload" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 </div>
 </div>

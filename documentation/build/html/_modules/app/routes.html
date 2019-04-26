@@ -36,11 +36,22 @@
 <span></span><span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">from</span> <span class="nn">app</span> <span class="k">import</span> <span class="n">application</span><span class="p">,</span> <span class="n">classes</span><span class="p">,</span> <span class="n">db</span>
 
-<span class="kn">from</span> <span class="nn">flask</span> <span class="k">import</span> <span class="n">render_template</span><span class="p">,</span> <span class="n">redirect</span><span class="p">,</span> <span class="n">url_for</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">flash</span>
+<span class="kn">from</span> <span class="nn">flask</span> <span class="k">import</span> <span class="p">(</span><span class="n">render_template</span><span class="p">,</span>
+                   <span class="n">redirect</span><span class="p">,</span>
+                   <span class="n">url_for</span><span class="p">,</span>
+                   <span class="n">request</span><span class="p">,</span>
+                   <span class="n">flash</span><span class="p">,</span>
+                   <span class="n">jsonify</span><span class="p">)</span>
+
+<span class="kn">import</span> <span class="nn">json</span>
+
+<span class="kn">from</span> <span class="nn">flask_wtf.file</span> <span class="k">import</span> <span class="n">FileField</span><span class="p">,</span> <span class="n">FileRequired</span>
+<span class="kn">from</span> <span class="nn">wtforms</span> <span class="k">import</span> <span class="n">SubmitField</span>
+<span class="kn">from</span> <span class="nn">werkzeug</span> <span class="k">import</span> <span class="n">secure_filename</span>
 
 <span class="c1"># for building forms</span>
 <span class="kn">from</span> <span class="nn">flask_wtf</span> <span class="k">import</span> <span class="n">FlaskForm</span>  <span class="c1"># RecaptchaField</span>
-<span class="kn">from</span> <span class="nn">wtforms</span> <span class="k">import</span> <span class="n">SubmitField</span>
+<span class="kn">from</span> <span class="nn">wtforms</span> <span class="k">import</span> <span class="n">SubmitField</span><span class="p">,</span> <span class="n">MultipleFileField</span>
 <span class="kn">from</span> <span class="nn">wtforms</span> <span class="k">import</span> <span class="n">TextField</span><span class="p">,</span> <span class="n">PasswordField</span>
 <span class="kn">from</span> <span class="nn">wtforms.validators</span> <span class="k">import</span> <span class="n">DataRequired</span><span class="p">,</span> <span class="n">Email</span><span class="p">,</span> <span class="n">Length</span>
 
@@ -49,155 +60,344 @@
 <span class="kn">from</span> <span class="nn">werkzeug.security</span> <span class="k">import</span> <span class="n">generate_password_hash</span>
 <span class="kn">from</span> <span class="nn">flask_login</span> <span class="k">import</span> <span class="n">current_user</span><span class="p">,</span> <span class="n">login_user</span><span class="p">,</span> <span class="n">login_required</span><span class="p">,</span> <span class="n">logout_user</span>
 
+<span class="c1"># for upload to s3</span>
+<span class="kn">from</span> <span class="nn">boto.s3.key</span> <span class="k">import</span> <span class="n">Key</span>
+<span class="kn">import</span> <span class="nn">boto</span>
+<span class="c1">########### Web app backend ##############</span>
+
 
 <div class="viewcode-block" id="index"><a class="viewcode-back" href="../../apiReference.html#app.routes.index">[docs]</a><span class="nd">@application</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/home&#39;</span><span class="p">)</span>
 <span class="nd">@application</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/index&#39;</span><span class="p">)</span>
 <span class="nd">@application</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">index</span><span class="p">():</span>
-	<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">	Route to the home page which can be accessed at / or /index or /home.</span>
-<span class="sd">	&quot;&quot;&quot;</span>
-	<span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s2">&quot;index.html&quot;</span><span class="p">)</span></div>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Route to the home page which can be accessed at / or /index or /home.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s2">&quot;index.html&quot;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="blog"><a class="viewcode-back" href="../../apiReference.html#app.routes.blog">[docs]</a><span class="nd">@application</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/blog&#39;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">blog</span><span class="p">():</span>
-	<span class="sd">&quot;&quot;&quot;Route to the blog page.&quot;&quot;&quot;</span>
-	<span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s2">&quot;blog.html&quot;</span><span class="p">)</span></div>
+    <span class="sd">&quot;&quot;&quot;Route to the blog page.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s2">&quot;blog.html&quot;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="blog_details"><a class="viewcode-back" href="../../apiReference.html#app.routes.blog_details">[docs]</a><span class="nd">@application</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/blog-details&#39;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">blog_details</span><span class="p">():</span>
-	<span class="sd">&quot;&quot;&quot;Route to the blog details page.&quot;&quot;&quot;</span>
-	<span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s2">&quot;blog-details.html&quot;</span><span class="p">)</span></div>
+    <span class="sd">&quot;&quot;&quot;Route to the blog details page.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s2">&quot;blog-details.html&quot;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="contact"><a class="viewcode-back" href="../../apiReference.html#app.routes.contact">[docs]</a><span class="nd">@application</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/contact&#39;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">contact</span><span class="p">():</span>
-	<span class="sd">&quot;&quot;&quot;Route to the statis page about contact information.&quot;&quot;&quot;</span>
-	<span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s2">&quot;contact.html&quot;</span><span class="p">)</span></div>
+    <span class="sd">&quot;&quot;&quot;Route to the statis page about contact information.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s2">&quot;contact.html&quot;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="feature"><a class="viewcode-back" href="../../apiReference.html#app.routes.feature">[docs]</a><span class="nd">@application</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/feature&#39;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">feature</span><span class="p">():</span>
-	<span class="sd">&quot;&quot;&quot;Route to the statis page about service information.&quot;&quot;&quot;</span>
-	<span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s2">&quot;feature.html&quot;</span><span class="p">)</span></div>
+    <span class="sd">&quot;&quot;&quot;Route to the statis page about service information.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s2">&quot;feature.html&quot;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="pricing"><a class="viewcode-back" href="../../apiReference.html#app.routes.pricing">[docs]</a><span class="nd">@application</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/pricing&#39;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">pricing</span><span class="p">():</span>
-	<span class="sd">&quot;&quot;&quot;Route to the statis page listing pricing information.&quot;&quot;&quot;</span>
-	<span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s2">&quot;pricing.html&quot;</span><span class="p">)</span></div>
+    <span class="sd">&quot;&quot;&quot;Route to the statis page listing pricing information.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s2">&quot;pricing.html&quot;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="register"><a class="viewcode-back" href="../../apiReference.html#app.routes.register">[docs]</a><span class="nd">@application</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/register&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;POST&#39;</span><span class="p">])</span>
 <span class="k">def</span> <span class="nf">register</span><span class="p">():</span>
-	<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">	This function uses method request to take user-input data from a regular</span>
-<span class="sd">	html form (not a FlaskForm object) then inserts the information of a</span>
-<span class="sd">	new user into the database using SQLAlchemy.</span>
-<span class="sd">	If data is valid, dedirect to log in page.</span>
-<span class="sd">	Oherwise, render the sign up form again.</span>
-<span class="sd">	&quot;&quot;&quot;</span>
-	<span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;POST&quot;</span><span class="p">:</span>
-		<span class="n">username</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;username&#39;</span><span class="p">]</span>
-		<span class="n">companyname</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;companyname&#39;</span><span class="p">]</span>
-		<span class="n">email</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;email&#39;</span><span class="p">]</span>
-		<span class="n">password</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;password&#39;</span><span class="p">]</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function uses method request to take user-input data from a regular</span>
+<span class="sd">    html form (not a FlaskForm object) then inserts the information of a</span>
+<span class="sd">    new user into the database using SQLAlchemy.</span>
+<span class="sd">    If data is valid, dedirect to log in page.</span>
+<span class="sd">    Oherwise, render the sign up form again.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;POST&quot;</span><span class="p">:</span>
+        <span class="n">username</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;username&#39;</span><span class="p">]</span>
+        <span class="n">companyname</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;companyname&#39;</span><span class="p">]</span>
+        <span class="n">email</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;email&#39;</span><span class="p">]</span>
+        <span class="n">password</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;password&#39;</span><span class="p">]</span>
 
-		<span class="n">user_count</span> <span class="o">=</span> <span class="n">classes</span><span class="o">.</span><span class="n">User</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="n">username</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span> <span class="o">+</span> \
-			<span class="n">classes</span><span class="o">.</span><span class="n">User</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">email</span><span class="o">=</span><span class="n">email</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+        <span class="n">user_count</span> <span class="o">=</span> <span class="n">classes</span><span class="o">.</span><span class="n">User</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="n">username</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span> <span class="o">+</span> \
+            <span class="n">classes</span><span class="o">.</span><span class="n">User</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">email</span><span class="o">=</span><span class="n">email</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
 
-		<span class="k">if</span> <span class="n">user_count</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-			<span class="n">user</span> <span class="o">=</span> <span class="n">classes</span><span class="o">.</span><span class="n">User</span><span class="p">(</span><span class="n">username</span><span class="p">,</span> <span class="n">email</span><span class="p">,</span> <span class="n">companyname</span><span class="p">,</span> <span class="n">password</span><span class="p">)</span>
-			<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
-			<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
-			<span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;signin&#39;</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">user_count</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">user</span> <span class="o">=</span> <span class="n">classes</span><span class="o">.</span><span class="n">User</span><span class="p">(</span><span class="n">username</span><span class="p">,</span> <span class="n">email</span><span class="p">,</span> <span class="n">companyname</span><span class="p">,</span> <span class="n">password</span><span class="p">)</span>
+            <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
+            <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+            <span class="c1"># flash(&#39;successfully logged in.&#39;)</span>
+            <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;signin&#39;</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">flash</span><span class="p">(</span><span class="s1">&#39;Username or email already exists.&#39;</span><span class="p">)</span>
 
-	<span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s2">&quot;signup.html&quot;</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s2">&quot;signup.html&quot;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="signin"><a class="viewcode-back" href="../../apiReference.html#app.routes.signin">[docs]</a><span class="nd">@application</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/signin&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;POST&#39;</span><span class="p">])</span>
 <span class="k">def</span> <span class="nf">signin</span><span class="p">():</span>
-	<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">	This function uses method request to take user-input data from a regular</span>
-<span class="sd">	html form (not a FlaskForm object) then queries user information in the database </span>
-<span class="sd">	to log user in.</span>
-<span class="sd">	If user information is found, redirect the user to project page.</span>
-<span class="sd">	Otherwise, render the sign in form again.</span>
-<span class="sd">	&quot;&quot;&quot;</span>
-	<span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;POST&#39;</span><span class="p">:</span>
-		<span class="n">username</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;username&#39;</span><span class="p">]</span>
-		<span class="n">password</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;password&#39;</span><span class="p">]</span>
-		<span class="n">user</span> <span class="o">=</span> <span class="n">classes</span><span class="o">.</span><span class="n">User</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="n">username</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function uses method request to take user-input data from a regular</span>
+<span class="sd">    html form (not a FlaskForm object) then queries user information in the database</span>
+<span class="sd">    to log user in.</span>
+<span class="sd">    If user information is found, redirect the user to project page.</span>
+<span class="sd">    Otherwise, render the sign in form again.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;POST&#39;</span><span class="p">:</span>
+        <span class="n">username</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;username&#39;</span><span class="p">]</span>
+        <span class="n">password</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;password&#39;</span><span class="p">]</span>
+        <span class="n">user</span> <span class="o">=</span> <span class="n">classes</span><span class="o">.</span><span class="n">User</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="n">username</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
 
-		<span class="k">if</span> <span class="n">user</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">user</span><span class="o">.</span><span class="n">check_password</span><span class="p">(</span><span class="n">password</span><span class="p">):</span>
-			<span class="n">login_user</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
-			<span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;projects&#39;</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">user</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">user</span><span class="o">.</span><span class="n">check_password</span><span class="p">(</span><span class="n">password</span><span class="p">):</span>
+            <span class="n">login_user</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;projects&#39;</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">flash</span><span class="p">(</span><span class="s1">&#39;Invalid username and password combination.&#39;</span><span class="p">)</span>
 
-	<span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s2">&quot;signin.html&quot;</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s2">&quot;signin.html&quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="projects"><a class="viewcode-back" href="../../apiReference.html#app.routes.projects">[docs]</a><span class="nd">@application</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/projects&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;POST&#39;</span><span class="p">])</span>
 <span class="nd">@login_required</span>
 <span class="k">def</span> <span class="nf">projects</span><span class="p">():</span>
-	<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">	This route displays the projects of a given user</span>
-<span class="sd">	and allows them the ability to add a project.</span>
-<span class="sd">	If a project using the same project_name already exists,</span>
-<span class="sd">	this will display an error to tell the user </span>
-<span class="sd">	to pick another project name.</span>
-<span class="sd">	&quot;&quot;&quot;</span>
-	<span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;GET&#39;</span><span class="p">:</span>	
-		<span class="n">projects</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">classes</span><span class="o">.</span><span class="n">User_Project</span><span class="o">.</span><span class="n">project_name</span><span class="p">)</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">user_id</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">current_user</span><span class="o">.</span><span class="n">id</span><span class="p">))</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
-		<span class="c1"># return render_template(&#39;projects.html&#39;, projects=list(projects))</span>
-		<span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;projects.html&#39;</span><span class="p">,</span> <span class="n">projects</span><span class="o">=</span><span class="p">[</span><span class="n">proj</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">proj</span> <span class="ow">in</span> <span class="n">projects</span><span class="p">])</span>
-	<span class="k">elif</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;POST&#39;</span><span class="p">:</span>
-		<span class="n">project_name</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;project_name&#39;</span><span class="p">]</span>
-		<span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="n">label</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;labels&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)]</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This route displays the projects of a given user</span>
+<span class="sd">    and allows them the ability to add a project.</span>
+<span class="sd">    If a project using the same project_name already exists,</span>
+<span class="sd">    this will display an error to tell the user</span>
+<span class="sd">    to pick another project name.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;GET&#39;</span><span class="p">:</span>
+        <span class="n">projects</span> <span class="o">=</span> <span class="n">classes</span><span class="o">.</span><span class="n">User_Project</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">user_id</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">current_user</span><span class="o">.</span><span class="n">id</span><span class="p">))</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+        <span class="c1"># return objects to easily call by attribute names, rather than by indexes, please keep</span>
+        <span class="n">proj_labs</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">proj</span> <span class="ow">in</span> <span class="n">projects</span><span class="p">:</span>
+            <span class="n">proj_labs</span><span class="p">[</span><span class="n">proj</span><span class="o">.</span><span class="n">project_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">classes</span><span class="o">.</span><span class="n">Label</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="n">proj</span><span class="o">.</span><span class="n">project_id</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+        <span class="c1"># use dictionary to easily call by key which matches the ids, more secure than by indexes, please keep</span>
 
-		<span class="c1"># query the Project table to see if the project already exists</span>
-		<span class="c1"># if it does, tell the user to pick another project_name</span>
-		<span class="n">projects_with_same_name</span> <span class="o">=</span> <span class="n">classes</span><span class="o">.</span><span class="n">User_Project</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">project_name</span><span class="o">=</span><span class="n">project_name</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
-		<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">projects_with_same_name</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-			<span class="k">return</span> <span class="p">(</span><span class="s2">&quot;&lt;h1&gt; A project with the name: &quot;</span> <span class="o">+</span> <span class="n">project_name</span> <span class="o">+</span> <span class="s2">&quot; already exists.&quot;</span> <span class="o">+</span>
-                    <span class="s2">&quot; Please choose another name for your project.&lt;/h1&gt; &quot;</span><span class="p">)</span>
-		<span class="k">else</span><span class="p">:</span>
-			<span class="c1"># insert into the Project table</span>
-			<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">classes</span><span class="o">.</span><span class="n">Project</span><span class="p">(</span><span class="n">project_name</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">current_user</span><span class="o">.</span><span class="n">id</span><span class="p">)))</span>
-			
-			<span class="c1"># get the project for the current user that was just added </span>
-			<span class="c1"># (by using the creation date)</span>
-			<span class="n">most_recent_project</span> <span class="o">=</span> <span class="n">classes</span><span class="o">.</span><span class="n">Project</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">project_owner_id</span><span class="o">=</span><span class="n">current_user</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>\
-							<span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="n">classes</span><span class="o">.</span><span class="n">Project</span><span class="o">.</span><span class="n">project_creation_date</span><span class="o">.</span><span class="n">desc</span><span class="p">())</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;projects.html&#39;</span><span class="p">,</span> <span class="n">projects</span><span class="o">=</span><span class="n">projects</span><span class="p">,</span> <span class="n">proj_labs</span><span class="o">=</span><span class="n">proj_labs</span><span class="p">)</span>
 
-			<span class="c1"># insert into the User_Project table so that the user is associated with a project</span>
-			<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">classes</span><span class="o">.</span><span class="n">User_Project</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">current_user</span><span class="o">.</span><span class="n">id</span><span class="p">),</span> 
-										<span class="n">most_recent_project</span><span class="o">.</span><span class="n">project_id</span><span class="p">,</span> 
-										<span class="n">project_name</span><span class="p">))</span>
-			
-			<span class="c1"># TODO: find a way to bulk insert</span>
-			<span class="c1"># insert all of the labels that the user entered</span>
-			<span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">labels</span><span class="p">:</span>
-				<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">classes</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span><span class="n">most_recent_project</span><span class="o">.</span><span class="n">project_id</span><span class="p">,</span>
-											<span class="n">label</span><span class="p">))</span>
+    <span class="k">elif</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;POST&#39;</span><span class="p">:</span>
+        <span class="n">project_name</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;project_name&#39;</span><span class="p">]</span>
+        <span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="n">label</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;labels&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)]</span>
 
-			<span class="c1"># pass the list of projects (including the new project) to the page so it can be shown to the user</span>
-			<span class="n">projects</span> <span class="o">=</span> <span class="n">classes</span><span class="o">.</span><span class="n">User_Project</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">user_id</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">current_user</span><span class="o">.</span><span class="n">id</span><span class="p">))</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
-			<span class="c1"># only commit the transactions once everything has been entered successfully.</span>
-			<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
-			
-			<span class="n">projects</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">classes</span><span class="o">.</span><span class="n">User_Project</span><span class="o">.</span><span class="n">project_name</span><span class="p">)</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">user_id</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">current_user</span><span class="o">.</span><span class="n">id</span><span class="p">))</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
-			<span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;projects.html&#39;</span><span class="p">,</span> 
-									<span class="n">projects</span><span class="o">=</span><span class="p">[</span><span class="n">proj</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">proj</span> <span class="ow">in</span> <span class="n">projects</span><span class="p">])</span></div>
+        <span class="c1"># TODO: verify label_names to be unique within one project, right now can have same name but different labelid.</span>
+
+        <span class="c1"># query the Project table to see if the project already exists</span>
+        <span class="c1"># if it does, tell the user to pick another project_name</span>
+        <span class="n">projects_with_same_name</span> <span class="o">=</span> <span class="n">classes</span><span class="o">.</span><span class="n">User_Project</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">project_name</span><span class="o">=</span><span class="n">project_name</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">projects_with_same_name</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">f</span><span class="s2">&quot;&lt;h1&gt; A project with the name: </span><span class="si">{project_name}</span><span class="s2">&quot;</span> <span class="o">+</span> \
+                <span class="s2">&quot; already exists. Please choose another name for your project.&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># insert into the Project table</span>
+            <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">classes</span><span class="o">.</span><span class="n">Project</span><span class="p">(</span><span class="n">project_name</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">current_user</span><span class="o">.</span><span class="n">id</span><span class="p">)))</span>
+
+            <span class="c1"># get the project for the current user that was just added</span>
+            <span class="c1"># (by using the creation date)</span>
+            <span class="n">most_recent_project</span> <span class="o">=</span> <span class="n">classes</span><span class="o">.</span><span class="n">Project</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">project_owner_id</span><span class="o">=</span><span class="n">current_user</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>\
+                            <span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="n">classes</span><span class="o">.</span><span class="n">Project</span><span class="o">.</span><span class="n">project_creation_date</span><span class="o">.</span><span class="n">desc</span><span class="p">())</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+
+            <span class="c1"># insert into the User_Project table so that the user is associated with a project</span>
+            <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">classes</span><span class="o">.</span><span class="n">User_Project</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">current_user</span><span class="o">.</span><span class="n">id</span><span class="p">),</span>
+                                        <span class="n">most_recent_project</span><span class="o">.</span><span class="n">project_id</span><span class="p">,</span>
+                                        <span class="n">project_name</span><span class="p">))</span>
+
+            <span class="c1"># TODO: find a way to bulk insert</span>
+            <span class="c1"># insert all of the labels that the user entered</span>
+            <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">labels</span><span class="p">:</span>
+                <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">classes</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span><span class="n">most_recent_project</span><span class="o">.</span><span class="n">project_id</span><span class="p">,</span>
+                                            <span class="n">label</span><span class="p">))</span>
+
+            <span class="c1"># pass the list of projects (including the new project) to the page so it can be shown to the user</span>
+            <span class="c1"># only commit the transactions once everything has been entered successfully.</span>
+            <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+
+            <span class="n">projects</span> <span class="o">=</span> <span class="n">classes</span><span class="o">.</span><span class="n">User_Project</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">user_id</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">current_user</span><span class="o">.</span><span class="n">id</span><span class="p">))</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+            <span class="n">proj_labs</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">proj</span> <span class="ow">in</span> <span class="n">projects</span><span class="p">:</span>
+                <span class="n">proj_labs</span><span class="p">[</span><span class="n">proj</span><span class="o">.</span><span class="n">project_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">classes</span><span class="o">.</span><span class="n">Label</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="n">proj</span><span class="o">.</span><span class="n">project_id</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+
+            <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;projects.html&#39;</span><span class="p">,</span> <span class="n">projects</span><span class="o">=</span><span class="n">projects</span><span class="p">,</span> <span class="n">proj_labs</span><span class="o">=</span><span class="n">proj_labs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="UploadFileForm"><a class="viewcode-back" href="../../apiReference.html#app.routes.UploadFileForm">[docs]</a><span class="k">class</span> <span class="nc">UploadFileForm</span><span class="p">(</span><span class="n">FlaskForm</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Class for uploading file when submitted&quot;&quot;&quot;</span>
+    <span class="n">file_selector</span> <span class="o">=</span> <span class="n">MultipleFileField</span><span class="p">(</span><span class="s1">&#39;File&#39;</span><span class="p">)</span><span class="c1">#, validators=[FileRequired()])</span>
+    <span class="n">submit</span> <span class="o">=</span> <span class="n">SubmitField</span><span class="p">(</span><span class="s1">&#39;Submit&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="upload"><a class="viewcode-back" href="../../apiReference.html#app.routes.upload">[docs]</a><span class="nd">@application</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/upload/&lt;labid&gt;&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="nd">@login_required</span>
+<span class="k">def</span> <span class="nf">upload</span><span class="p">(</span><span class="n">labid</span><span class="p">):</span>
+    <span class="n">labelnm</span> <span class="o">=</span> <span class="n">classes</span><span class="o">.</span><span class="n">Label</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">label_id</span><span class="o">=</span><span class="n">labid</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span><span class="o">.</span><span class="n">label_name</span>
+    <span class="n">projid</span> <span class="o">=</span> <span class="n">classes</span><span class="o">.</span><span class="n">Label</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">label_id</span><span class="o">=</span><span class="n">labid</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span><span class="o">.</span><span class="n">project_id</span>
+    <span class="n">projnm</span> <span class="o">=</span> <span class="n">classes</span><span class="o">.</span><span class="n">User_Project</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="n">projid</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span><span class="o">.</span><span class="n">project_name</span>
+
+    <span class="n">form</span> <span class="o">=</span> <span class="n">UploadFileForm</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">form</span><span class="o">.</span><span class="n">validate_on_submit</span><span class="p">():</span>  <span class="c1"># Check if it is a POST request and if it is valid.</span>
+        <span class="n">files</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">file_selector</span><span class="o">.</span><span class="n">data</span>
+        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="n">secure_filename</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span>
+            <span class="n">file_content</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">stream</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+            <span class="n">bucket_name</span> <span class="o">=</span> <span class="s1">&#39;msds603-deep-vision&#39;</span>
+            <span class="n">s3_connection</span> <span class="o">=</span> <span class="n">boto</span><span class="o">.</span><span class="n">connect_s3</span><span class="p">(</span><span class="n">aws_access_key_id</span><span class="o">=</span><span class="s1">&#39;AKIAIQRI4EE5ENXNW6LQ&#39;</span><span class="p">,</span>
+                                            <span class="n">aws_secret_access_key</span><span class="o">=</span><span class="s1">&#39;2gduLL4umVC9j7XXc2L1N8DfUVQQKcFmnezTYF8O&#39;</span><span class="p">)</span>
+            <span class="n">bucket</span> <span class="o">=</span> <span class="n">s3_connection</span><span class="o">.</span><span class="n">get_bucket</span><span class="p">(</span><span class="n">bucket_name</span><span class="p">)</span>
+            <span class="n">k</span> <span class="o">=</span> <span class="n">Key</span><span class="p">(</span><span class="n">bucket</span><span class="p">)</span>
+            <span class="n">k</span><span class="o">.</span><span class="n">key</span> <span class="o">=</span> <span class="s1">&#39;/&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">projid</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">labid</span><span class="p">),</span> <span class="n">filename</span><span class="p">])</span>
+            <span class="n">k</span><span class="o">.</span><span class="n">set_contents_from_string</span><span class="p">(</span><span class="n">file_content</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;projects&#39;</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;upload_lab.html&#39;</span><span class="p">,</span> <span class="n">projnm</span><span class="o">=</span><span class="n">projnm</span><span class="p">,</span> <span class="n">labelnm</span><span class="o">=</span><span class="n">labelnm</span><span class="p">,</span> <span class="n">form</span><span class="o">=</span><span class="n">form</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="logout"><a class="viewcode-back" href="../../apiReference.html#app.routes.logout">[docs]</a><span class="nd">@application</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/logout&#39;</span><span class="p">)</span>
 <span class="nd">@login_required</span>
 <span class="k">def</span> <span class="nf">logout</span><span class="p">():</span>
-	<span class="n">logout_user</span><span class="p">()</span>
-	<span class="n">flash</span><span class="p">(</span><span class="s1">&#39;You have been logged out.&#39;</span><span class="p">)</span>
-	<span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;index&#39;</span><span class="p">))</span></div>
+    <span class="n">logout_user</span><span class="p">()</span>
+    <span class="n">flash</span><span class="p">(</span><span class="s1">&#39;You have been logged out.&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;index&#39;</span><span class="p">))</span></div>
 
+
+<span class="c1">########### Mobile app backend ##############</span>
+
+
+<div class="viewcode-block" id="mobile_register"><a class="viewcode-back" href="../../apiReference.html#app.routes.mobile_register">[docs]</a><span class="nd">@application</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/mobile_register&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">mobile_register</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function uses method post to register user information</span>
+<span class="sd">    in the data base. This returns a message indicating the if</span>
+<span class="sd">    the procedure has been successful or not.</span>
+
+<span class="sd">    :return: return dictionary with success &quot;1&quot;/&quot;0&quot; if success/failure</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;POST&quot;</span><span class="p">:</span>
+        <span class="n">username</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;username&#39;</span><span class="p">]</span>
+        <span class="n">companyname</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;companyname&#39;</span><span class="p">]</span>
+        <span class="n">email</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;email&#39;</span><span class="p">]</span>
+        <span class="n">password</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;password&#39;</span><span class="p">]</span>
+
+        <span class="n">user_count</span> <span class="o">=</span> <span class="n">classes</span><span class="o">.</span><span class="n">User</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="n">username</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span> <span class="o">+</span> \
+            <span class="n">classes</span><span class="o">.</span><span class="n">User</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">email</span><span class="o">=</span><span class="n">email</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">user_count</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">user</span> <span class="o">=</span> <span class="n">classes</span><span class="o">.</span><span class="n">User</span><span class="p">(</span><span class="n">username</span><span class="p">,</span> <span class="n">email</span><span class="p">,</span> <span class="n">companyname</span><span class="p">,</span> <span class="n">password</span><span class="p">)</span>
+            <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
+            <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+            <span class="c1"># return &quot;1&quot; #</span>
+            <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">({</span><span class="s2">&quot;success&quot;</span><span class="p">:</span><span class="s2">&quot;1&quot;</span><span class="p">})</span>
+
+    <span class="c1"># return &quot;0&quot;</span>
+    <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">({</span><span class="s2">&quot;success&quot;</span><span class="p">:</span><span class="s2">&quot;0&quot;</span><span class="p">})</span></div>
+
+
+<div class="viewcode-block" id="mobile_signin"><a class="viewcode-back" href="../../apiReference.html#app.routes.mobile_signin">[docs]</a><span class="nd">@application</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/mobile_signin&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">mobile_signin</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Mobile version of signin</span>
+<span class="sd">    This function uses method post to take user-input data and check if exists</span>
+<span class="sd">    and the credentials are correct.</span>
+
+<span class="sd">    :return: return dictionary with success &quot;1&quot;/&quot;0&quot; if success/failure</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;POST&#39;</span><span class="p">:</span>
+        <span class="n">email</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;email&#39;</span><span class="p">]</span>
+        <span class="n">password</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;password&#39;</span><span class="p">]</span>
+        <span class="n">user</span> <span class="o">=</span> <span class="n">classes</span><span class="o">.</span><span class="n">User</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">email</span><span class="o">=</span><span class="n">email</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">user</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">user</span><span class="o">.</span><span class="n">check_password</span><span class="p">(</span><span class="n">password</span><span class="p">):</span>
+            <span class="n">login_user</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
+            <span class="c1"># return &quot;1&quot;</span>
+            <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">({</span><span class="s2">&quot;success&quot;</span><span class="p">:</span><span class="s2">&quot;1&quot;</span><span class="p">})</span>
+
+    <span class="c1"># return &quot;0&quot;</span>
+    <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">({</span><span class="s2">&quot;success&quot;</span><span class="p">:</span><span class="s2">&quot;0&quot;</span><span class="p">})</span></div>
+
+
+<div class="viewcode-block" id="mobile_projects"><a class="viewcode-back" href="../../apiReference.html#app.routes.mobile_projects">[docs]</a><span class="nd">@application</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/mobile_projects&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="nd">@login_required</span>
+<span class="k">def</span> <span class="nf">mobile_projects</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">     This route is the backend for the project menu of a</span>
+<span class="sd">     given user in the mobile phone.</span>
+<span class="sd">     It allows for projects to be added.</span>
+<span class="sd">     If a project using the same project_name already exists,</span>
+<span class="sd">     this will display an error to tell the user</span>
+<span class="sd">     to pick another project name.</span>
+
+<span class="sd">     :return: return dictionary with success &quot;1&quot;/&quot;0&quot; if success/failure and the list of projects</span>
+<span class="sd">     &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;GET&#39;</span><span class="p">:</span>
+        <span class="n">projects</span> <span class="o">=</span> <span class="n">classes</span><span class="o">.</span><span class="n">User_Project</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">user_id</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">current_user</span><span class="o">.</span><span class="n">id</span><span class="p">))</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+        <span class="c1"># return objects to easily call by attribute names, rather than by indexes, please keep</span>
+        <span class="n">proj_labs</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">proj</span> <span class="ow">in</span> <span class="n">projects</span><span class="p">:</span>
+            <span class="n">proj_labs</span><span class="p">[</span><span class="n">proj</span><span class="o">.</span><span class="n">project_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">classes</span><span class="o">.</span><span class="n">Label</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="n">proj</span><span class="o">.</span><span class="n">project_id</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+        <span class="c1"># use dictionary to easily call by key which matches the ids, more secure than by indexes, please keep</span>
+
+        <span class="c1"># return render_template(&#39;projects.html&#39;, projects=projects, proj_labs=proj_labs)</span>
+        <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">({</span><span class="s2">&quot;success&quot;</span><span class="p">:</span><span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;projects&quot;</span><span class="p">:</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">projects</span><span class="p">),</span> <span class="s2">&quot;proj_labs&quot;</span><span class="p">:</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">proj_labs</span><span class="p">)})</span>
+
+    <span class="k">elif</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;POST&#39;</span><span class="p">:</span>
+        <span class="n">project_name</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;project_name&#39;</span><span class="p">]</span>
+        <span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="n">label</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;labels&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)]</span>
+
+        <span class="c1"># TODO: verify label_names to be unique within one project, right now can have same name but different labelid.</span>
+
+        <span class="c1"># query the Project table to see if the project already exists</span>
+        <span class="c1"># if it does, tell the user to pick another project_name</span>
+        <span class="n">projects_with_same_name</span> <span class="o">=</span> <span class="n">classes</span><span class="o">.</span><span class="n">User_Project</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">project_name</span><span class="o">=</span><span class="n">project_name</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">projects_with_same_name</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c1"># return f&quot;&lt;h1&gt; A project with the name: {project_name}&quot; + \</span>
+            <span class="c1">#        &quot; already exists. Please choose another name for your project.&quot;</span>
+            <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">({</span><span class="s2">&quot;success&quot;</span><span class="p">:</span><span class="s2">&quot;0&quot;</span><span class="p">})</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># insert into the Project table</span>
+            <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">classes</span><span class="o">.</span><span class="n">Project</span><span class="p">(</span><span class="n">project_name</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">current_user</span><span class="o">.</span><span class="n">id</span><span class="p">)))</span>
+
+            <span class="c1"># get the project for the current user that was just added</span>
+            <span class="c1"># (by using the creation date)</span>
+            <span class="n">most_recent_project</span> <span class="o">=</span> <span class="n">classes</span><span class="o">.</span><span class="n">Project</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">project_owner_id</span><span class="o">=</span><span class="n">current_user</span><span class="o">.</span><span class="n">id</span><span class="p">)</span> \
+                <span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="n">classes</span><span class="o">.</span><span class="n">Project</span><span class="o">.</span><span class="n">project_creation_date</span><span class="o">.</span><span class="n">desc</span><span class="p">())</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+
+            <span class="c1"># insert into the User_Project table so that the user is associated with a project</span>
+            <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">classes</span><span class="o">.</span><span class="n">User_Project</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">current_user</span><span class="o">.</span><span class="n">id</span><span class="p">),</span>
+                                                <span class="n">most_recent_project</span><span class="o">.</span><span class="n">project_id</span><span class="p">,</span>
+                                                <span class="n">project_name</span><span class="p">))</span>
+
+            <span class="c1"># TODO: find a way to bulk insert</span>
+            <span class="c1"># insert all of the labels that the user entered</span>
+            <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">labels</span><span class="p">:</span>
+                <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">classes</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span><span class="n">most_recent_project</span><span class="o">.</span><span class="n">project_id</span><span class="p">,</span>
+                                             <span class="n">label</span><span class="p">))</span>
+
+            <span class="c1"># pass the list of projects (including the new project) to the page so it can be shown to the user</span>
+            <span class="c1"># only commit the transactions once everything has been entered successfully.</span>
+            <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+
+            <span class="n">projects</span> <span class="o">=</span> <span class="n">classes</span><span class="o">.</span><span class="n">User_Project</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">user_id</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">current_user</span><span class="o">.</span><span class="n">id</span><span class="p">))</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+            <span class="n">proj_labs</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">proj</span> <span class="ow">in</span> <span class="n">projects</span><span class="p">:</span>
+                <span class="n">proj_labs</span><span class="p">[</span><span class="n">proj</span><span class="o">.</span><span class="n">project_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">classes</span><span class="o">.</span><span class="n">Label</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="n">proj</span><span class="o">.</span><span class="n">project_id</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+
+            <span class="c1"># return render_template(&#39;projects.html&#39;, projects=projects, proj_labs=proj_labs)</span>
+            <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">({</span><span class="s2">&quot;success&quot;</span><span class="p">:</span><span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;projects&quot;</span><span class="p">:</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">projects</span><span class="p">),</span> <span class="s2">&quot;proj_labs&quot;</span><span class="p">:</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">proj_labs</span><span class="p">)})</span></div>
+
+<div class="viewcode-block" id="mobile_logout"><a class="viewcode-back" href="../../apiReference.html#app.routes.mobile_logout">[docs]</a><span class="nd">@application</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/mobile_logout&#39;</span><span class="p">)</span>
+<span class="nd">@login_required</span>
+<span class="k">def</span> <span class="nf">mobile_logout</span><span class="p">():</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Log out function for mobile phone</span>
+<span class="sd">    :return: return dictionary with success &quot;1&quot;/&quot;0&quot; if success/failure</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">logout_user</span><span class="p">()</span>
+    <span class="c1"># flash(&#39;You have been logged out.&#39;)</span>
+    <span class="c1"># return &quot;1&quot;</span>
+    <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">({</span><span class="s2">&quot;success&quot;</span><span class="p">:</span><span class="s2">&quot;1&quot;</span><span class="p">})</span></div>
+
+<span class="c1"># TODO: mobile_upload</span>
 </pre></div>
 
           </div>

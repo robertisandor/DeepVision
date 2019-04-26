@@ -232,11 +232,11 @@ def logout():
 @application.route('/mobile_register', methods=['GET', 'POST'])
 def mobile_register():
     """
-    This function uses method request to take user-input data from a regular
-    html form (not a FlaskForm object) then inserts the information of a
-    new user into the database using SQLAlchemy.
-    If data is valid, dedirect to log in page.
-    Oherwise, render the sign up form again.
+    This function uses method post to register user information
+    in the data base. This returns a message indicating the if
+    the procedure has been successful or not.
+
+    :return: return dictionary with success "1"/"0" if success/failure
     """
     if request.method == "POST":
         username = request.form['username']
@@ -261,11 +261,11 @@ def mobile_register():
 @application.route('/mobile_signin', methods=['GET', 'POST'])
 def mobile_signin():
     """
-    This function uses method request to take user-input data from a regular
-    html form (not a FlaskForm object) then queries user information in the database
-    to log user in.
-    If user information is found, redirect the user to project page.
-    Otherwise, render the sign in form again.
+    Mobile version of signin
+    This function uses method post to take user-input data and check if exists
+    and the credentials are correct.
+
+    :return: return dictionary with success "1"/"0" if success/failure
     """
     if request.method == 'POST':
         email = request.form['email']
@@ -285,11 +285,14 @@ def mobile_signin():
 @login_required
 def mobile_projects():
     """
-     This route displays the projects of a given user
-     and allows them the ability to add a project.
+     This route is the backend for the project menu of a
+     given user in the mobile phone.
+     It allows for projects to be added.
      If a project using the same project_name already exists,
      this will display an error to tell the user
      to pick another project name.
+
+     :return: return dictionary with success "1"/"0" if success/failure and the list of projects
      """
     if request.method == 'GET':
         projects = classes.User_Project.query.filter_by(user_id=int(current_user.id)).all()
@@ -350,6 +353,10 @@ def mobile_projects():
 @application.route('/mobile_logout')
 @login_required
 def mobile_logout():
+    '''
+    Log out function for mobile phone
+    :return: return dictionary with success "1"/"0" if success/failure
+    '''
     logout_user()
     # flash('You have been logged out.')
     # return "1"
