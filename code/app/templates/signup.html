@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -76,15 +75,19 @@
         <div class ="section-intro pb-75px text-center">
             <h1 style ="text-aligin:center;"></a></h1>
             <div class = 'box'>
+              {% extends "flash.html" %}
+              {% block body %}
                 <h1>REGISTER</h1>
                 <form action="" method ="POST">
-                    <input type="text" name="username" id="username" placeholder="Username" value="{{request.form.username}}">
-                    <input type="text" name="email" id="email" placeholder="Email" value="{{request.form.email}}">
-                    <input type="text" name="companyname" id="companyname" placeholder="Company Name" value="{{request.form.companyname}}">
-                    <input type="password" name="password" id="password" placeholder="Password" value="{{request.form.password}}">
+
+                    <input type="text" name="username" id="username" placeholder="Username" required>
+                    <input type="email" name="email" id="email" placeholder="Email" validate required>
+                    <input type="text" name="companyname" id="companyname" placeholder="Company Name" required>
+                    <input type="password" name="password" id="password" placeholder="Password">
                     <h2 style="text-align:center;"><input type="submit" class="button" value="SIGN UP"/></h2>
                     <h5 style="text-align:center;"><a class="txt1 bo1 hov1" href="{{url_for('signin')}}">Already a member? Sign in now </h5>
                 </form>
+              {% endblock %}
             </div>
         </div>
     <div>

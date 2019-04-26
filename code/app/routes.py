@@ -93,7 +93,10 @@ def register():
             user = classes.User(username, email, companyname, password)
             db.session.add(user)
             db.session.commit()
+            # flash('successfully logged in.')
             return redirect(url_for('signin'))
+        else:
+            flash('Username or email already exists.')
 
     return render_template("signup.html")
 
@@ -115,6 +118,8 @@ def signin():
         if user is not None and user.check_password(password):
             login_user(user)
             return redirect(url_for('projects'))
+        else:
+            flash('Invalid username and password combination.')
 
     return render_template("signin.html")
 
