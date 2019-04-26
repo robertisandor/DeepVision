@@ -28,6 +28,9 @@ from flask_login import current_user, login_user, login_required, logout_user
 # for upload to s3
 from boto.s3.key import Key
 import boto
+
+# just for kidding prediction
+import numpy as np
 ########### Web app backend ##############
 
 
@@ -216,6 +219,23 @@ def upload(labid):
             k.set_contents_from_string(file_content)
         return redirect(url_for('projects'))
     return render_template('upload_lab.html', projnm=projnm, labelnm=labelnm, form=form)
+
+@application.route('/predict/<projid>', methods=['GET', 'POST'])
+@login_required
+def predict(projid):
+    """
+    just randomly throwing one label as prediction
+    :param projid:
+    :return: one label
+    """
+    projnm = classes.User_Project.query.filter_by(project_id=projid).first().project_name
+    form = UploadFileForm()
+    pred_lab = 'None'
+    if form.validate_on_submit():
+        labels = classes.Label.query.filter_by(project_id=projid).all()
+        pred_lab = np.random.choice([lab.label_name for lab in labels])
+        return render_template('predict.html', projnm=projnm, pred_lab= pred_lab, form=form)
+    return render_template('predict.html', projnm=projnm, pred_lab= pred_lab, form=form)
 
 
 @application.route('/logout')
