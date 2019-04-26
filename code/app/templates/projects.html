@@ -140,7 +140,12 @@
                                             <a href="{{ url_for('upload', labid = lab.label_id ) }}">
                                               {{ lab.label_name }}&nbsp; </button></a>
                                       {% endfor %}</td>
-                                    <td class="cell100 column3">Model Action1, Model Action2</td>
+                                    <td class="cell100 column3">
+                                        <button type="submit" class="button button-light">
+                                        <a href="#">Train</button></a>,
+                                        <button type="submit" class="button button-light">
+                                        <a href="{{ url_for('predict', projid = proj.project_id) }}">Predict</button></a>
+                                    </td>
                                     </th>
                                     {% endfor %}
                                 </form>

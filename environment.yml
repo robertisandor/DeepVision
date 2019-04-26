@@ -36,6 +36,7 @@ dependencies:
   - libsodium=1.0.16
   - markupsafe=1.1.1
   - ncurses=6.1
+  - numpy=1.16.3
   - openssl=1.1.1b
   - packaging=19.0
   - paramiko=2.4.2
