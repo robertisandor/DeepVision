@@ -30,6 +30,8 @@ from boto.s3.key import Key
 import boto
 ########### Web app backend ##############
 
+# just for kidding prediction
+import numpy as np
 
 @application.route('/home')
 @application.route('/index')
@@ -218,6 +220,24 @@ def upload(labid):
     return render_template('upload_lab.html', projnm=projnm, labelnm=labelnm, form=form)
 
 
+@application.route('/predict/<projid>', methods=['GET', 'POST'])
+@login_required
+def predict(projid):
+    """
+    just randomly throwing one label as prediction
+    :param projid:
+    :return: one label
+    """
+    projnm = classes.User_Project.query.filter_by(project_id=projid).first().project_name
+    form = UploadFileForm()
+    pred_lab = 'None'
+    if form.validate_on_submit():
+        labels = classes.Label.query.filter_by(project_id=projid).all()
+        pred_lab = np.random.choice([lab.label_name for lab in labels])
+        return render_template('predict.html', projnm=projnm, pred_lab= pred_lab, form=form)
+    return render_template('predict.html', projnm=projnm, pred_lab= pred_lab, form=form)
+
+
 @application.route('/logout')
 @login_required
 def logout():
@@ -346,6 +366,7 @@ def mobile_projects():
 
             # return render_template('projects.html', projects=projects, proj_labs=proj_labs)
             return json.dumps({"success":"1", "projects": json.dumps(projects), "proj_labs":json.dumps(proj_labs)})
+
 
 @application.route('/mobile_logout')
 @login_required
