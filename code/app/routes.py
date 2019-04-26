@@ -92,7 +92,7 @@ def register():
         password = request.form['password']
 
         user_count = classes.User.query.filter_by(username=username).count() \
-                     + classes.User.query.filter_by(email=email).count()
+            + classes.User.query.filter_by(email=email).count()
 
         if user_count == 0:
             user = classes.User(username, email, companyname, password)
@@ -238,8 +238,8 @@ def upload(labid):
             bucket_name = 'msds603-deep-vision'
             s3_connection = boto.connect_s3(
                 aws_access_key_id='AKIAIQRI4EE5ENXNW6LQ',
-                aws_secret_access_key=
-                '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')
+                aws_secret_access_key='2gduLL4umVC9j7XXc2L1N8DfUVQQ\
+                    KcFmnezTYF8O')
             # to be fixed with paramiko
             bucket = s3_connection.get_bucket(bucket_name)
             k = Key(bucket)
@@ -279,7 +279,7 @@ def logout():
 @application.errorhandler(401)
 def unauthorized(e):
     """If user goes to a page that requires authorization such as
-    projects page but is not yet logged in, redirect them to 
+    projects page but is not yet logged in, redirect them to
     the log-in page."""
     return redirect(url_for('login'))
 
@@ -302,8 +302,8 @@ def mobile_register():
         email = request.form['email']
         password = request.form['password']
 
-        user_count = classes.User.query.filter_by(username=username).count() + \
-                     classes.User.query.filter_by(email=email).count()
+        user_count = classes.User.query.filter_by(username=username).count() \
+            + classes.User.query.filter_by(email=email).count()
 
         if user_count == 0:
             user = classes.User(username, email, companyname, password)
@@ -350,31 +350,42 @@ def mobile_projects():
      this will display an error to tell the user
      to pick another project name.
 
-     :return: return dictionary with success "1"/"0" if success/failure and the list of projects
+     :return: return dictionary with success "1"/"0" if
+    success/failure and the list of projects
      """
     if request.method == 'GET':
-        projects = classes.User_Project.query.filter_by(user_id=int(current_user.id)).all()
-        # return objects to easily call by attribute names, rather than by indexes, please keep
+        projects = classes.User_Project.query.filter_by(
+            user_id=int(current_user.id)).all()
+        # return objects to easily call by attribute names,
+        # rather than by indexes, please keep
         proj_labs = {}
         for proj in projects:
-            proj_labs[proj.project_id] = classes.Label.query.filter_by(project_id=proj.project_id).all()
-        # use dictionary to easily call by key which matches the ids, more secure than by indexes, please keep
+            proj_labs[proj.project_id] = classes.Label.query.filter_by(
+                project_id=proj.project_id).all()
+        # use dictionary to easily call by key which matches the ids,
+        # more secure than by indexes, please keep
 
-        # return render_template('projects.html', projects=projects, proj_labs=proj_labs)
-        return json.dumps({"success": "1", "projects": json.dumps(projects), "proj_labs": json.dumps(proj_labs)})
+        # return render_template('projects.html', projects=projects,
+        # proj_labs=proj_labs)
+        return json.dumps(
+            {"success": "1", "projects": json.dumps(projects),
+             "proj_labs": json.dumps(proj_labs)})
 
     elif request.method == 'POST':
         project_name = request.form['project_name']
         labels = [label.strip() for label in request.form['labels'].split(',')]
 
-        # TODO: verify label_names to be unique within one project, right now can have same name but different labelid.
+        # TODO: verify label_names to be unique within one project,
+        # right now can have same name but different labelid.
 
         # query the Project table to see if the project already exists
         # if it does, tell the user to pick another project_name
-        projects_with_same_name = classes.User_Project.query.filter_by(project_name=project_name).all()
+        projects_with_same_name = classes.User_Project.query.filter_by(
+            project_name=project_name).all()
         if len(projects_with_same_name) > 0:
             # return f"<h1> A project with the name: {project_name}" + \
-            #        " already exists. Please choose another name for your project."
+            #        " already exists. Please choose
+            # another name for your project."
             return json.dumps({"success": "0"})
         else:
             # insert into the Project table
@@ -382,10 +393,12 @@ def mobile_projects():
 
             # get the project for the current user that was just added
             # (by using the creation date)
-            most_recent_project = classes.Project.query.filter_by(project_owner_id=current_user.id) \
+            most_recent_project = classes.Project.query.filter_by(
+                project_owner_id=current_user.id) \
                 .order_by(classes.Project.project_creation_date.desc()).first()
 
-            # insert into the User_Project table so that the user is associated with a project
+            # insert into the User_Project table so that the
+            # user is associated with a project
             db.session.add(classes.User_Project(int(current_user.id),
                                                 most_recent_project.project_id,
                                                 project_name))
@@ -396,17 +409,24 @@ def mobile_projects():
                 db.session.add(classes.Label(most_recent_project.project_id,
                                              label))
 
-            # pass the list of projects (including the new project) to the page so it can be shown to the user
-            # only commit the transactions once everything has been entered successfully.
+            # pass the list of projects (including the new project)
+            # to the page so it can be shown to the user
+            # only commit the transactions once everything
+            # has been entered successfully.
             db.session.commit()
 
-            projects = classes.User_Project.query.filter_by(user_id=int(current_user.id)).all()
+            projects = classes.User_Project.query.filter_by(user_id=int(
+                current_user.id)).all()
             proj_labs = {}
             for proj in projects:
-                proj_labs[proj.project_id] = classes.Label.query.filter_by(project_id=proj.project_id).all()
+                proj_labs[proj.project_id] = classes.Label.query.filter_by(
+                    project_id=proj.project_id).all()
 
-            # return render_template('projects.html', projects=projects, proj_labs=proj_labs)
-            return json.dumps({"success": "1", "projects": json.dumps(projects), "proj_labs": json.dumps(proj_labs)})
+            # return render_template('projects.html',
+            # projects=projects, proj_labs=proj_labs)
+            return json.dumps(
+                {"success": "1", "projects": json.dumps(projects),
+                 "proj_labs": json.dumps(proj_labs)})
 
 
 @application.route('/mobile_logout')
