@@ -220,10 +220,7 @@ def upload(labid):
         return redirect(url_for('projects'))
     return render_template('upload_lab.html', projnm=projnm, labelnm=labelnm, form=form)
 
-def upload(labid):
-     return render_template('upload_lab.html', projnm=projnm, labelnm=labelnm, form=form)
 
-     
 @application.route('/predict/<projid>', methods=['GET', 'POST'])
 @login_required
 def predict(projid):
