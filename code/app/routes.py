@@ -265,8 +265,6 @@ def predict(projid):
     if form.validate_on_submit():
         labels = classes.Label.query.filter_by(project_id=projid).all()
         pred_lab = np.random.choice([lab.label_name for lab in labels])
-        return render_template('predict.html', projnm=projnm,
-                               pred_lab=pred_lab, form=form)
     return render_template('predict.html', projnm=projnm,
                            pred_lab=pred_lab, form=form)
 
