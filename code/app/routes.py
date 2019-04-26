@@ -275,8 +275,15 @@ def predict(projid):
 @login_required
 def logout():
     logout_user()
-    flash('You have been logged out.')
     return redirect(url_for('index'))
+
+
+@application.errorhandler(401)
+def unauthorized(e):
+    """If user goes to a page that requires authorization such as
+    projects page but is not yet logged in, redirect them to 
+    the log-in page."""
+    return redirect(url_for('login'))
 
 
 # Mobile app backend ##############
