@@ -13,7 +13,10 @@ from sqlalchemy.schema import ForeignKey
 
 class User(db.Model, UserMixin):
     '''
-    This class inherits from db.Model, UserMixin and is used to create user instances with multiple associated properties such as username and email. It is also used by ``SQLALCHEMY`` to store user records in the data base.
+    This class inherits from db.Model, UserMixin and is used to
+    create user instances with multiple associated properties
+    such as username and email. It is also used by ``SQLALCHEMY``
+    to store user records in the data base.
     '''
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
@@ -37,9 +40,11 @@ class User(db.Model, UserMixin):
 
     def set_password(self, password):
         '''
-        Transforms the introduced password to it's hashed version and sotres it in the ``password_hash`` attribute.
+        Transforms the introduced password to it's hashed version and
+        sotres it in the ``password_hash`` attribute.
 
-        :param password: (str) transform the introduced password to it's hashed version to store it.
+        :param password: (str) transform the introduced password
+        to it's hashed version to store it.
         :return: None
         '''
         self.password_hash = generate_password_hash(password)
@@ -56,9 +61,13 @@ class User(db.Model, UserMixin):
 
 class Project(db.Model):
     '''
-    This class inherits from db.Model and is used to create project instances with multiple associated properties such as project owner and creation date. It is also used by ``SQLALCHEMY`` to store project records in the data base.
+    This class inherits from db.Model and is used to create project
+    instances with multiple associated properties such as project owner
+    and creation date. It is also used by ``SQLALCHEMY`` to store project
+    records in the data base.
     '''
-    project_id = db.Column(db.Integer, primary_key=True, unique=True, autoincrement=True)
+    project_id = db.Column(
+        db.Integer, primary_key=True, unique=True, autoincrement=True)
     project_owner_id = db.Column(db.Integer, nullable=False)
     project_creation_date = db.Column(db.DateTime, nullable=False)
 
@@ -76,12 +85,18 @@ class Project(db.Model):
 
 class Label(db.Model):
     '''
-    This class inherits from db.Model and is used to create labels instances with multiple associated properties such as label id and project id. It is also used by ``SQLALCHEMY`` to store label records in the data base.
+    This class inherits from db.Model and is used to create labels
+    instances with multiple associated properties such as label id and
+    project id. It is also used by ``SQLALCHEMY`` to store label records
+    in the data base.
 
-    It's main functionality is mapping label names to labels index so they can change the names if they want to without affecting system.
+    It's main functionality is mapping label names to labels index so they
+    can change the names if they want to without affecting system.
     '''
-    label_id = db.Column(db.Integer, primary_key=True, unique=True, autoincrement=True)
-    project_id = db.Column(db.Integer, ForeignKey(Project.project_id), nullable=False)
+    label_id = db.Column(
+        db.Integer, primary_key=True, unique=True, autoincrement=True)
+    project_id = db.Column(
+        db.Integer, ForeignKey(Project.project_id), nullable=False)
     label_name = db.Column(db.String(80), nullable=False)
 
     def __init__(self, project_id, label_name):
@@ -97,17 +112,23 @@ class Label(db.Model):
 
 class User_Project(db.Model):
     '''
-    This class inherits from db.Model and is used to relate projects to users. To what projects do a user have access to ? .
+    This class inherits from db.Model and is used to relate projects to users.
+    To what projects do a user have access to ? .
 
-    It is also used by ``SQLALCHEMY`` to store those relations records in the data base.
+    It is also used by ``SQLALCHEMY`` to store those relations records in the
+    data base.
     '''
-    user_id = db.Column(db.Integer, ForeignKey(User.id), primary_key=True, nullable=False)
-    project_id = db.Column(db.Integer, ForeignKey(Project.project_id), primary_key=True, nullable=False)
+    user_id = db.Column(
+        db.Integer, ForeignKey(User.id), primary_key=True, nullable=False)
+    project_id = db.Column(
+        db.Integer, ForeignKey(Project.project_id),
+        primary_key=True, nullable=False)
     project_name = db.Column(db.String(80), unique=True, nullable=False)
 
     def __init__(self, user_id, project_id, project_name):
         '''
-        Set the attributes of for the relations between user_id/project_id/project_name
+        Set the attributes of for the relations between
+        user_id/project_id/project_name
 
         :param user_id: (str) Id of the user.
         :param project_id: (str) Id of the project.
