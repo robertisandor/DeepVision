@@ -238,8 +238,7 @@ def upload(labid):
             bucket_name = 'msds603-deep-vision'
             s3_connection = boto.connect_s3(
                 aws_access_key_id='AKIAIQRI4EE5ENXNW6LQ',
-                aws_secret_access_key='2gduLL4umVC9j7XXc2L1N8DfUVQQ\
-                    KcFmnezTYF8O')
+                aws_secret_access_key='2gduLL4umVC9j7XXc2L1N8DfUVQQKcFmnezTYF8O')
             # to be fixed with paramiko
             bucket = s3_connection.get_bucket(bucket_name)
             k = Key(bucket)
