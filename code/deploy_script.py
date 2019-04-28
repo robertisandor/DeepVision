@@ -3,7 +3,7 @@ import os
 from os.path import expanduser
 from user_definition import *
 
-
+ENVIRONMENT_PATH='/opt/conda/envs/deepVision'
 
 def ssh_client():
     '''
@@ -44,7 +44,7 @@ def git_clone_pull(ssh, git_user_id, git_repo_name):
 
     stdin, stdout, stderr = ssh.exec_command("git config " +
                                              "--global " +
-                                             "~/.")
+                                             "credential.helper store")
 
 
 
@@ -56,8 +56,8 @@ def git_clone_pull(ssh, git_user_id, git_repo_name):
         git_pull_command = "cd " + git_repo_name + " ; git stash; git pull"
         stdin, stdout, stderr = ssh.exec_command(git_pull_command)
 
-        print(stdout.read())
-        print(stderr.read())
+        # print(stdout.read())
+        # print(stderr.read())
 
     else:
         git_clone_command = "git clone https://" + git_user +\
@@ -65,8 +65,8 @@ def git_clone_pull(ssh, git_user_id, git_repo_name):
                             git_user_id + "/" + git_repo_name + ".git"
 
         stdin, stdout, stderr = ssh.exec_command(git_clone_command)
-        print(stdout.read())
-        print(stderr.read())
+        # print(stdout.read())
+        # print(stderr.read())
 
 
 def create_or_update_environment(ssh, git_repo_name):
@@ -77,15 +77,15 @@ def create_or_update_environment(ssh, git_repo_name):
     :return: None
     """
 
-    stdin, stdout, stderr = ssh.exec_command("cd ~/.conda/envs/deepVision")
+    stdin, stdout, stderr = ssh.exec_command(f"cd {ENVIRONMENT_PATH}")
 
     # Try cloning the repo
     if b"" != stderr.read():
         stdin, stdout, stderr = ssh.exec_command("conda env create -f "\
         + "~/" + git_repo_name + "/" + "environment.yml")
 
-        print(stdout.read())
-        print(stderr.read())
+        # print(stdout.read())
+        # print(stderr.read())
 
  
     else:
@@ -93,8 +93,8 @@ def create_or_update_environment(ssh, git_repo_name):
         stdin, stdout, stderr = ssh.exec_command("conda env update "\
         + "-f ~/" + git_repo_name + "/" + "environment.yml")
 
-        print(stdout.read())
-        print(stderr.read())
+        # print(stdout.read())
+        # print(stderr.read())
 
 
 def get_port(ssh, server_path):
@@ -149,7 +149,7 @@ def launch_application(ssh, server_path='~/' + git_repo_name + '/code'):
     port = get_port(ssh, server_path)
 
     # run the server with the last version
-    command = f".conda/envs/deepVision/bin/gunicorn -D -b :{port} --chdir product-analytics-group-project-deepvision/code/ app:application"
+    command = f"{ENVIRONMENT_PATH}/bin/gunicorn -w 20 -D -b :{port} --chdir product-analytics-group-project-deepvision/code/ app:application"
 
     stdin, stdout, stderr = ssh.exec_command(command)
 
