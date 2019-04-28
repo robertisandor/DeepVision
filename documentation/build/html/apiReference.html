@@ -216,8 +216,12 @@ key from the root directory</li>
 <dl class="class">
 <dt id="app.classes.Label">
 <em class="property">class </em><code class="descclassname">app.classes.</code><code class="descname">Label</code><span class="sig-paren">(</span><em>project_id</em>, <em>label_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/classes.html#Label"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.classes.Label" title="Permalink to this definition">¶</a></dt>
-<dd><p>This class inherits from db.Model and is used to create labels instances with multiple associated properties such as label id and project id. It is also used by <code class="docutils literal notranslate"><span class="pre">SQLALCHEMY</span></code> to store label records in the data base.</p>
-<p>It’s main functionality is mapping label names to labels index so they can change the names if they want to without affecting system.</p>
+<dd><p>This class inherits from db.Model and is used to create labels
+instances with multiple associated properties such as label id and
+project id. It is also used by <code class="docutils literal notranslate"><span class="pre">SQLALCHEMY</span></code> to store label records
+in the data base.</p>
+<p>It’s main functionality is mapping label names to labels index so they
+can change the names if they want to without affecting system.</p>
 <dl class="attribute">
 <dt id="app.classes.Label.label_id">
 <code class="descname">label_id</code><a class="headerlink" href="#app.classes.Label.label_id" title="Permalink to this definition">¶</a></dt>
@@ -238,7 +242,10 @@ key from the root directory</li>
 <dl class="class">
 <dt id="app.classes.Project">
 <em class="property">class </em><code class="descclassname">app.classes.</code><code class="descname">Project</code><span class="sig-paren">(</span><em>project_name</em>, <em>project_owner_id</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/classes.html#Project"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.classes.Project" title="Permalink to this definition">¶</a></dt>
-<dd><p>This class inherits from db.Model and is used to create project instances with multiple associated properties such as project owner and creation date. It is also used by <code class="docutils literal notranslate"><span class="pre">SQLALCHEMY</span></code> to store project records in the data base.</p>
+<dd><p>This class inherits from db.Model and is used to create project
+instances with multiple associated properties such as project owner
+and creation date. It is also used by <code class="docutils literal notranslate"><span class="pre">SQLALCHEMY</span></code> to store project
+records in the data base.</p>
 <dl class="attribute">
 <dt id="app.classes.Project.project_creation_date">
 <code class="descname">project_creation_date</code><a class="headerlink" href="#app.classes.Project.project_creation_date" title="Permalink to this definition">¶</a></dt>
@@ -259,7 +266,10 @@ key from the root directory</li>
 <dl class="class">
 <dt id="app.classes.User">
 <em class="property">class </em><code class="descclassname">app.classes.</code><code class="descname">User</code><span class="sig-paren">(</span><em>username</em>, <em>email</em>, <em>companyname</em>, <em>password</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/classes.html#User"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.classes.User" title="Permalink to this definition">¶</a></dt>
-<dd><p>This class inherits from db.Model, UserMixin and is used to create user instances with multiple associated properties such as username and email. It is also used by <code class="docutils literal notranslate"><span class="pre">SQLALCHEMY</span></code> to store user records in the data base.</p>
+<dd><p>This class inherits from db.Model, UserMixin and is used to
+create user instances with multiple associated properties
+such as username and email. It is also used by <code class="docutils literal notranslate"><span class="pre">SQLALCHEMY</span></code>
+to store user records in the data base.</p>
 <dl class="method">
 <dt id="app.classes.User.check_password">
 <code class="descname">check_password</code><span class="sig-paren">(</span><em>password</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/classes.html#User.check_password"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.classes.User.check_password" title="Permalink to this definition">¶</a></dt>
@@ -299,17 +309,18 @@ key from the root directory</li>
 <dl class="method">
 <dt id="app.classes.User.set_password">
 <code class="descname">set_password</code><span class="sig-paren">(</span><em>password</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/classes.html#User.set_password"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.classes.User.set_password" title="Permalink to this definition">¶</a></dt>
-<dd><p>Transforms the introduced password to it’s hashed version and sotres it in the <code class="docutils literal notranslate"><span class="pre">password_hash</span></code> attribute.</p>
+<dd><p>Transforms the introduced password to it’s hashed version and
+sotres it in the <code class="docutils literal notranslate"><span class="pre">password_hash</span></code> attribute.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>password</strong> – (str) transform the introduced password to it’s hashed version to store it.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>password</strong> – (str) transform the introduced password</td>
 </tr>
 </tbody>
 </table>
+<p>to it’s hashed version to store it.
+:return: None</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -322,8 +333,10 @@ key from the root directory</li>
 <dl class="class">
 <dt id="app.classes.User_Project">
 <em class="property">class </em><code class="descclassname">app.classes.</code><code class="descname">User_Project</code><span class="sig-paren">(</span><em>user_id</em>, <em>project_id</em>, <em>project_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/classes.html#User_Project"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.classes.User_Project" title="Permalink to this definition">¶</a></dt>
-<dd><p>This class inherits from db.Model and is used to relate projects to users. To what projects do a user have access to ? .</p>
-<p>It is also used by <code class="docutils literal notranslate"><span class="pre">SQLALCHEMY</span></code> to store those relations records in the data base.</p>
+<dd><p>This class inherits from db.Model and is used to relate projects to users.
+To what projects do a user have access to ? .</p>
+<p>It is also used by <code class="docutils literal notranslate"><span class="pre">SQLALCHEMY</span></code> to store those relations records in the
+data base.</p>
 <dl class="attribute">
 <dt id="app.classes.User_Project.project_id">
 <code class="descname">project_id</code><a class="headerlink" href="#app.classes.User_Project.project_id" title="Permalink to this definition">¶</a></dt>
@@ -363,7 +376,7 @@ key from the root directory</li>
 <dl class="class">
 <dt id="app.routes.UploadFileForm">
 <em class="property">class </em><code class="descclassname">app.routes.</code><code class="descname">UploadFileForm</code><span class="sig-paren">(</span><em>formdata=&lt;object object&gt;</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes.html#UploadFileForm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.routes.UploadFileForm" title="Permalink to this definition">¶</a></dt>
-<dd><p>Class for uploading file when submitted</p>
+<dd><p>Class for uploading multiple files when submitted</p>
 <dl class="attribute">
 <dt id="app.routes.UploadFileForm.file_selector">
 <code class="descname">file_selector</code><em class="property"> = &lt;UnboundField(MultipleFileField, ('File',), {})&gt;</em><a class="headerlink" href="#app.routes.UploadFileForm.file_selector" title="Permalink to this definition">¶</a></dt>
@@ -421,7 +434,8 @@ key from the root directory</li>
 <dl class="function">
 <dt id="app.routes.mobile_projects">
 <code class="descclassname">app.routes.</code><code class="descname">mobile_projects</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes.html#mobile_projects"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.routes.mobile_projects" title="Permalink to this definition">¶</a></dt>
-<dd><p>This route is the backend for the project menu of a
+<dd><blockquote>
+<div><p>This route is the backend for the project menu of a
 given user in the mobile phone.
 It allows for projects to be added.
 If a project using the same project_name already exists,
@@ -431,10 +445,12 @@ to pick another project name.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">return dictionary with success “1”/”0” if success/failure and the list of projects</td>
+<tr class="field-odd field"><th class="field-name">return:</th><td class="field-body">return dictionary with success “1”/”0” if</td>
 </tr>
 </tbody>
 </table>
+</div></blockquote>
+<p>success/failure and the list of projects</p>
 </dd></dl>
 
 <dl class="function">
@@ -470,6 +486,13 @@ and the credentials are correct.</p>
 </dd></dl>
 
 <dl class="function">
+<dt id="app.routes.predict">
+<code class="descclassname">app.routes.</code><code class="descname">predict</code><span class="sig-paren">(</span><em>projid</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes.html#predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.routes.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>This route provides prediction on newly uploaded image for a project.
+:return: predicted label of the new image, display on the website.</p>
+</dd></dl>
+
+<dl class="function">
 <dt id="app.routes.pricing">
 <code class="descclassname">app.routes.</code><code class="descname">pricing</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes.html#pricing"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.routes.pricing" title="Permalink to this definition">¶</a></dt>
 <dd><p>Route to the statis page listing pricing information.</p>
@@ -482,7 +505,10 @@ and the credentials are correct.</p>
 and allows them the ability to add a project.
 If a project using the same project_name already exists,
 this will display an error to tell the user
-to pick another project name.</p>
+to pick another project name.
+Project details are listed in a table, allowing user to
+upload image data per project, per label, to initiate
+training process and to upload new image for prediction.</p>
 </dd></dl>
 
 <dl class="function">
@@ -499,16 +525,26 @@ Oherwise, render the sign up form again.</p>
 <dt id="app.routes.signin">
 <code class="descclassname">app.routes.</code><code class="descname">signin</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes.html#signin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.routes.signin" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function uses method request to take user-input data from a regular
-html form (not a FlaskForm object) then queries user information in the database
-to log user in.
+html form (not a FlaskForm object) then queries user information in the
+database to log user in.
 If user information is found, redirect the user to project page.
 Otherwise, render the sign in form again.</p>
 </dd></dl>
 
 <dl class="function">
+<dt id="app.routes.unauthorized">
+<code class="descclassname">app.routes.</code><code class="descname">unauthorized</code><span class="sig-paren">(</span><em>e</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes.html#unauthorized"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.routes.unauthorized" title="Permalink to this definition">¶</a></dt>
+<dd><p>If user goes to a page that requires authorization such as
+projects page but is not yet logged in, redirect them to
+the log-in page.</p>
+</dd></dl>
+
+<dl class="function">
 <dt id="app.routes.upload">
 <code class="descclassname">app.routes.</code><code class="descname">upload</code><span class="sig-paren">(</span><em>labid</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes.html#upload"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#app.routes.upload" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>This route allows users to bulk upload image data per project, per label.
+Files would be stored in S3 bucket organized as “./project/label/files”.</p>
+</dd></dl>
 
 </div>
 </div>

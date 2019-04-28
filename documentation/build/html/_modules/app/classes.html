@@ -48,7 +48,10 @@
 
 <div class="viewcode-block" id="User"><a class="viewcode-back" href="../../apiReference.html#app.classes.User">[docs]</a><span class="k">class</span> <span class="nc">User</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">,</span> <span class="n">UserMixin</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    This class inherits from db.Model, UserMixin and is used to create user instances with multiple associated properties such as username and email. It is also used by ``SQLALCHEMY`` to store user records in the data base.</span>
+<span class="sd">    This class inherits from db.Model, UserMixin and is used to</span>
+<span class="sd">    create user instances with multiple associated properties</span>
+<span class="sd">    such as username and email. It is also used by ``SQLALCHEMY``</span>
+<span class="sd">    to store user records in the data base.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="nb">id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">username</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="mi">80</span><span class="p">),</span> <span class="n">unique</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
@@ -72,9 +75,11 @@
 
 <div class="viewcode-block" id="User.set_password"><a class="viewcode-back" href="../../apiReference.html#app.classes.User.set_password">[docs]</a>    <span class="k">def</span> <span class="nf">set_password</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">password</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">        Transforms the introduced password to it&#39;s hashed version and sotres it in the ``password_hash`` attribute.</span>
+<span class="sd">        Transforms the introduced password to it&#39;s hashed version and</span>
+<span class="sd">        sotres it in the ``password_hash`` attribute.</span>
 
-<span class="sd">        :param password: (str) transform the introduced password to it&#39;s hashed version to store it.</span>
+<span class="sd">        :param password: (str) transform the introduced password</span>
+<span class="sd">        to it&#39;s hashed version to store it.</span>
 <span class="sd">        :return: None</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">password_hash</span> <span class="o">=</span> <span class="n">generate_password_hash</span><span class="p">(</span><span class="n">password</span><span class="p">)</span></div>
@@ -91,9 +96,13 @@
 
 <div class="viewcode-block" id="Project"><a class="viewcode-back" href="../../apiReference.html#app.classes.Project">[docs]</a><span class="k">class</span> <span class="nc">Project</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    This class inherits from db.Model and is used to create project instances with multiple associated properties such as project owner and creation date. It is also used by ``SQLALCHEMY`` to store project records in the data base.</span>
+<span class="sd">    This class inherits from db.Model and is used to create project</span>
+<span class="sd">    instances with multiple associated properties such as project owner</span>
+<span class="sd">    and creation date. It is also used by ``SQLALCHEMY`` to store project</span>
+<span class="sd">    records in the data base.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
-    <span class="n">project_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">unique</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">autoincrement</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">project_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">unique</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">autoincrement</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">project_owner_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">project_creation_date</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">DateTime</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
@@ -111,12 +120,18 @@
 
 <div class="viewcode-block" id="Label"><a class="viewcode-back" href="../../apiReference.html#app.classes.Label">[docs]</a><span class="k">class</span> <span class="nc">Label</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    This class inherits from db.Model and is used to create labels instances with multiple associated properties such as label id and project id. It is also used by ``SQLALCHEMY`` to store label records in the data base.</span>
+<span class="sd">    This class inherits from db.Model and is used to create labels</span>
+<span class="sd">    instances with multiple associated properties such as label id and</span>
+<span class="sd">    project id. It is also used by ``SQLALCHEMY`` to store label records</span>
+<span class="sd">    in the data base.</span>
 
-<span class="sd">    It&#39;s main functionality is mapping label names to labels index so they can change the names if they want to without affecting system.</span>
+<span class="sd">    It&#39;s main functionality is mapping label names to labels index so they</span>
+<span class="sd">    can change the names if they want to without affecting system.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
-    <span class="n">label_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">unique</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">autoincrement</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">project_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="n">Project</span><span class="o">.</span><span class="n">project_id</span><span class="p">),</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">label_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">unique</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">autoincrement</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">project_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="n">Project</span><span class="o">.</span><span class="n">project_id</span><span class="p">),</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">label_name</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="mi">80</span><span class="p">),</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">label_name</span><span class="p">):</span>
@@ -132,17 +147,23 @@
 
 <div class="viewcode-block" id="User_Project"><a class="viewcode-back" href="../../apiReference.html#app.classes.User_Project">[docs]</a><span class="k">class</span> <span class="nc">User_Project</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    This class inherits from db.Model and is used to relate projects to users. To what projects do a user have access to ? .</span>
+<span class="sd">    This class inherits from db.Model and is used to relate projects to users.</span>
+<span class="sd">    To what projects do a user have access to ? .</span>
 
-<span class="sd">    It is also used by ``SQLALCHEMY`` to store those relations records in the data base.</span>
+<span class="sd">    It is also used by ``SQLALCHEMY`` to store those relations records in the</span>
+<span class="sd">    data base.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
-    <span class="n">user_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="n">User</span><span class="o">.</span><span class="n">id</span><span class="p">),</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-    <span class="n">project_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="n">Project</span><span class="o">.</span><span class="n">project_id</span><span class="p">),</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">user_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="n">User</span><span class="o">.</span><span class="n">id</span><span class="p">),</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">project_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="n">Project</span><span class="o">.</span><span class="n">project_id</span><span class="p">),</span>
+        <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">project_name</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="mi">80</span><span class="p">),</span> <span class="n">unique</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_id</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">project_name</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">        Set the attributes of for the relations between user_id/project_id/project_name</span>
+<span class="sd">        Set the attributes of for the relations between</span>
+<span class="sd">        user_id/project_id/project_name</span>
 
 <span class="sd">        :param user_id: (str) Id of the user.</span>
 <span class="sd">        :param project_id: (str) Id of the project.</span>
