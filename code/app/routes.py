@@ -119,8 +119,6 @@ def signin():
         username = request.form['username']
         password = request.form['password']
         user = classes.User.query.filter_by(username=username).first()
-        print(user)
-        print(user.check_password(password))
         if user is not None and user.check_password(password):
             login_user(user)
             return redirect(url_for('projects'))
