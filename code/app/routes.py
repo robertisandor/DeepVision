@@ -119,7 +119,8 @@ def signin():
         username = request.form['username']
         password = request.form['password']
         user = classes.User.query.filter_by(username=username).first()
-
+        print(user)
+        print(user.check_password(password))
         if user is not None and user.check_password(password):
             login_user(user)
             return redirect(url_for('projects'))
@@ -244,6 +245,9 @@ def upload(labid):
             k = Key(bucket)
             k.key = '/'.join([str(projid), str(labid), filename])
             k.set_contents_from_string(file_content)
+
+            k.key = f'/{str(projid)}/model/'
+            k.set_contents_from_string('')
         return redirect(url_for('projects'))
     return render_template('upload_lab.html', projnm=projnm,
                            labelnm=labelnm, form=form)
@@ -280,7 +284,7 @@ def unauthorized(e):
     """If user goes to a page that requires authorization such as
     projects page but is not yet logged in, redirect them to
     the log-in page."""
-    return redirect(url_for('login'))
+    return redirect(url_for('signin'))
 
 
 # Mobile app backend ##############
