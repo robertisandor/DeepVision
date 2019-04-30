@@ -70,6 +70,7 @@ class Project(db.Model):
         db.Integer, primary_key=True, unique=True, autoincrement=True)
     project_owner_id = db.Column(db.Integer, nullable=False)
     project_creation_date = db.Column(db.DateTime, nullable=False)
+    last_train_asp_ratio = db.Column(db.Float, nullable=True)
 
     def __init__(self, project_name, project_owner_id):
         '''
@@ -81,6 +82,7 @@ class Project(db.Model):
         self.project_name = project_name
         self.project_owner_id = project_owner_id
         self.project_creation_date = datetime.utcnow()
+        self.last_train_asp_ratio = last_train_asp_ratio
 
 
 class Label(db.Model):
@@ -137,6 +139,48 @@ class User_Project(db.Model):
         self.user_id = user_id
         self.project_id = project_id
         self.project_name = project_name
+
+
+class Aspect_Ratio(db.Model):
+    project_id = db.Column(
+        db.Integer, ForeignKey(Project.project_id),
+        primary_key=True, nullable=False)
+    aspect_ratio = db.Column(db.String(80), nullable=False)
+    count = db.Column(db.Integer, nullable=False)
+
+    def __init__(self, project_id, aspect_ratio, count):
+        '''
+        Set the attributes of for the relations between
+        project_id/aspect_ratio/count
+
+        :param project_id: (str) Id of the project.
+        :param aspect_ratio: (float) ratio of width to heigh.
+        :param count: (int) Count of each aspect ratio of each project.
+        '''
+        self.project_id = project_id
+        self.aspect_ratio = aspect_ratio
+        self.count = count
+
+
+class Pred_Results(db.Model):
+    project_id = db.Column(
+        db.Integer, ForeignKey(Project.project_id),
+        primary_key=True, nullable=False)
+    path_to_img = db.Column(db.String(200), nullable=False)
+    label = db.Column(db.String(80), nullable=False)
+
+    def __init__(self, project_id, path_to_img, label):
+        '''
+        Set the attributes of for the relations between
+        project_id/aspect_ratio/count
+
+        :param project_id: (str) Id of the project.
+        :param path_to_img: (str) url path to the image.
+        :param label: (str) prediction result.
+        '''
+        self.project_id = project_id
+        self.path_to_img = path_to_img
+        self.label = label
 
 
 db.create_all()
