@@ -72,7 +72,7 @@ class Project(db.Model):
     project_creation_date = db.Column(db.DateTime, nullable=False)
     last_train_asp_ratio = db.Column(db.Float, nullable=True)
 
-    def __init__(self, project_name, project_owner_id):
+    def __init__(self, project_name, project_owner_id, last_train_asp_ratio=None):
         '''
         Set the main attributes of a project.
 
