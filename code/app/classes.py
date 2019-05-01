@@ -73,8 +73,7 @@ class Project(db.Model):
     project_creation_date = db.Column(db.DateTime, nullable=False)
     last_train_asp_ratio = db.Column(db.Float, nullable=True)
 
-    def __init__(self, project_name, project_owner_id, 
-                 last_train_asp_ratio=None, last_model_version=0):
+    def __init__(self, project_name, project_owner_id, last_train_asp_ratio=None):
         '''
         Set the main attributes of a project.
 
@@ -146,8 +145,7 @@ class Aspect_Ratio(db.Model):
     project_id = db.Column(
         db.Integer, ForeignKey(Project.project_id),
         primary_key=True, nullable=False)
-    aspect_ratio = db.Column(db.String(80), 
-        primary_key=True, nullable=False)
+    aspect_ratio = db.Column(db.String(80), nullable=False)
     count = db.Column(db.Integer, nullable=False)
 
     def __init__(self, project_id, aspect_ratio, count):
@@ -166,9 +164,9 @@ class Aspect_Ratio(db.Model):
 
 class Pred_Results(db.Model):
     project_id = db.Column(
-        db.Integer, ForeignKey(Project.project_id), nullable=False)
-    path_to_img = db.Column(db.String(200), primary_key=True,
-        nullable=False)
+        db.Integer, ForeignKey(Project.project_id), 
+        primary_key=True, nullable=False)
+    path_to_img = db.Column(db.String(200), nullable=False)
     label = db.Column(db.String(80), nullable=False)
 
     def __init__(self, project_id, path_to_img, label):
