@@ -145,7 +145,8 @@ class Aspect_Ratio(db.Model):
     project_id = db.Column(
         db.Integer, ForeignKey(Project.project_id),
         primary_key=True, nullable=False)
-    aspect_ratio = db.Column(db.String(80), nullable=False)
+    aspect_ratio = db.Column(db.String(80), 
+        primary_key=True, nullable=False)
     count = db.Column(db.Integer, nullable=False)
 
     def __init__(self, project_id, aspect_ratio, count):
@@ -164,9 +165,9 @@ class Aspect_Ratio(db.Model):
 
 class Pred_Results(db.Model):
     project_id = db.Column(
-        db.Integer, ForeignKey(Project.project_id),
-        primary_key=True, nullable=False)
-    path_to_img = db.Column(db.String(200), nullable=False)
+        db.Integer, ForeignKey(Project.project_id), nullable=False)
+    path_to_img = db.Column(db.String(200), primary_key=True,
+        nullable=False)
     label = db.Column(db.String(80), nullable=False)
 
     def __init__(self, project_id, path_to_img, label):
