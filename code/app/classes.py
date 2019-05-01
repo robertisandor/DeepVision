@@ -68,11 +68,13 @@ class Project(db.Model):
     '''
     project_id = db.Column(
         db.Integer, primary_key=True, unique=True, autoincrement=True)
+    # project_name = db.Column(db.String(80), nullable=False)
     project_owner_id = db.Column(db.Integer, nullable=False)
     project_creation_date = db.Column(db.DateTime, nullable=False)
     last_train_asp_ratio = db.Column(db.Float, nullable=True)
 
-    def __init__(self, project_name, project_owner_id, last_train_asp_ratio=None):
+    def __init__(self, project_name, project_owner_id, 
+                 last_train_asp_ratio=None, last_model_version=0):
         '''
         Set the main attributes of a project.
 
@@ -83,7 +85,6 @@ class Project(db.Model):
         self.project_owner_id = project_owner_id
         self.project_creation_date = datetime.utcnow()
         self.last_train_asp_ratio = last_train_asp_ratio
-
 
 class Label(db.Model):
     '''
