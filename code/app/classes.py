@@ -165,7 +165,6 @@ class Aspect_Ratio(db.Model):
         :param aspect_ratio: (float) ratio of width to heigh.
         :param count: (int) Count of each aspect ratio of each project.
         '''
-        self.aspect_ratio_id = aspect_ratio_id
         self.project_id = project_id
         self.aspect_ratio = aspect_ratio
         self.count = count
@@ -195,7 +194,6 @@ class Pred_Results(db.Model):
         :param path_to_img: (str) url path to the image.
         :param label: (str) prediction result.
         '''
-        self.pred_results_id = pred_results_id
         self.project_id = project_id
         self.path_to_img = path_to_img
         self.label = label

@@ -11,6 +11,8 @@ from flask import (render_template,
 import json
 
 from flask_wtf.file import FileField, FileRequired
+import matplotlib.image as mpimg
+import tempfile
 from wtforms import SubmitField
 from werkzeug import secure_filename
 
@@ -160,6 +162,9 @@ def projects():
         project_name = request.form['project_name']
         labels = [label.strip() for label in request.form['labels'].split(',')]
 
+        # this was updated
+        if len(set(labels)) != len(labels):
+            return f"<h1>There are duplicate labels. Please enter labels that are different.</h1>"
         # TODO: verify label_names to be unique within one project,
         # TODO: right now can have same name but different labelid.
 
@@ -170,7 +175,7 @@ def projects():
         if len(projects_with_same_name) > 0:
             return f"<h1> A project with the name: {project_name}" + \
                    " already exists. Please choose another " \
-                   "name for your project."
+                   "name for your project.</h1>"
         else:
             # insert into the Project table
             db.session.add(classes.Project(project_name, int(current_user.id)))
@@ -192,6 +197,44 @@ def projects():
             for label in labels:
                 db.session.add(classes.Label(most_recent_project.project_id,
                                              label))
+
+            most_recent_project_labels = classes.Label.query.filter_by(project_id=most_recent_project.project_id)
+
+            # this was added
+            # TODO: when creating the project, I need to create the model 
+            # and prediction folders for a given project in S3 
+
+            # TODO: abstract writing to S3 bucket into a function; 
+            # remove duplicated code
+            bucket_name = 'msds603-deep-vision'
+            s3_connection = boto.connect_s3(
+                aws_access_key_id='AKIAIQRI4EE5ENXNW6LQ',
+                aws_secret_access_key='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')
+            # to be fixed with paramiko
+            bucket = s3_connection.get_bucket(bucket_name)
+            k = Key(bucket)
+
+            for label in most_recent_project_labels:
+                k.key = f'/{str(most_recent_project.project_id)}/{str(label.label_id)}/'
+                k.set_contents_from_string('')
+
+            k.key = f'/{str(most_recent_project.project_id)}/model/'
+            k.set_contents_from_string('')
+
+            k.key = f'/{str(most_recent_project.project_id)}/prediction/'
+            k.set_contents_from_string('')
+
+            # create folder in predict bucket
+            bucket_name = 'msds603-deep-vision-predict'
+            s3_connection = boto.connect_s3(
+                aws_access_key_id='AKIAIQRI4EE5ENXNW6LQ',
+                aws_secret_access_key='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')
+            # to be fixed with paramiko
+            bucket = s3_connection.get_bucket(bucket_name)
+            k = Key(bucket)
+
+            k.key = f'/{str(most_recent_project.project_id)}/'
+            k.set_contents_from_string('')
 
             # pass the list of projects (including the new project) to the page
             # so it can be shown to the user
@@ -222,8 +265,11 @@ def upload(labid):
     This route allows users to bulk upload image data per project, per label.
     Files would be stored in S3 bucket organized as "./project/label/files".
     """
-    labelnm = classes.Label.query.filter_by(label_id=labid).first().label_name
-    projid = classes.Label.query.filter_by(label_id=labid).first().project_id
+    label = classes.Label.query.filter_by(label_id=labid).first()
+    labelnm = label.label_name
+    projid = label.project_id
+    # labelnm = classes.Label.query.filter_by(label_id=labid).first().label_name
+    # projid = classes.Label.query.filter_by(label_id=labid).first().project_id
     projnm = classes.User_Project.query.filter_by(project_id=projid) \
         .first().project_name
 
@@ -231,8 +277,31 @@ def upload(labid):
     if form.validate_on_submit():
         files = form.file_selector.data
         for f in files:
+            tmp = tempfile.NamedTemporaryFile()
+            file_content = ''
+            # file must be temporarily created
+            # so that it can be read
+            # to find out the aspect ratio of the image
+            with open(tmp.name, 'wb') as data:
+                file_content = f.stream.read()
+                data.write(file_content)
+            image = mpimg.imread(tmp.name)
+            aspect_ratio = round(float(image.shape[1]) / float(image.shape[0]), 1)
             filename = secure_filename(f.filename)
-            file_content = f.stream.read()
+            # I need to find the aspect ratio of the image
+            # then query
+            # and insert that into the table in postgres
+
+            aspect_ratios = classes.Aspect_Ratio.query.filter_by(project_id=projid).filter_by(aspect_ratio=str(aspect_ratio)).all()
+            # aspect_ratios = classes.Aspect_Ratio.query.filter_by(project_id=projid).all()
+            # aspect_ratios = classes.Aspect_Ratio.query.all()
+            
+            if len(aspect_ratios) == 0:
+                db.session.add(classes.Aspect_Ratio(projid, str(aspect_ratio), 1))
+            elif len(aspect_ratios) == 1:
+                aspect_ratios[0].count += 1
+
+            db.session.commit()
 
             bucket_name = 'msds603-deep-vision'
             s3_connection = boto.connect_s3(
@@ -244,8 +313,9 @@ def upload(labid):
             k.key = '/'.join([str(projid), str(labid), filename])
             k.set_contents_from_string(file_content)
 
-            k.key = f'/{str(projid)}/model/'
-            k.set_contents_from_string('')
+        # I think I need to insert/update the table
+        # with the newest aspect ratio
+
         return redirect(url_for('projects'))
     return render_template('upload_lab.html', projnm=projnm,
                            labelnm=labelnm, form=form)
@@ -262,10 +332,30 @@ def predict(projid):
         .first().project_name
     form = UploadFileForm()
     pred_lab = ''
-    # For the demo just randomly throwing one label as prediction now
     if form.validate_on_submit():
-        labels = classes.Label.query.filter_by(project_id=projid).all()
-        pred_lab = np.random.choice([lab.label_name for lab in labels])
+        files = form.file_selector.data
+        
+        # simply get the aspect ratio and the project id 
+        most_common_aspect_ratio = classes.Aspect_Ratio.query.filter_by(project_id=projid)\
+            .order_by(classes.Aspect_Ratio.count.desc()).first()
+        print(most_common_aspect_ratio.aspect_ratio)
+        # TODO: call Miguel's function by passing the most common aspect ratio
+        # and the project id (doesn't have to be before the S3 upload yet)
+
+        for f in files:
+            filename = secure_filename(f.filename)
+            file_content = f.stream.read()
+
+            bucket_name = 'msds603-deep-vision'
+            s3_connection = boto.connect_s3(
+                aws_access_key_id='AKIAIQRI4EE5ENXNW6LQ',
+                aws_secret_access_key='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')
+            # to be fixed with paramiko
+            bucket = s3_connection.get_bucket(bucket_name)
+            k = Key(bucket)
+            k.key = '/'.join([str(projid), 'prediction', filename])
+            k.set_contents_from_string(file_content)
+
     return render_template('predict.html', projnm=projnm,
                            pred_lab=pred_lab, form=form)
 
