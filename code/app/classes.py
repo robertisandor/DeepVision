@@ -68,7 +68,6 @@ class Project(db.Model):
     '''
     project_id = db.Column(
         db.Integer, primary_key=True, unique=True, autoincrement=True)
-    # project_name = db.Column(db.String(80), nullable=False)
     project_owner_id = db.Column(db.Integer, nullable=False)
     project_creation_date = db.Column(db.DateTime, nullable=False)
     last_train_asp_ratio = db.Column(db.Float, nullable=True)
@@ -84,6 +83,7 @@ class Project(db.Model):
         self.project_owner_id = project_owner_id
         self.project_creation_date = datetime.utcnow()
         self.last_train_asp_ratio = last_train_asp_ratio
+
 
 class Label(db.Model):
     '''
@@ -142,42 +142,60 @@ class User_Project(db.Model):
 
 
 class Aspect_Ratio(db.Model):
+    '''
+    This class inherits from db.Model and is used to record the counts of
+    each aspect_ratio in every projects.
+    It is also used by ``SQLALCHEMY`` to store those relations records in the
+    data base.
+    '''
+    aspect_ratio_id = db.Column(
+        db.Integer, primary_key=True, unique=True, autoincrement=True)
     project_id = db.Column(
-        db.Integer, ForeignKey(Project.project_id),
-        primary_key=True, nullable=False)
+        db.Integer, ForeignKey(Project.project_id), nullable=False)
     aspect_ratio = db.Column(db.String(80), nullable=False)
     count = db.Column(db.Integer, nullable=False)
 
     def __init__(self, project_id, aspect_ratio, count):
         '''
         Set the attributes of for the relations between
-        project_id/aspect_ratio/count
-
+        aspect_ratio_id/project_id/aspect_ratio/count
+        
+        :param aspect_ratio_id: (int) primary key of the table.
         :param project_id: (str) Id of the project.
         :param aspect_ratio: (float) ratio of width to heigh.
         :param count: (int) Count of each aspect ratio of each project.
         '''
+        self.aspect_ratio_id = aspect_ratio_id
         self.project_id = project_id
         self.aspect_ratio = aspect_ratio
         self.count = count
 
 
 class Pred_Results(db.Model):
+    '''
+    This class inherits from db.Model and is used to record the prediction
+    results of images.
+    It is also used by ``SQLALCHEMY`` to store those relations records in the
+    data base.
+    '''
+    pred_results_id = db.Column(
+        db.Integer, primary_key=True, unique=True, autoincrement=True)
     project_id = db.Column(
         db.Integer, ForeignKey(Project.project_id), nullable=False)
-    path_to_img = db.Column(db.String(200), primary_key=True, 
-                            nullable=False)
+    path_to_img = db.Column(db.String(200), nullable=False)
     label = db.Column(db.String(80), nullable=False)
 
     def __init__(self, project_id, path_to_img, label):
         '''
         Set the attributes of for the relations between
-        project_id/aspect_ratio/count
+        pred_results_id/project_id/aspect_ratio/count
 
+        :param pred_results_id: (int) primary key of the table.
         :param project_id: (str) Id of the project.
         :param path_to_img: (str) url path to the image.
         :param label: (str) prediction result.
         '''
+        self.pred_results_id = pred_results_id
         self.project_id = project_id
         self.path_to_img = path_to_img
         self.label = label
