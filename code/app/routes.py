@@ -9,7 +9,7 @@ from flask import (render_template,
                    jsonify)
 
 import json
-
+import boto3
 from flask_wtf.file import FileField, FileRequired
 import matplotlib.image as mpimg
 import tempfile
@@ -144,8 +144,10 @@ def projects():
     training process and to upload new image for prediction.
     """
     if request.method == 'GET':
-        projects = classes.User_Project.query.filter_by(
-            user_id=int(current_user.id)).all()
+        users_projects = classes.User_Project.query.filter_by(user_id=current_user.id).all()
+        project_ids = [user_project.project_id for user_project in users_projects]
+        projects = classes.Project.query.filter(classes.Project.project_id.in_(project_ids))
+
         # return objects to easily call by attribute names,
         # rather than by indexes, please keep
         proj_labs = {}
@@ -170,8 +172,16 @@ def projects():
 
         # query the Project table to see if the project already exists
         # if it does, tell the user to pick another project_name
-        projects_with_same_name = classes.User_Project.query \
-            .filter_by(project_name=project_name).all()
+        users_projects = classes.User_Project.query.filter_by(user_id=current_user.id).all()
+        project_ids = [user_project.project_id for user_project in users_projects]
+
+        # if a user has multiple projects
+        # check if the project name with the same name already exists for them
+        projects_with_same_name = []
+        if len(users_projects) > 0:
+            projects = classes.Project.query.filter_by(project_name=project_name).all()
+            projects_with_same_name = [project.project_id for project in projects if project.project_id in project_ids]
+
         if len(projects_with_same_name) > 0:
             return f"<h1> A project with the name: {project_name}" + \
                    " already exists. Please choose another " \
@@ -185,12 +195,12 @@ def projects():
             most_recent_project = classes.Project.query \
                 .filter_by(project_owner_id=current_user.id) \
                 .order_by(classes.Project.project_creation_date.desc()).first()
+            print(most_recent_project.project_name)
 
             # insert into the User_Project table
             # so that the user is associated with a project
             db.session.add(classes.User_Project(int(current_user.id),
-                                                most_recent_project.project_id,
-                                                project_name))
+                                                most_recent_project.project_id))
 
             # TODO: find a way to bulk insert
             # insert all of the labels that the user entered
@@ -240,9 +250,11 @@ def projects():
             # so it can be shown to the user
             # only commit the transactions once everything has been entered.
             db.session.commit()
-
-            projects = classes.User_Project.query.filter_by(
-                user_id=int(current_user.id)).all()
+            
+            users_projects = classes.User_Project.query.filter_by(user_id=current_user.id).all()
+            project_ids = [user_project.project_id for user_project in users_projects]
+            projects = classes.Project.query.filter(classes.Project.project_id.in_(project_ids))
+            
             proj_labs = {}
             for proj in projects:
                 proj_labs[proj.project_id] = classes.Label.query.filter_by(
@@ -270,8 +282,11 @@ def upload(labid):
     projid = label.project_id
     # labelnm = classes.Label.query.filter_by(label_id=labid).first().label_name
     # projid = classes.Label.query.filter_by(label_id=labid).first().project_id
-    projnm = classes.User_Project.query.filter_by(project_id=projid) \
+
+    projnm = classes.Project.query.filter_by(project_id=projid) \
         .first().project_name
+    # projnm = classes.User_Project.query.filter_by(project_id=projid) \
+    #     .first().project_name
 
     form = UploadFileForm()
     if form.validate_on_submit():
@@ -285,6 +300,11 @@ def upload(labid):
             with open(tmp.name, 'wb') as data:
                 file_content = f.stream.read()
                 data.write(file_content)
+            # TODO: rename the images to be unique per project
+            # and based on the count of images already stored
+            # so that if you upload the same image multiple times 
+            # there will be multiple copies with different filenames
+            # rather than updating the same file
             image = mpimg.imread(tmp.name)
             aspect_ratio = round(float(image.shape[1]) / float(image.shape[0]), 1)
             filename = secure_filename(f.filename)
@@ -328,7 +348,7 @@ def predict(projid):
     This route provides prediction on newly uploaded image for a project.
     :return: predicted label of the new image, display on the website.
     """
-    projnm = classes.User_Project.query.filter_by(project_id=projid) \
+    projnm = classes.Project.query.filter_by(project_id=projid) \
         .first().project_name
     form = UploadFileForm()
     pred_lab = ''
@@ -336,17 +356,37 @@ def predict(projid):
         files = form.file_selector.data
         
         # simply get the aspect ratio and the project id 
-        most_common_aspect_ratio = classes.Aspect_Ratio.query.filter_by(project_id=projid)\
-            .order_by(classes.Aspect_Ratio.count.desc()).first()
-        print(most_common_aspect_ratio.aspect_ratio)
-        # TODO: call Miguel's function by passing the most common aspect ratio
-        # and the project id (doesn't have to be before the S3 upload yet)
+        
+        # train(projid, current_project.project_owner_id, project_owner.username, project_owner.email)
+        # pojectid, paths, aspect ratio
+        client = boto3.client('s3', aws_access_key_id='AKIAIQRI4EE5ENXNW6LQ',
+                aws_secret_access_key='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')
+        bucket_name = 'msds603-deep-vision'
+        filepaths = client.list_objects(Bucket=bucket_name, Prefix=projid, Delimiter='')
+        filepaths = [item['Key'] for item in filepaths['Contents'] if len(item['Key'].split('.')) > 1]
+        print(filepaths)
+
+        # to get aspect_ratio
+        project = classes.Project.query.filter_by(project_id=projid).first()
+        aspect_ratio = project.last_train_asp_ratio
+        if aspect_ratio is None:
+            aspect_ratio = 1
+        print(aspect_ratio)
+
+        # to get number of training labels
+        labels = classes.Label.query.filter_by(project_id=projid).all()
+        print(len(labels))
+
+        # predict(project_id=projid, paths=filepaths, aspect_r=aspect_ratio, n_training_labels=len(labels))
+        
+        # figure out issue with labels
+        # label history
 
         for f in files:
             filename = secure_filename(f.filename)
             file_content = f.stream.read()
 
-            bucket_name = 'msds603-deep-vision'
+            
             s3_connection = boto.connect_s3(
                 aws_access_key_id='AKIAIQRI4EE5ENXNW6LQ',
                 aws_secret_access_key='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')
