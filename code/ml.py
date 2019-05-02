@@ -115,9 +115,9 @@ def get_image(client, file_path, show=False, bucket_name=BUCKET_RESIZE):
         client.download_fileobj(bucket_name, file_path, data)
         img = mpimg.imread(tmp.name)
 
-    if show:
-        plt.imshow(img)
-        plt.show()
+    # if show:
+    #     plt.imshow(img)
+    #     plt.show()
 
     return img
 
