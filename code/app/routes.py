@@ -358,7 +358,7 @@ def train(proj_id):
     proj_owner_name = proj_owner.username
     proj_owner_email = proj_owner.email
 
-    labels = classes.Label.query.filter_by(project_id=projid).all()
+    labels = classes.Label.query.filter_by(project_id=proj_id).all()
     lbl2idx = {label.label_name: label.label_index for label in labels}
 
     # call the train function from ml module
