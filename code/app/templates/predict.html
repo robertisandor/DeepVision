@@ -38,18 +38,23 @@
                         <br><!--  render the form's CSRF field like normal. -->
                         {{ form.file_selector(class="button button-light") }}
                         <br>
-                        {{ form.submit(class="button button-light") }}
+                        {{ form.submit(class="button button-light", onclick="popupClickButton()") }}
                         <br>
-                        <br>
-                        <p class="section-intro__subtitle">It looks like you just uploaded an image of class: </p>
                         
-                        <button type="button" class="button button-light">
-                                <strong>{{ pred_lab }}</button></strong></a>
+                        <script>
+                            function popupClickButton() {
+                                alert("Your image is being predited. Go to the status page to check predition results.");
+                            }
+                        </script>
                         <br>
                         <br>
                         <button type="submit" class="button button-light">
+                            <a href="{{ url_for('status', projid=projid) }}">Go to Status Page</a></button>
+                        <br />
+                        <br>
+                        <button type="submit" class="button button-light">
                             <a href="{{ url_for('projects') }}">Back to Project List Page</a></button>
-                        <br/>
+                        <br />
                         <br>
                     </center>
                 </div>
