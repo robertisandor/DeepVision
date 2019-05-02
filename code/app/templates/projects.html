@@ -139,7 +139,7 @@
                       
                       <td class="cell100 column2">
                         <div class="dropdown">
-                          <button class="dropbtn">Choose label</button>
+                          <button class="dropbtn" type="button">Choose label</button>
                           <div class="dropdown-content">
                         {% for lab in proj_labs[proj.project_id] %}
                             <a href="{{ url_for('upload', labid = lab.label_id ) }}">{{ lab.label_name }}</a>
