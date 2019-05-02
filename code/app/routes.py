@@ -31,9 +31,9 @@ from flask_login import current_user, login_user, login_required, logout_user
 from boto.s3.key import Key
 import boto
 
-# just for kidding prediction
+# for prediction
 import numpy as np
-
+from ml import train, predict
 
 # Web app backend ##############
 
@@ -339,6 +339,31 @@ def upload(labid):
         return redirect(url_for('projects'))
     return render_template('upload_lab.html', projnm=projnm,
                            labelnm=labelnm, form=form)
+
+
+@application.route('/train/<projid>', methods=['GET', 'POST'])
+@login_required
+def train(proj_id):
+    """
+    This route triggered when a user clicks "Train" button in a project.
+    After training is done, the user will receive an notification email.
+    """
+    # query inputs for to train the model
+    proj = classes.Project.query.filter_by(project_id=proj_id).first()
+    project_name = proj.project_name
+    last_asp_ratio = proj.last_train_asp_ratio
+    
+    project_owner_id = proj.project_owner_id
+    proj_owner = classes.User.query.filter_by(id=project_owner_id).first() 
+    proj_owner_name = proj_owner.username
+    proj_owner_email = proj_owner.email
+
+    labels = classes.Label.query.filter_by(project_id=projid).all()
+    lbl2idx = {label.label_name: label.label_index for label in labels}
+
+    # call the train function from ml module
+    train(proj_name, last_asp_ratio, proj_owner_name, proj_owner_email, lbl2idx)
+
 
 
 @application.route('/predict/<projid>', methods=['GET', 'POST'])
