@@ -68,6 +68,7 @@ class Project(db.Model):
     '''
     project_id = db.Column(
         db.Integer, primary_key=True, unique=True, autoincrement=True)
+    project_name = db.Column(db.String(100), nullable=False)
     project_owner_id = db.Column(db.Integer, nullable=False)
     project_creation_date = db.Column(db.DateTime, nullable=False)
     last_train_asp_ratio = db.Column(db.Float, nullable=True)
@@ -76,8 +77,9 @@ class Project(db.Model):
         '''
         Set the main attributes of a project.
 
-        :param project_name: (str) project name
+        :param project_name: (str) project name        
         :param project_owner_id: (str) user ``id`` of the project's owner
+        :param last_train_asp_ratio: (float) ratio of width to heigh used in last training
         '''
         self.project_name = project_name
         self.project_owner_id = project_owner_id
@@ -100,16 +102,19 @@ class Label(db.Model):
     project_id = db.Column(
         db.Integer, ForeignKey(Project.project_id), nullable=False)
     label_name = db.Column(db.String(80), nullable=False)
+    label_index = db.Column(db.Integer, nullable=True)
 
-    def __init__(self, project_id, label_name):
+    def __init__(self, project_id, label_name, label_index=None):
         '''
         Set the main attributes of a label.
 
         :param project_id: (str) Id of the project where the label belongs.
         :param label_name: (str) Name of the label
+        :param label_index: (int) label used when training
         '''
         self.project_id = project_id
         self.label_name = label_name
+        self.label_index = label_index
 
 
 class User_Project(db.Model):
@@ -120,25 +125,23 @@ class User_Project(db.Model):
     It is also used by ``SQLALCHEMY`` to store those relations records in the
     data base.
     '''
+    user_project_id = db.Column(
+        db.Integer, primary_key=True, unique=True, autoincrement=True)
     user_id = db.Column(
-        db.Integer, ForeignKey(User.id), primary_key=True, nullable=False)
+        db.Integer, ForeignKey(User.id), nullable=False)
     project_id = db.Column(
-        db.Integer, ForeignKey(Project.project_id),
-        primary_key=True, nullable=False)
-    project_name = db.Column(db.String(80), unique=True, nullable=False)
+        db.Integer, ForeignKey(Project.project_id), nullable=False)
 
-    def __init__(self, user_id, project_id, project_name):
+    def __init__(self, user_id, project_id):
         '''
         Set the attributes of for the relations between
-        user_id/project_id/project_name
+        user_project_id/user_id/project_id
 
         :param user_id: (str) Id of the user.
         :param project_id: (str) Id of the project.
-        :param project_name: (str) Name of the project.
         '''
         self.user_id = user_id
         self.project_id = project_id
-        self.project_name = project_name
 
 
 class Aspect_Ratio(db.Model):
@@ -158,9 +161,8 @@ class Aspect_Ratio(db.Model):
     def __init__(self, project_id, aspect_ratio, count):
         '''
         Set the attributes of for the relations between
-        aspect_ratio_id/project_id/aspect_ratio/count
+        project_id/aspect_ratio/count
         
-        :param aspect_ratio_id: (int) primary key of the table.
         :param project_id: (str) Id of the project.
         :param aspect_ratio: (float) ratio of width to heigh.
         :param count: (int) Count of each aspect ratio of each project.
@@ -187,9 +189,8 @@ class Pred_Results(db.Model):
     def __init__(self, project_id, path_to_img, label):
         '''
         Set the attributes of for the relations between
-        pred_results_id/project_id/aspect_ratio/count
+        project_id/aspect_ratio/count
 
-        :param pred_results_id: (int) primary key of the table.
         :param project_id: (str) Id of the project.
         :param path_to_img: (str) url path to the image.
         :param label: (str) prediction result.
