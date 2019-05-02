@@ -19,8 +19,9 @@
   <!--===========================CSS File for TABLE=====================================-->
   <link rel="stylesheet" href="{{ url_for('static', filename='addcss/main.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='addcss/util.css') }}">
-  
-    <!--===============================================================================================-->
+  <link rel="stylesheet" href="{{ url_for('static', filename='addcss/labels.css') }}">
+
+  <!--===============================================================================================-->
 </head>
 
 <body>
@@ -81,32 +82,32 @@
       <div class="section-intro pb-75px text-center">
         <h2 class="section-intro__title">Your Projects</h2>
         <p class="section-intro__subtitle">Select <strong>ADD PROJECT</strong> below to create your project!</p>
-        
-          <div class="section-padding--small2 bg-magnolia" id="create project">
-            <div class="container">
-              <div class="row no-gutters align-items-center" style="text-align:center;">
-                <form action="" method="post" class="text-align:center;" >
-                  <br>
-                  
-                    <input type="text" name="project_name" id="project_name" placeholder="Project Name"
-                      value="{{ request.form.project_name }}" size="40" required />
-                    <br>
-                    <input type="text" name="labels" id="labels" placeholder="Labels" value="{{ request.form.labels }}"
-                    size="40" required />
-                  
-                  <br>
-                  <p class="section-intro__subtitle">Define unique labels separated by comma please :)</p>
-                  <br>
-                  <button type="submit" class="button button-light">
-                    <a href="{{ url_for('projects') }}"><strong>Add Project</button></strong></a>
-                    <br/>
-                    <br>
-                  </form>
-                </div>
-              </div>
+
+        <div class="section-padding--small2 bg-magnolia" id="create project">
+          <div class="container">
+            <div class="row no-gutters align-items-center" style="text-align:center;">
+              <form action="" method="post" class="text-align:center;">
+                <br>
+
+                <input type="text" name="project_name" id="project_name" placeholder="Project Name"
+                  value="{{ request.form.project_name }}" size="40" required />
+                <br>
+                <input type="text" name="labels" id="labels" placeholder="Labels" value="{{ request.form.labels }}"
+                  size="40" required />
+
+                <br>
+                <p class="section-intro__subtitle">Define unique labels separated by comma please :)</p>
+                <br>
+                <button type="submit" class="button button-light">
+                  <a href="{{ url_for('projects') }}"><strong>Add Project</button></strong></a>
+                <br />
+                <br>
+              </form>
             </div>
+          </div>
         </div>
       </div>
+    </div>
 
     <!--================ Offer section end =================-->
 
@@ -121,8 +122,7 @@
                   <tr class="row100 head">
                     <!-- The width of the table could be changed -->
                     <th class="cell100 column1">Project Name</th>
-                    <th class="cell100 column2">Upload Data (Click the label to upload data for it.)
-                    </th>
+                    <th class="cell100 column2">Upload Data</th>
                     <th class="cell100 column3">Model Action</th>
                   </tr>
                 </thead>
@@ -132,32 +132,46 @@
             <div class="table100-body js-pscroll">
               <table>
                 <tbody>
-                  <form action="/projects" method="get">
+                  <form action="/project" method="get">
                     {% for proj in projects %}
                     <tr class="row100 body">
                       <td class="cell100 column1">{{ proj.project_name }}</td>
+                      
                       <td class="cell100 column2">
+                        <div class="dropdown">
+                          <button class="dropbtn">Choose label</button>
+                          <div class="dropdown-content">
                         {% for lab in proj_labs[proj.project_id] %}
-                        <button type="submit" class="button2 button2-dark" projId={{ proj.project_id }}>
-                          <a href="{{ url_for('upload', labid = lab.label_id ) }}">
-                            {{ lab.label_name }}&nbsp; </button></a>
+                            <a href="{{ url_for('upload', labid = lab.label_id ) }}">{{ lab.label_name }}</a>
                         {% endfor %}
-                        </td>
-                    <!-- <td class="cell100 column3">Model Action1, Model Action2</td> -->
-                    <td class="cell100 column3">
-                      <button type="submit" class="button button-light">
-                        <a href="#">Train</button></a>,
-                      <button type="submit" class="button button-light">
-                        <a href="{{ url_for('predict', projid = proj.project_id) }}">Predict</button></a>
-                    </td>
+                        </div>
+                      </div>
+                      </td>
+
+
+                      <td class="cell100 column3">
+                        <button onclick="popupClickButton()" class="button button-light" type="button">Train</button>
+
+                        <script>
+                          function popupClickButton() {
+                            alert("Your model is being trained! Please wait...");
+                          }
+                        </script>
+
+                        <button type="submit" class="button button-light">
+                          <a href="{{ url_for('predict', projid = proj.project_id) }}">Predict</button></a>
+
+                        <button type="submit" class="button button-light">
+                          <a href="{{ url_for('status', projid = proj.project_id) }}">Status</button></a>
+                      </td>
                     </tr>
                     {% endfor %}
-                </form>
+                  </form>
                 </tbody>
-                </table>
-              </div>
+              </table>
             </div>
           </div>
+        </div>
       </div>
     </div>
 
@@ -176,8 +190,6 @@
     </script>
     <!--===============================================================================================-->
     <script src="{{ url_for('static', filename='addjs/main_table.js') }}"></script>
-
-</body>
 
 
 
@@ -266,6 +278,7 @@
 <script src="{{ url_for('static', filename='js/jquery.ajaxchimp.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/mail-script.js') }}"></script>
 <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
 </body>
 
 </html>

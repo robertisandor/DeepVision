@@ -397,7 +397,42 @@ def predict(projid):
             k.set_contents_from_string(file_content)
 
     return render_template('predict.html', projnm=projnm,
-                           pred_lab=pred_lab, form=form)
+                           pred_lab=pred_lab, form=form, projid=projid)
+
+
+@application.route('/status/<projid>', methods=['GET', 'POST'])
+@login_required
+def status(projid):
+    """
+    This route provides project status, 
+    including the prediction results and users of this project.
+    :return: model prediction results and users of the project.
+    """
+    projnm = classes.Project.query.filter_by(project_id=projid) \
+        .first().project_name
+    userids_of_one_project = classes.User_Project.query \
+        .filter_by(project_id=projid).all()
+    users = []
+    for user_proj in userids_of_one_project:
+        users.append(classes.User.query.filter_by(
+            id=user_proj.user_id).first().username)
+    if request.method == "POST":
+        username = request.form['username']
+        count = classes.User.query.filter_by(username=username).count()
+        if count == 0:
+            flash('User does not exist.')
+        elif username in users:
+            flash(username + ' already exists.')
+        else:
+            user_id = classes.User.query.filter_by(username=username) \
+                .first().id
+            user_proj = classes.User_Project(user_id, projid)
+            db.session.add(user_proj)
+            db.session.commit()
+            return render_template('status.html', projnm=projnm, 
+                           users=users, projid=projid)
+    return render_template('status.html', projnm=projnm, 
+                           users=users, projid=projid)
 
 
 @application.route('/logout')
