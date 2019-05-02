@@ -1,3 +1,4 @@
+import asyncio
 import ssl
 import smtplib
 from sklearn.metrics import roc_auc_score, f1_score
@@ -662,7 +663,7 @@ def send_email(receiver_name, receiver_email):
 
 ##### calls from backend ##### 
 
-def train(project_name, aspect_r, name, email, lbl2idx):
+async def train(project_name, aspect_r, name, email, lbl2idx):
 
     # Resizing
     df = get_project_df(CLIENT, project_name, BUCKET_ORIG)
@@ -741,3 +742,27 @@ def predict(project_id, paths, aspect_r, n_training_labels):
         predictions.append(np.argmax(logits))
 
     return predictions
+
+
+
+if __name__=='__main__':
+
+    loop = asyncio.get_event_loop()
+
+    project_name = 'Oxford-IIIT-Pet'
+    aspect_r = .8
+    D = {'pomeranian': 0,
+         'pug': 1,
+         'saint_bernard': 2,
+         'samoyed': 3,
+         'scottish_terrier': 4,
+         'shiba_inu': 5}
+    user = 'Miguel'
+    email = 'mromerocalvo@dons.usfca.edu'
+
+    loop.run_until_complete(train(project_name, aspect_r, user , email, D))
+
+    print("It's working Dude!")
+
+
+
