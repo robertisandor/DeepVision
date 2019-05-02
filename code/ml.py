@@ -665,8 +665,8 @@ def send_email(receiver_name, receiver_email):
 def train(project_name, aspect_r, name, email, lbl2idx):
 
     # Resizing
-    #     df = get_project_df(CLIENT, project_name, BUCKET_ORIG)
-    #     resize_images(df, aspect_r, CLIENT, project_name)
+    df = get_project_df(CLIENT, project_name, BUCKET_ORIG)
+    resize_images(df, aspect_r, CLIENT, project_name)
 
     # datasets declaration
     transforms = [RandomRotation(arc_width=30), Flip(), RandomCrop(R_PIX)]
