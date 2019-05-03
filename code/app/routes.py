@@ -38,6 +38,11 @@ from collections import Counter
 import numpy as np
 from ml import train_ml, predict_ml
 
+CLIENT = boto3.client('s3', aws_access_key_id='AKIAIQRI4EE5ENXNW6LQ',
+                      aws_secret_access_key='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')
+
+BUCKET_NAME = 'msds603-deep-vision'
+
 # Web app backend ##############
 
 
@@ -358,6 +363,11 @@ def train(projid):
     After training is done, the user will receive an notification email.
     """
     # query inputs for to train the model
+    folders = CLIENT.list_objects(Bucket=BUCKET_NAME, Prefix=f'{projid}/', Delimiter="/")
+
+    print(folders)
+
+
     print('Enters training route')
     proj = classes.Project.query.filter_by(project_id=projid).first()
     proj_name = proj.project_name
