@@ -365,7 +365,7 @@ def train(projid):
     # query inputs for to train the model
     folders = CLIENT.list_objects(Bucket=BUCKET_NAME, Prefix=f'{projid}/', Delimiter="/")
 
-    print(folders)
+    if print(folders)
 
 
     print('Enters training route')
@@ -384,7 +384,7 @@ def train(projid):
 
     # call the train function from ml module
     print('before training', lbl2idx)
-    train_ml(proj_name, last_asp_ratio, proj_owner_name, proj_owner_email, lbl2idx)
+    train_ml(projid, last_asp_ratio, proj_owner_name, proj_owner_email, lbl2idx)
 
     return redirect(url_for('projects'))
 

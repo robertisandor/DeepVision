@@ -664,25 +664,25 @@ def send_email(receiver_name, receiver_email):
 ##### calls from backend ##### 
 
 # async def train_ml(project_name, aspect_r, name, email, lbl2idx):
-def train_ml(project_name, aspect_r, name, email, lbl2idx):
+def train_ml(proj_id, aspect_r, name, email, lbl2idx):
 
     # Resizing
     print('Resizing images ...')
-    df = get_project_df(CLIENT, project_name, BUCKET_ORIG)
-    resize_images(df, aspect_r, CLIENT, project_name)
+    df = get_project_df(CLIENT, proj_id, BUCKET_ORIG)
+    resize_images(df, aspect_r, CLIENT, proj_id)
 
     print('Creating data sets/ loaders ...')
     # datasets declaration
     transforms = [RandomRotation(arc_width=30), Flip(), RandomCrop(R_PIX)]
 
-    df = get_project_df(CLIENT, project_name, BUCKET_RESIZE)
+    df = get_project_df(CLIENT, proj_id, BUCKET_RESIZE)
     idx = np.random.rand(len(df)) < .9
     train_df = df[idx]
     valid_df = df[~idx]
 
-    train_ds = Transform(ProjectDS(train_df, lbl2idx, CLIENT, project_name, BUCKET_RESIZE),
+    train_ds = Transform(ProjectDS(train_df, lbl2idx, CLIENT, proj_id, BUCKET_RESIZE),
                          transforms=transforms, normalize=False, r_pix=R_PIX)
-    valid_ds = Transform(ProjectDS(valid_df, lbl2idx, CLIENT, project_name, BUCKET_RESIZE),
+    valid_ds = Transform(ProjectDS(valid_df, lbl2idx, CLIENT, proj_id, BUCKET_RESIZE),
                          transforms=False, normalize=False, r_pix=R_PIX)
 
     n_lbls = len(lbl2idx)
@@ -693,7 +693,7 @@ def train_ml(project_name, aspect_r, name, email, lbl2idx):
     # model = DenseNet(n_lbls, pretrained=True,
     #                  freeze=True).to(device)  # .cuda()
 
-    save_path = f'{project_name}/{MODEL_W_FOLD_NAME}/' + \
+    save_path = f'{proj_id}/{MODEL_W_FOLD_NAME}/' + \
         now_str() + '-model.pth'
 
     best_loss = np.inf
@@ -711,7 +711,7 @@ def train_ml(project_name, aspect_r, name, email, lbl2idx):
                      freeze=True).to(device)  # .cuda()
     print('max_lr:', .01)
     best_loss = train_model(MAX_EPOCHS, model, best_loss=best_loss,  train_dl=train_dl, valid_dl=valid_dl,
-                            max_lr=.01, wd=0, project_name=project_name, n_lbls=n_lbls,
+                            max_lr=.01, wd=0, project_name=proj_id, n_lbls=n_lbls,
                             save_path=save_path, unfreeze_during_loop=(.1, .2))
 
     send_email(receiver_name=name, receiver_email=email)
