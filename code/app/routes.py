@@ -386,13 +386,14 @@ def predict(projid):
                           aws_secret_access_key='2gduLL4umVC9j7XXc2L1N8DfUVQQKcFmnezTYF8O')
     bucket_name = 'msds603-deep-vision'
 
-    # check if there is a model
-    filepaths = client.list_objects(Bucket=bucket_name, Prefix=projid, Delimiter='')
-    if f'{projid}/model/' not in [element['Prefix'] for element in filepaths['CommonPrefixes']]:
-        return "A model has to be trained before predicting."
-
     projnm = classes.Project.query.filter_by(project_id=projid) \
         .first().project_name
+
+    # check if there is a model
+    filepaths = client.list_objects(Bucket=bucket_name, Prefix=projid, Delimiter='')
+    if f'{projid}/model/' not in [element['Key'] for element in filepaths['Contents']]:
+        return "A model has to be trained before predicting."
+
     form = UploadFileForm()
     prediction_labels = []
 
@@ -414,8 +415,8 @@ def predict(projid):
         aspect_ratio = project.last_train_asp_ratio
 
         # remove and create the tmp sub directory for that project
-        if os.path.exists(f"static/tmp/{projid}"): shutil.rmtree(f"static/tmp/{projid}")
-        os.mkdir(f"static/tmp/{projid}")
+        if os.path.exists(f"/home/ec2-user/product-analytics-group-project-deepvision/code/app/static/tmp/{projid}"): shutil.rmtree(f"/home/ec2-user/product-analytics-group-project-deepvision/code/app/static/tmp/{projid}")
+        os.mkdir(f"/home/ec2-user/product-analytics-group-project-deepvision/code/app/static/tmp/{projid}")
 
         # Store imgs to s3 and ec2.
         s3_filepaths = []
@@ -423,7 +424,7 @@ def predict(projid):
         for f in files:
             filename = secure_filename(f.filename)
             s3_filepath = '/'.join([str(projid), 'prediction', filename])
-            ec2_filepath = '/'.join(['static','tmp', str(projid), filename])
+            ec2_filepath = '/'.join(['/home/ec2-user/product-analytics-group-project-deepvision/code/app/static/tmp', str(projid), filename])
 
             file_content = f.stream.read()
             s3_connection = boto.connect_s3(
@@ -452,7 +453,7 @@ def predict(projid):
         predictions = [0 for _ in range(len(files))]
 
         idx2lbls = [0]*len(labels)
-        for label in labels: idx2lbls[int(label.index)] = label.name
+        for label in labels: idx2lbls[int(label.label_index)] = label.label_name
         prediction_labels = [ idx2lbls[p] for p in predictions ]
 
 
