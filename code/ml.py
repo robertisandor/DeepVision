@@ -113,12 +113,13 @@ def get_image(client, file_path, show=False, bucket_name=BUCKET_RESIZE):
     tmp = tempfile.NamedTemporaryFile()
     with open(tmp.name, 'wb') as data:
         client.download_fileobj(bucket_name, file_path, data)
-        print(file_path)
-        img = mpimg.imread(tmp.name)
+    #    await asyncio.sleep(10)
+    
+    img = mpimg.imread(tmp.name)
 
-    # with open(tmp.name, 'wb') as tmp.name:
-    #     client.download_fileobj(bucket_name, file_path, tmp.name)
-    #     img = mpimg.imread(tmp.name)
+    #with open(tmp.name, 'wb') as tmp.name:
+    #    client.download_fileobj(bucket_name, file_path, tmp.name)
+    #    img = mpimg.imread(tmp.name)
 
     # if show:
     #     plt.imshow(img)
@@ -144,7 +145,7 @@ class ProjectDS(Dataset):
 
 #         self.lbl2idx, self.idx2lbl = create_mappings(df.label)
         self.lbl2idx = lbl2idx
-
+        print(lbl2idx)
         self.labels = list(map(lambda x: self.lbl2idx[x], df.label))
 
     def __len__(self): return len(self.labels)
@@ -414,7 +415,7 @@ class DenseNet(nn.Module):
 # Validation functions
 
 
-def ave_auc(probs, ys, n_lbls):
+def ave_f1(probs, ys, n_lbls):
     #     ys2 = label_binarize(ys, classes=list(range(n_lbls)))
     #     print(ys2)
     #     print(ys2)
@@ -438,9 +439,9 @@ def validate_loop(model, valid_dl, task):
 
     for x, y in valid_dl:
 
-        x, y = x.to(device), y.to(device)  # x.cuda(),y.cuda()
+        x, y = x.float().to(device), y.float().to(device)  # x.cuda(),y.cuda()
         out = model(x)
-        loss = loss_f(out, y)
+        loss = loss_f(out.squeeze(), y)
 
         batch = y.shape[0]
         sum_loss += batch * (loss.item())
@@ -461,7 +462,7 @@ def validate_multiclass(model, valid_dl, n_lbls):
 
     loss, preds, ys = validate_loop(model, valid_dl, 'multiclass')
 
-    mean_auc = ave_auc(preds, ys, n_lbls)
+    mean_auc = ave_f1(preds, ys, n_lbls)
 
     return loss, mean_auc
 
@@ -470,7 +471,7 @@ def validate_binary(model, valid_dl, n_lbls):
 
     loss, preds, ys = validate_loop(model, valid_dl, 'binary')
 
-    auc = roc_auc_score(preds, ys)
+    auc = roc_auc_score(y_score=preds,y_true=ys)
 
     return loss, auc
 
@@ -592,7 +593,7 @@ def train_model(n_epochs, model, train_dl, n_lbls, best_loss, valid_dl=None, max
 
     cnt = 0
 
-    policy = TrainingPolicy(n_epochs=n_epochs, dl=dl, max_lr=max_lr)
+    policy = TrainingPolicy(n_epochs=n_epochs, dl=train_dl, max_lr=max_lr)
     optimizer = OptimizerWrapper(
         policy, model, n_epochs, train_dl, max_lr=max_lr, wd=wd, alpha=alpha)
 
@@ -609,10 +610,10 @@ def train_model(n_epochs, model, train_dl, n_lbls, best_loss, valid_dl=None, max
                 if cnt == second_unfreeze:
                     model.unfreeze(0)
 
-            x, y = x.to(device), y.to(device)
+            x, y = x.float().to(device), y.float().to(device)
 
             out = model(x)
-            loss = loss_fun(input=out, target=y)
+            loss = loss_fun(input=out.squeeze(), target=y)
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
@@ -712,7 +713,7 @@ def train_ml(proj_id, aspect_r, name, email, lbl2idx):
     #                             max_lr=M_lr, wd=0, project_name=project_name, n_lbls=n_lbls,
     #                             save_path=save_path, unfreeze_during_loop=(.1, .2))
 
-    model = DenseNet(n_lbls, pretrained=True,
+    model = DenseNet(n_lbls if n_lbls!=2 else 1, pretrained=True,
                      freeze=True).to(device)  # .cuda()
     print('max_lr:', .01)
     best_loss = train_model(MAX_EPOCHS, model, best_loss=best_loss,  train_dl=train_dl, valid_dl=valid_dl,
@@ -727,7 +728,7 @@ def predict_ml(project_id, paths, aspect_r, n_training_labels):
     predictions = []
 
     print('constructing model ...')
-    model = DenseNet(out_size=n_training_labels)
+    model = DenseNet(out_size=n_training_labels if n_training_labels!=2 else 1)
     print('loading model ...')
     load_model(model, CLIENT, project_id, bucket_name=BUCKET_ORIG,
                tmp_p=project_id+TMP_MODEL_FILE)

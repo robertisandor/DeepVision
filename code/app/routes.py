@@ -389,7 +389,7 @@ def train(projid):
 
 
     print('Enters training route')
-    max_asp_ratio = classes.Aspect_Ratio.query.filter_by(project_id=projid).order_by(classes.Aspect_Ratio.count.desc()).first()
+    max_asp_ratio = float(classes.Aspect_Ratio.query.filter_by(project_id=projid).order_by(classes.Aspect_Ratio.count.desc()).first().aspect_ratio)
 
     # proj_name = proj.project_name
 
@@ -403,7 +403,7 @@ def train(projid):
 
     labels = classes.Label.query.filter_by(project_id=projid).all()
     print(labels)
-    lbl2idx = {label.label_name: label.label_index for label in labels}
+    lbl2idx = {str(label.label_id): (label.label_index if label.label_index else i) for i, label in enumerate(labels)}
 
     # call the train function from ml module
     print('before training', lbl2idx)
@@ -492,7 +492,7 @@ def predict(projid):
         predictions = [0 for _ in range(len(files))]
 
         idx2lbls = [0]*len(labels)
-        for label in labels: idx2lbls[int(label.label_index)] = label.label_name
+        for label in labels: idx2lbls[int(label.label_index)] = label.label_id
         prediction_labels = [ idx2lbls[p] for p in predictions ]
 
 
