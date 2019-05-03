@@ -446,16 +446,6 @@ def predict(projid):
 
     if form.validate_on_submit():
         files = form.file_selector.data
-        
-
-
-        # pred_folder = f"{projid}/prediction"
-
-        # filepaths = client.list_objects(Bucket=bucket_name, Prefix=projid+'/prediction', Delimiter='')
-        # filepaths = [item['Key'] for item in filepaths['Contents']
-        #              if len(item['Key'].split('.')) > 1 and item['Key'].split('/')[0] == projid
-        #              and item['Key'].split('/')[1] == 'prediction']
-
 
         # Get aspect_ratio
         project = classes.Project.query.filter_by(project_id=projid).first()
@@ -491,26 +481,24 @@ def predict(projid):
                 file_content = f.stream.read()
                 data.write(file_content)
 
-        # Number of training labels
+        # To get number of training labels
         labels = classes.Label.query.filter_by(project_id=projid).all()
-        # print(len(labels))
 
         # Miguel's predict function
-        # predictions = predict_ml(project_id=projid, paths=filepaths, aspect_r=aspect_ratio, n_training_labels=len(labels))
-        predictions = [0 for _ in range(len(files))]
-
+        predictions = predict_ml(project_id=projid, paths=filepaths, aspect_r=aspect_ratio, n_training_labels=len(labels))
+        
         idx2lbls = [0]*len(labels)
-        for label in labels: idx2lbls[int(label.label_index)] = label.label_name
+        for label in labels: 
+            idx2lbls[int(label.label_index)] = label.label_name
         prediction_labels = [ idx2lbls[p] for p in predictions ]
+        project_ids = [projid for i in range(len(prediction_labels))]
+        
+        for row in zip(project_ids, ec2_filepaths, prediction_labels):
+            prediction(row[0], row[1], row[2])
 
-
+        # TODO: remove print statements after debugging
         print('prediction_labels', prediction_labels)
         print('ec2_paths', ec2_filepaths)
-
-        # query labels for labelnames of project given the indices returned (predictions) and the project id
-        # create list comprehension that maps labels from indexes given
-
-        # TODO: query S3, find filepaths, create named temporary files for all of the images 
 
     return render_template('predict.html', projnm=projnm,
                            pred_lab=prediction_labels, form=form, projid=projid)
@@ -732,3 +720,11 @@ def mobile_logout():
     return json.dumps({"success": "1"})
 
 # TODO: mobile_upload
+
+def prediction(project_id, path_to_img, label):
+    '''
+    Record the predicted result and their path
+    '''
+    pred_results = classes.Pred_Results(project_id, path_to_img, label)
+    db.session.add(pred_results)
+    db.session.commit()
