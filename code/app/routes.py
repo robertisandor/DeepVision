@@ -454,8 +454,16 @@ def status(projid):
             user_proj = classes.User_Project(user_id, projid)
             db.session.add(user_proj)
             db.session.commit()
+            users_with_new = []
+            userids_with_new_of_one_project = classes.User_Project\
+                .query.filter_by(project_id=projid).all()
+            for user_proj_new in userids_with_new_of_one_project:
+                users_with_new.append(
+                    classes.User.query.filter_by(
+                        id=user_proj_new.user_id).first().username
+                )
             return render_template('status.html', projnm=projnm, 
-                           users=users, projid=projid)
+                           users=users_with_new, projid=projid)
     return render_template('status.html', projnm=projnm, 
                            users=users, projid=projid)
 
