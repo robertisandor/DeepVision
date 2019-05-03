@@ -350,6 +350,7 @@ def train(proj_id):
     After training is done, the user will receive an notification email.
     """
     # query inputs for to train the model
+    print('I am being called')
     proj = classes.Project.query.filter_by(project_id=proj_id).first()
     project_name = proj.project_name
     last_asp_ratio = proj.last_train_asp_ratio
@@ -358,11 +359,12 @@ def train(proj_id):
     proj_owner = classes.User.query.filter_by(id=project_owner_id).first() 
     proj_owner_name = proj_owner.username
     proj_owner_email = proj_owner.email
-
+    
     labels = classes.Label.query.filter_by(project_id=proj_id).all()
     lbl2idx = {label.label_name: label.label_index for label in labels}
 
     # call the train function from ml module
+    print('About to enter..', lbl2idx)
     train(proj_name, last_asp_ratio, proj_owner_name, proj_owner_email, lbl2idx)
 
 
