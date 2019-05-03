@@ -15,6 +15,7 @@ import matplotlib.image as mpimg
 import tempfile
 from wtforms import SubmitField
 from werkzeug import secure_filename
+import shutil
 import ml
 
 # for building forms
@@ -376,74 +377,83 @@ def predict(projid):
     This route provides prediction on newly uploaded image for a project.
     :return: predicted label of the new image, display on the website.
     """
+
+    client = boto3.client('s3', aws_access_key_id='AKIAIQRI4EE5ENXNW6LQ',
+                          aws_secret_access_key='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')
+    bucket_name = 'msds603-deep-vision'
+
+    # check if there is a model
+    filepaths = client.list_objects(Bucket=bucket_name, Prefix=projid, Delimiter='')
+    if f'{projnm}/model/' not in [element['Prefix'] for element in filepaths['CommonPrefixes']]:
+        return "A model has to be trained before predicting."
+
     projnm = classes.Project.query.filter_by(project_id=projid) \
         .first().project_name
     form = UploadFileForm()
     prediction_labels = []
+
     if form.validate_on_submit():
         files = form.file_selector.data
         
-        # simply get the aspect ratio and the project id 
-        
-        # train(projid, current_project.project_owner_id, project_owner.username, project_owner.email)
-        # pojectid, paths, aspect ratio
-        client = boto3.client('s3', aws_access_key_id='AKIAIQRI4EE5ENXNW6LQ',
-                aws_secret_access_key='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')
-        bucket_name = 'msds603-deep-vision'
-
-        filepaths = client.list_objects(Bucket=bucket_name, Prefix=projid, Delimiter='')
-        print([element['Prefix'] for element in filepaths['CommonPrefixes']])
-
-        
-        if f'{projnm}/model/' not in [element['Prefix'] for element in filepaths['CommonPrefixes']]
-            return "There is no model. Please give a model."
-
-        
-
-        filepaths = [item['Key'] for item in filepaths['Contents'] 
-                     if len(item['Key'].split('.')) > 1 and item['Key'].split('/')[0] == projid
-                     and item['Key'].split('/')[1] == 'prediction']
 
 
-        # to get aspect_ratio
+        # pred_folder = f"{projid}/prediction"
+
+        # filepaths = client.list_objects(Bucket=bucket_name, Prefix=projid+'/prediction', Delimiter='')
+        # filepaths = [item['Key'] for item in filepaths['Contents']
+        #              if len(item['Key'].split('.')) > 1 and item['Key'].split('/')[0] == projid
+        #              and item['Key'].split('/')[1] == 'prediction']
+
+
+        # Get aspect_ratio
         project = classes.Project.query.filter_by(project_id=projid).first()
         aspect_ratio = project.last_train_asp_ratio
-        if aspect_ratio is None:
-            aspect_ratio = 1
-        print(aspect_ratio)
 
-        # to get number of training labels
-        labels = classes.Label.query.filter_by(project_id=projid).all()
-        print(len(labels))
-        
-        # figure out issue with labels
-        # label history
+        # remove and create the tmp sub directory for that project
+        if os.path.exists(f"static/tmp/{projid}"): shutil.rmtree(f"static/tmp/{projid}")
+        os.mkdir(f"static/tmp/{projid}")
 
+        # Store imgs to s3 and ec2.
+        s3_filepaths = []
+        ec2_filepaths = []
         for f in files:
             filename = secure_filename(f.filename)
-            file_content = f.stream.read()
+            s3_filepath = '/'.join([str(projid), 'prediction', filename])
+            ec2_filepath = '/'.join(['static','tmp', str(projid), filename])
 
+            file_content = f.stream.read()
             s3_connection = boto.connect_s3(
                 aws_access_key_id='AKIAIQRI4EE5ENXNW6LQ',
                 aws_secret_access_key='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')
             # to be fixed with paramiko
             bucket = s3_connection.get_bucket(bucket_name)
             k = Key(bucket)
-            k.key = '/'.join([str(projid), 'prediction', filename])
+            k.key = s3_filepath
             k.set_contents_from_string(file_content)
 
-        # Miguel's predict function
-        # ml.predict_ml(project_id=projid, paths=filepaths, aspect_r=aspect_ratio, n_training_labels=len(labels))
-        # predictions = ml.predict(project_id=projid, paths=filepaths, aspect_r=aspect_ratio, n_training_labels=len(labels))
-        predictions = [0 for i in range(len(files))]
-        
-        labels = classes.Label.query(project_id=projid).all()
-        print(labels)
-        label_dict = {label.index:label.name for label in labels}
-        print(label_dict)
+            s3_filepaths.append(s3_filepath)
+            ec2_filepaths.append(ec2_filepath)
 
-        prediction_labels = [label_dict[prediction] for prediction in predictions if prediction in list(label_dict.keys())]
-        print(prediction_labels)
+            with open(ec2_filepath, 'wb') as data:
+                file_content = f.stream.read()
+                data.write(file_content)
+
+        # Number of training labels
+        labels = classes.Label.query.filter_by(project_id=projid).all()
+        # print(len(labels))
+
+        # Miguel's predict function
+        # predictions = predict_ml(project_id=projid, paths=filepaths, aspect_r=aspect_ratio, n_training_labels=len(labels))
+        predictions = [0 for _ in range(len(files))]
+
+        idx2lbls = [0]*len(labels)
+        for label in labels: idx2lbls[int(label.index)] = label.name
+        prediction_labels = [ idx2lbls[p] for p in predictions ]
+
+
+        print('prediction_labels', prediction_labels)
+        print('ec2_paths', ec2_filepaths)
+
         # query labels for labelnames of project given the indices returned (predictions) and the project id
         # create list comprehension that maps labels from indexes given
 
