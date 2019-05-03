@@ -663,7 +663,8 @@ def send_email(receiver_name, receiver_email):
 
 ##### calls from backend ##### 
 
-async def train_ml(project_name, aspect_r, name, email, lbl2idx):
+# async def train_ml(project_name, aspect_r, name, email, lbl2idx):
+def train_ml(project_name, aspect_r, name, email, lbl2idx):
 
     # Resizing
     print('Resizing images ...')
@@ -698,13 +699,20 @@ async def train_ml(project_name, aspect_r, name, email, lbl2idx):
     best_loss = np.inf
 
     print('Training with different max lr ...')
-    for M_lr in [.01, .005, .001]:
-        model = DenseNet(n_lbls, pretrained=True,
-                         freeze=True).to(device)  # .cuda()
-        print('max_lr:', M_lr)
-        best_loss = train_model(MAX_EPOCHS, model, best_loss=best_loss,  train_dl=train_dl, valid_dl=valid_dl,
-                                max_lr=M_lr, wd=0, project_name=project_name, n_lbls=n_lbls,
-                                save_path=save_path, unfreeze_during_loop=(.1, .2))
+    # for M_lr in [.01, .005, .001]:
+    #     model = DenseNet(n_lbls, pretrained=True,
+    #                      freeze=True).to(device)  # .cuda()
+    #     print('max_lr:', M_lr)
+    #     best_loss = train_model(MAX_EPOCHS, model, best_loss=best_loss,  train_dl=train_dl, valid_dl=valid_dl,
+    #                             max_lr=M_lr, wd=0, project_name=project_name, n_lbls=n_lbls,
+    #                             save_path=save_path, unfreeze_during_loop=(.1, .2))
+
+    model = DenseNet(n_lbls, pretrained=True,
+                     freeze=True).to(device)  # .cuda()
+    print('max_lr:', .01)
+    best_loss = train_model(MAX_EPOCHS, model, best_loss=best_loss,  train_dl=train_dl, valid_dl=valid_dl,
+                            max_lr=.01, wd=0, project_name=project_name, n_lbls=n_lbls,
+                            save_path=save_path, unfreeze_during_loop=(.1, .2))
 
     send_email(receiver_name=name, receiver_email=email)
 
