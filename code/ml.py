@@ -666,9 +666,11 @@ def send_email(receiver_name, receiver_email):
 async def train(project_name, aspect_r, name, email, lbl2idx):
 
     # Resizing
+    print('Resizing images ...')
     df = get_project_df(CLIENT, project_name, BUCKET_ORIG)
     resize_images(df, aspect_r, CLIENT, project_name)
 
+    print('Creating data sets/ loaders ...')
     # datasets declaration
     transforms = [RandomRotation(arc_width=30), Flip(), RandomCrop(R_PIX)]
 
@@ -687,14 +689,15 @@ async def train(project_name, aspect_r, name, email, lbl2idx):
     train_dl = DataLoader(train_ds, batch_size=BATCH_SIZE, shuffle=True)
     valid_dl = DataLoader(valid_ds, batch_size=BATCH_SIZE, shuffle=False)
 
-    model = DenseNet(n_lbls, pretrained=True,
-                     freeze=True).to(device)  # .cuda()
+    # model = DenseNet(n_lbls, pretrained=True,
+    #                  freeze=True).to(device)  # .cuda()
 
     save_path = f'{project_name}/{MODEL_W_FOLD_NAME}/' + \
         now_str() + '-model.pth'
 
     best_loss = np.inf
 
+    print('Training with different max lr ...')
     for M_lr in [.01, .005, .001]:
         model = DenseNet(n_lbls, pretrained=True,
                          freeze=True).to(device)  # .cuda()
