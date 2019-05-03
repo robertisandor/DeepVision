@@ -635,6 +635,30 @@ def train_model(n_epochs, model, train_dl, n_lbls, best_loss, valid_dl=None, max
 
 # sending email
 
+def send_notification(receiver_name, receiver_email, subject_line, email_text):
+    """
+    A general function to send notification emails to users.
+    Subject line and content of the notification can be customized.
+    """
+    message = f'Subject: {subject_line}\n\n{email_text}'
+
+    # Create a secure SSL context
+    context = ssl.create_default_context()
+
+    # Try to log in to server and send email
+    try:
+        server = smtplib.SMTP(SMTP_SERVER, PORT)
+        server.ehlo()  # Can be omitted
+        server.starttls(context=context)  # Secure the connection
+        server.ehlo()  # Can be omitted
+        server.login(SENDER_EMAIL, PASSWORD)
+        server.sendmail(SENDER_EMAIL, receiver_email, message)
+        # TODO: Send email here
+    except Exception as e:
+        # Print any error messages to stdout
+        print(e)
+    finally:
+        server.quit()
 
 def send_email(receiver_name, receiver_email):
 

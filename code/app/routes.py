@@ -37,7 +37,7 @@ import time
 
 # for prediction
 import numpy as np
-from ml import train_ml, predict_ml
+from ml import train_ml, predict_ml, send_notifcation
 
 CLIENT = boto3.client('s3', aws_access_key_id='AKIAIQRI4EE5ENXNW6LQ',
                       aws_secret_access_key='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')
@@ -46,6 +46,14 @@ BUCKET_NAME = 'msds603-deep-vision'
 MIN_IMG_LBL = 5
 
 # Web app backend ##############
+
+# S3 helper functions
+def get_deepVision_bucket():
+    bucket_name = 'msds603-deep-vision'
+    s3_connection = boto.connect_s3(
+        aws_access_key_id='AKIAIQRI4EE5ENXNW6LQ',
+        aws_secret_access_key='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')
+    return s3_connection.get_bucket(bucket_name)
 
 
 @application.route('/home')
@@ -228,14 +236,7 @@ def projects():
             # TODO: when creating the project, I need to create the model 
             # and prediction folders for a given project in S3 
 
-            # TODO: abstract writing to S3 bucket into a function; 
-            # remove duplicated code
-            bucket_name = 'msds603-deep-vision'
-            s3_connection = boto.connect_s3(
-                aws_access_key_id='AKIAIQRI4EE5ENXNW6LQ',
-                aws_secret_access_key='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')
-            # to be fixed with paramiko
-            bucket = s3_connection.get_bucket(bucket_name)
+            bucket = get_deepVision_bucket()
             # bucket.set_acl('public-read')
             k = Key(bucket)
 
@@ -249,13 +250,14 @@ def projects():
             k.key = f'/{str(most_recent_project.project_id)}/prediction/'
             k.set_contents_from_string('')
 
-            # create folder in predict bucket
-            bucket_name = 'msds603-deep-vision-predict'
-            s3_connection = boto.connect_s3(
-                aws_access_key_id='AKIAIQRI4EE5ENXNW6LQ',
-                aws_secret_access_key='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')
-            # to be fixed with paramiko
-            bucket = s3_connection.get_bucket(bucket_name)
+            # # create folder in predict bucket
+            # bucket_name = 'msds603-deep-vision-predict'
+            # s3_connection = boto.connect_s3(
+            #     aws_access_key_id='AKIAIQRI4EE5ENXNW6LQ',
+            #     aws_secret_access_key='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')
+            # # to be fixed with paramiko
+            # bucket = s3_connection.get_bucket(bucket_name)
+
             # bucket.set_acl('public-read')
             k = Key(bucket)
             k.key = f'/{str(most_recent_project.project_id)}/'
@@ -335,12 +337,13 @@ def upload(labid):
             aspect_ratios_newfs.append(str(aspect_ratio))
 
             # send file to s3 one by one
-            bucket_name = 'msds603-deep-vision'
-            s3_connection = boto.connect_s3(
-                aws_access_key_id='AKIAIQRI4EE5ENXNW6LQ',
-                aws_secret_access_key='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')
-            # to be fixed with paramiko
-            bucket = s3_connection.get_bucket(bucket_name)
+            # bucket_name = 'msds603-deep-vision'
+            # s3_connection = boto.connect_s3(
+            #     aws_access_key_id='AKIAIQRI4EE5ENXNW6LQ',
+            #     aws_secret_access_key='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')
+            # # to be fixed with paramiko
+            # bucket = s3_connection.get_bucket(bucket_name)
+            bucket = get_deepVision_bucket()
             k = Key(bucket)
             ts = round(time.time())
             k.key = '/'.join([str(projid), str(labid), str(ts)+"_"+filename])
@@ -521,6 +524,8 @@ def status(projid):
     for user_proj in userids_of_one_project:
         users.append(classes.User.query.filter_by(
             id=user_proj.user_id).first().username)
+
+
     if request.method == "POST":
         username = request.form['username']
         count = classes.User.query.filter_by(username=username).count()
@@ -542,6 +547,8 @@ def status(projid):
                     classes.User.query.filter_by(
                         id=user_proj_new.user_id).first().username
                 )
+                # send_notifcation()
+
             return render_template('status.html', projnm=projnm, 
                            users=users_with_new, projid=projid)
     return render_template('status.html', projnm=projnm, 
