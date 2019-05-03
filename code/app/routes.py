@@ -344,13 +344,13 @@ def upload(labid):
 
 @application.route('/train/<projid>', methods=['GET', 'POST'])
 @login_required
-def train(projid):
+def train(proj_id):
     """
     This route triggered when a user clicks "Train" button in a project.
     After training is done, the user will receive an notification email.
     """
     # query inputs for to train the model
-    proj = classes.Project.query.filter_by(project_id=projid).first()
+    proj = classes.Project.query.filter_by(project_id=proj_id).first()
     project_name = proj.project_name
     last_asp_ratio = proj.last_train_asp_ratio
     
@@ -359,11 +359,11 @@ def train(projid):
     proj_owner_name = proj_owner.username
     proj_owner_email = proj_owner.email
 
-    labels = classes.Label.query.filter_by(project_id=projid).all()
+    labels = classes.Label.query.filter_by(project_id=proj_id).all()
     lbl2idx = {label.label_name: label.label_index for label in labels}
 
     # call the train function from ml module
-    train(projid, last_asp_ratio, proj_owner_name, proj_owner_email, lbl2idx)
+    train(proj_name, last_asp_ratio, proj_owner_name, proj_owner_email, lbl2idx)
 
 
 
