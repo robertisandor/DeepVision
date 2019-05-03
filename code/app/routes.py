@@ -42,6 +42,7 @@ CLIENT = boto3.client('s3', aws_access_key_id='AKIAIQRI4EE5ENXNW6LQ',
                       aws_secret_access_key='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')
 
 BUCKET_NAME = 'msds603-deep-vision'
+MIN_IMG_LBL = 20
 
 # Web app backend ##############
 
@@ -364,7 +365,22 @@ def train(projid):
     """
     # query inputs for to train the model
 
-    # TODO: Check that minimum amount of images are uploaded
+    # Check that minimum amount of images are uploaded
+    # TODO: Frontend handeling this
+    folders = CLIENT.list_objects(Bucket=BUCKET_NAME, Prefix=f'{projid}/', Delimiter="/")
+
+    if 'CommonPrefixes' in folders:
+        dirs = [di['Prefix'] for di in folders['CommonPrefixes'] if
+                di['Prefix'] not in [f'{projid}/prediction/', f'{projid}/model/']]
+        for di in dirs:
+            files = CLIENT.list_objects(Bucket=BUCKET_NAME, Prefix=di, Delimiter="")
+            if 'Contents' in files:
+                files = [f['Key'] for f in files['Contents'][1:]]
+                if len(files) < MIN_IMG_LBL: return f"Upload at least {MIN_IMG_LBL} images for {files[0].split('/')[1]}"
+            else: return "Upload images for {di.split('/')[1]} before starting training"
+
+    else: return "Upload images before starting training"
+
     # folders = CLIENT.list_objects(Bucket=BUCKET_NAME, Prefix=f'{projid}/', Delimiter="/")
 
 
