@@ -111,8 +111,12 @@ def resize_images(df, aspect_r, client, project_name, org_bucket=BUCKET_ORIG, de
 def get_image(client, file_path, show=False, bucket_name=BUCKET_RESIZE):
 
     tmp = tempfile.NamedTemporaryFile()
-    with open(tmp.name, 'wb') as data:
-        client.download_fileobj(bucket_name, file_path, data)
+    # with open(tmp.name, 'wb') as data:
+    #     client.download_fileobj(bucket_name, file_path, data)
+    #     img = mpimg.imread(tmp.name)
+
+    with open(tmp.name, 'wb') as tmp.name:
+        client.download_fileobj(bucket_name, file_path, tmp.name)
         img = mpimg.imread(tmp.name)
 
     # if show:
