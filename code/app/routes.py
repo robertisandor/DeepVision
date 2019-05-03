@@ -34,7 +34,7 @@ import boto
 
 # for prediction
 import numpy as np
-from ml import train, predict
+from ml import train_ml, predict_ml
 
 # Web app backend ##############
 
@@ -365,7 +365,7 @@ def train(projid):
 
     # call the train function from ml module
     print('before training', lbl2idx)
-    train(projid, last_asp_ratio, proj_owner_name, proj_owner_email, lbl2idx)
+    train_ml(projid, last_asp_ratio, proj_owner_name, proj_owner_email, lbl2idx)
 
 
 
@@ -424,7 +424,7 @@ def predict(projid):
             k.set_contents_from_string(file_content)
 
         # Miguel's predict function
-        ml.predict(project_id=projid, paths=filepaths, aspect_r=aspect_ratio, n_training_labels=len(labels))
+        ml.predict_ml(project_id=projid, paths=filepaths, aspect_r=aspect_ratio, n_training_labels=len(labels))
 
     return render_template('predict.html', projnm=projnm,
                            pred_lab=pred_lab, form=form, projid=projid)

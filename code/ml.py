@@ -663,7 +663,7 @@ def send_email(receiver_name, receiver_email):
 
 ##### calls from backend ##### 
 
-async def train(project_name, aspect_r, name, email, lbl2idx):
+async def train_ml(project_name, aspect_r, name, email, lbl2idx):
 
     # Resizing
     print('Resizing images ...')
@@ -709,7 +709,7 @@ async def train(project_name, aspect_r, name, email, lbl2idx):
     send_email(receiver_name=name, receiver_email=email)
 
 
-def predict(project_id, paths, aspect_r, n_training_labels):
+def predict_ml(project_id, paths, aspect_r, n_training_labels):
 
     predictions = []
 
