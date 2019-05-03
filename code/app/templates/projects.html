@@ -153,11 +153,11 @@
                         <!-- <button onclick="popupClickButton()" class="button button-light" type="button">Train</button> -->
                         <button class="button button-light" type="submit">
                           <a href="{{ url_for('train', projid = proj.project_id) }}">Train</a></button>
-                        <script>
+                        <!-- <script>
                           function popupClickButton() {
                             alert("Your model is being trained! Please wait...");
                           }
-                        </script>
+                        </script> -->
 
                         <button type="submit" class="button button-light">
                           <a href="{{ url_for('predict', projid = proj.project_id) }}">Predict</button></a>

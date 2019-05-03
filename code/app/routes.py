@@ -360,7 +360,7 @@ def train(projid):
     # query inputs for to train the model
     print('Enters training route')
     proj = classes.Project.query.filter_by(project_id=projid).first()
-    # project_name = proj.project_name
+    proj_name = proj.project_name
     last_asp_ratio = proj.last_train_asp_ratio
     
     project_owner_id = proj.project_owner_id
@@ -374,7 +374,7 @@ def train(projid):
 
     # call the train function from ml module
     print('before training', lbl2idx)
-    train_ml(projid, last_asp_ratio, proj_owner_name, proj_owner_email, lbl2idx)
+    train_ml(proj_name, last_asp_ratio, proj_owner_name, proj_owner_email, lbl2idx)
 
     return redirect(url_for('projects'))
 
