@@ -34,6 +34,7 @@ import boto
 
 # for prediction
 import numpy as np
+from collections import Counter
 from ml import train, predict
 
 # Web app backend ##############
@@ -278,25 +279,29 @@ def upload(labid):
     This route allows users to bulk upload image data per project, per label.
     Files would be stored in S3 bucket organized as "./project/label/files".
     """
+    accepts = ['bmp', 'dib','jpeg', 'jpg', 'jpe', 'jp2', 'png', 'webp',
+               'pbm', 'pgm', 'ppm', 'sr', 'ras','tiff', 'tif']
+
     label = classes.Label.query.filter_by(label_id=labid).first()
     labelnm = label.label_name
     projid = label.project_id
-    # labelnm = classes.Label.query.filter_by(label_id=labid).first().label_name
-    # projid = classes.Label.query.filter_by(label_id=labid).first().project_id
 
     projnm = classes.Project.query.filter_by(project_id=projid) \
         .first().project_name
-    # projnm = classes.User_Project.query.filter_by(project_id=projid) \
-    #     .first().project_name
 
     form = UploadFileForm()
+    nfiles = 0
+    muploaded = 0
     if form.validate_on_submit():
         files = form.file_selector.data
+        nfiles = len(files)
+        aspect_ratios_newfs = []  # aspect ratios of the each image
         for f in files:
+            if f.filename.split('.')[-1].strip().lower() not in accepts:
+                continue  # filter out those
             tmp = tempfile.NamedTemporaryFile()
             file_content = ''
-            # file must be temporarily created
-            # so that it can be read
+            # file must be temporarily created so that it can be read
             # to find out the aspect ratio of the image
             with open(tmp.name, 'wb') as data:
                 file_content = f.stream.read()
@@ -307,23 +312,12 @@ def upload(labid):
             # there will be multiple copies with different filenames
             # rather than updating the same file
             image = mpimg.imread(tmp.name)
-            aspect_ratio = round(float(image.shape[1]) / float(image.shape[0]), 1)
+            aspect_ratio = round(float(image.shape[1])/float(image.shape[0]), 1)
             filename = secure_filename(f.filename)
-            # I need to find the aspect ratio of the image
-            # then query
-            # and insert that into the table in postgres
 
-            aspect_ratios = classes.Aspect_Ratio.query.filter_by(project_id=projid).filter_by(aspect_ratio=str(aspect_ratio)).all()
-            # aspect_ratios = classes.Aspect_Ratio.query.filter_by(project_id=projid).all()
-            # aspect_ratios = classes.Aspect_Ratio.query.all()
-            
-            if len(aspect_ratios) == 0:
-                db.session.add(classes.Aspect_Ratio(projid, str(aspect_ratio), 1))
-            elif len(aspect_ratios) == 1:
-                aspect_ratios[0].count += 1
+            aspect_ratios_newfs.append(str(aspect_ratio))
 
-            db.session.commit()
-
+            # send file to s3 one by one
             bucket_name = 'msds603-deep-vision'
             s3_connection = boto.connect_s3(
                 aws_access_key_id='AKIAIQRI4EE5ENXNW6LQ',
@@ -334,12 +328,25 @@ def upload(labid):
             k.key = '/'.join([str(projid), str(labid), filename])
             k.set_contents_from_string(file_content)
 
-        # I think I need to insert/update the table
-        # with the newest aspect ratio
+        muploaded = len(aspect_ratios_newfs)
+        # update the ratio tabel outside the loop over each file
+        aspect_ratio_newcounts = Counter(aspect_ratios_newfs)
+        # a dictionary of ratios: counts of new images
+        for r in aspect_ratio_newcounts:
+            aspect_ratios = classes.Aspect_Ratio.query\
+                .filter_by(project_id=projid).filter_by(aspect_ratio=r).all()
 
-        return redirect(url_for('projects'))
-    return render_template('upload_lab.html', projnm=projnm,
-                           labelnm=labelnm, form=form)
+            if len(aspect_ratios) == 0:
+                db.session.add(classes.Aspect_Ratio(
+                    projid, r, aspect_ratio_newcounts[r]))
+            elif len(aspect_ratios) == 1:
+                aspect_ratios[0].count += aspect_ratio_newcounts[r]
+
+        db.session.commit()
+
+        # return redirect(url_for('projects'))
+    return render_template('upload_lab.html', projnm=projnm,labelnm=labelnm,
+                           form=form, nfiles=nfiles, muploaded=muploaded)
 
 
 @application.route('/train/<projid>', methods=['GET', 'POST'])
