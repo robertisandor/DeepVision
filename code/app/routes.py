@@ -42,7 +42,7 @@ CLIENT = boto3.client('s3', aws_access_key_id='AKIAIQRI4EE5ENXNW6LQ',
                       aws_secret_access_key='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')
 
 BUCKET_NAME = 'msds603-deep-vision'
-MIN_IMG_LBL = 20
+MIN_IMG_LBL = 5
 
 # Web app backend ##############
 
