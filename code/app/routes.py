@@ -328,14 +328,11 @@ def upload(labid):
             s3_connection = boto.connect_s3(
                 aws_access_key_id='AKIAIQRI4EE5ENXNW6LQ',
                 aws_secret_access_key='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')
-            # to be fixed with paramiko
+            
             bucket = s3_connection.get_bucket(bucket_name)
             k = Key(bucket)
             k.key = '/'.join([str(projid), str(labid), filename])
             k.set_contents_from_string(file_content)
-
-        # I think I need to insert/update the table
-        # with the newest aspect ratio
 
         return redirect(url_for('projects'))
     return render_template('upload_lab.html', projnm=projnm,
@@ -382,7 +379,7 @@ def predict(projid):
     projnm = classes.Project.query.filter_by(project_id=projid) \
         .first().project_name
     form = UploadFileForm()
-    pred_lab = ''
+    prediction_labels = []
     if form.validate_on_submit():
         files = form.file_selector.data
         
@@ -397,11 +394,10 @@ def predict(projid):
         filepaths = client.list_objects(Bucket=bucket_name, Prefix=projid, Delimiter='')
         print([element['Prefix'] for element in filepaths['CommonPrefixes']])
 
-        try: 
-            has_models = f'{projnm}/model/' in [element['Prefix'] for element in filepaths['CommonPrefixes']]
-        except: 
-            return 
-            has_models = False
+        
+        if f'{projnm}/model/' not in [element['Prefix'] for element in filepaths['CommonPrefixes']]
+            return "There is no model. Please give a model."
+
         
 
         filepaths = [item['Key'] for item in filepaths['Contents'] 
@@ -451,6 +447,7 @@ def predict(projid):
         # query labels for labelnames of project given the indices returned (predictions) and the project id
         # create list comprehension that maps labels from indexes given
 
+        # TODO: query S3, find filepaths, create named temporary files for all of the images 
 
     return render_template('predict.html', projnm=projnm,
                            pred_lab=prediction_labels, form=form, projid=projid)
