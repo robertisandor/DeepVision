@@ -640,13 +640,13 @@ def send_notification(receiver_name, receiver_email, subject_line, email_body):
     A general function to send notification emails to users.
     Subject line and content of the notification can be customized.
     """
-    Text = f"""Hello {receiver_name.title()},
+    Text = f"""
+    Hello {receiver_name.title()},
 
-        {email_body}
+    {email_body}
 
-        Best,
-        Deep Vision Team
-        """
+    Best,
+    Deep Vision Team"""
 
     message = f'Subject: {subject_line}\n\n{Text}'
 
