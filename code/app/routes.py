@@ -363,14 +363,14 @@ def train(projid):
     After training is done, the user will receive an notification email.
     """
     # query inputs for to train the model
-    folders = CLIENT.list_objects(Bucket=BUCKET_NAME, Prefix=f'{projid}/', Delimiter="/")
 
-    if print(folders)
+    # TODO: Check that minimum amount of images are uploaded
+    # folders = CLIENT.list_objects(Bucket=BUCKET_NAME, Prefix=f'{projid}/', Delimiter="/")
 
 
     print('Enters training route')
     proj = classes.Project.query.filter_by(project_id=projid).first()
-    proj_name = proj.project_name
+    # proj_name = proj.project_name
     last_asp_ratio = proj.last_train_asp_ratio
     
     project_owner_id = proj.project_owner_id
