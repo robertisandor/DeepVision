@@ -37,7 +37,7 @@ import time
 
 # for prediction
 import numpy as np
-from ml import train_ml, predict_ml, send_notifcation
+from ml import train_ml, predict_ml, send_notification
 
 CLIENT = boto3.client('s3', aws_access_key_id='AKIAIQRI4EE5ENXNW6LQ',
                       aws_secret_access_key='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')
@@ -527,18 +527,29 @@ def status(projid):
 
 
     if request.method == "POST":
-        username = request.form['username']
-        count = classes.User.query.filter_by(username=username).count()
-        if count == 0:
+        added_username = request.form['username']
+        found_users = classes.User.query.filter_by(username=added_username).all()
+        if len(found_users) == 0:
             flash('User does not exist.')
-        elif username in users:
-            flash(username + ' already exists.')
+        elif added_username in users:
+            flash(added_username + ' already has access to the project.')
+        elif len(found_users) > 1:
+            flash("You can only add one user at a time.")
         else:
-            user_id = classes.User.query.filter_by(username=username) \
-                .first().id
+            # user = classes.User.query.filter_by(username=added_username).first()
+            user_id = found_users.id
             user_proj = classes.User_Project(user_id, projid)
             db.session.add(user_proj)
             db.session.commit()
+
+            #send notification to the added user
+            user_email = found_users.email
+            subject_line = f"You have been added to project {projnm}."
+            email_body = f"You have just been added to project {projnm}. " \
+                         f"Now you can start uploading data, training, and predicting."
+
+            send_notification(added_username, user_email, subject_line, email_body)
+
             users_with_new = []
             userids_with_new_of_one_project = classes.User_Project\
                 .query.filter_by(project_id=projid).all()
@@ -547,7 +558,6 @@ def status(projid):
                     classes.User.query.filter_by(
                         id=user_proj_new.user_id).first().username
                 )
-                # send_notifcation()
 
             return render_template('status.html', projnm=projnm, 
                            users=users_with_new, projid=projid)
