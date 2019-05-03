@@ -1,3 +1,4 @@
+import asyncio
 import ssl
 import smtplib
 from sklearn.metrics import roc_auc_score, f1_score
@@ -114,9 +115,9 @@ def get_image(client, file_path, show=False, bucket_name=BUCKET_RESIZE):
         client.download_fileobj(bucket_name, file_path, data)
         img = mpimg.imread(tmp.name)
 
-    if show:
-        plt.imshow(img)
-        plt.show()
+    # if show:
+    #     plt.imshow(img)
+    #     plt.show()
 
     return img
 
@@ -662,12 +663,14 @@ def send_email(receiver_name, receiver_email):
 
 ##### calls from backend ##### 
 
-def train(project_name, aspect_r, name, email, lbl2idx):
+async def train(project_name, aspect_r, name, email, lbl2idx):
 
     # Resizing
+    print('Resizing images ...')
     df = get_project_df(CLIENT, project_name, BUCKET_ORIG)
     resize_images(df, aspect_r, CLIENT, project_name)
 
+    print('Creating data sets/ loaders ...')
     # datasets declaration
     transforms = [RandomRotation(arc_width=30), Flip(), RandomCrop(R_PIX)]
 
@@ -686,14 +689,15 @@ def train(project_name, aspect_r, name, email, lbl2idx):
     train_dl = DataLoader(train_ds, batch_size=BATCH_SIZE, shuffle=True)
     valid_dl = DataLoader(valid_ds, batch_size=BATCH_SIZE, shuffle=False)
 
-    model = DenseNet(n_lbls, pretrained=True,
-                     freeze=True).to(device)  # .cuda()
+    # model = DenseNet(n_lbls, pretrained=True,
+    #                  freeze=True).to(device)  # .cuda()
 
     save_path = f'{project_name}/{MODEL_W_FOLD_NAME}/' + \
         now_str() + '-model.pth'
 
     best_loss = np.inf
 
+    print('Training with different max lr ...')
     for M_lr in [.01, .005, .001]:
         model = DenseNet(n_lbls, pretrained=True,
                          freeze=True).to(device)  # .cuda()
@@ -741,3 +745,28 @@ def predict(project_id, paths, aspect_r, n_training_labels):
         predictions.append(np.argmax(logits))
 
     return predictions
+
+
+
+if __name__=='__main__':
+    pass
+
+    # loop = asyncio.get_event_loop()
+    #
+    # project_name = 'Oxford-IIIT-Pet'
+    # aspect_r = .8
+    # D = {'pomeranian': 0,
+    #      'pug': 1,
+    #      'saint_bernard': 2,
+    #      'samoyed': 3,
+    #      'scottish_terrier': 4,
+    #      'shiba_inu': 5}
+    # user = 'Miguel'
+    # email = 'mromerocalvo@dons.usfca.edu'
+    #
+    # loop.run_until_complete(train(project_name, aspect_r, user , email, D))
+    #
+    # print("It's working Dude!")
+
+
+

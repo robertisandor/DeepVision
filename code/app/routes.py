@@ -15,6 +15,7 @@ import matplotlib.image as mpimg
 import tempfile
 from wtforms import SubmitField
 from werkzeug import secure_filename
+import ml
 
 # for building forms
 from flask_wtf import FlaskForm  # RecaptchaField
@@ -31,10 +32,10 @@ from flask_login import current_user, login_user, login_required, logout_user
 from boto.s3.key import Key
 import boto
 
-# just for kidding prediction
+# for prediction
 import numpy as np
 from collections import Counter
-
+from ml import train, predict
 
 # Web app backend ##############
 
@@ -348,6 +349,33 @@ def upload(labid):
                            form=form, nfiles=nfiles, muploaded=muploaded)
 
 
+@application.route('/train/<projid>', methods=['GET', 'POST'])
+@login_required
+def train(proj_id):
+    """
+    This route triggered when a user clicks "Train" button in a project.
+    After training is done, the user will receive an notification email.
+    """
+    # query inputs for to train the model
+    print('I am being called')
+    proj = classes.Project.query.filter_by(project_id=proj_id).first()
+    project_name = proj.project_name
+    last_asp_ratio = proj.last_train_asp_ratio
+    
+    project_owner_id = proj.project_owner_id
+    proj_owner = classes.User.query.filter_by(id=project_owner_id).first() 
+    proj_owner_name = proj_owner.username
+    proj_owner_email = proj_owner.email
+    
+    labels = classes.Label.query.filter_by(project_id=proj_id).all()
+    lbl2idx = {label.label_name: label.label_index for label in labels}
+
+    # call the train function from ml module
+    print('About to enter..', lbl2idx)
+    train(proj_name, last_asp_ratio, proj_owner_name, proj_owner_email, lbl2idx)
+
+
+
 @application.route('/predict/<projid>', methods=['GET', 'POST'])
 @login_required
 def predict(projid):
@@ -370,8 +398,10 @@ def predict(projid):
                 aws_secret_access_key='2gduLL4umVC9j7XXc2L1N8DfUVQQKcFmnezTYF8O')
         bucket_name = 'msds603-deep-vision'
         filepaths = client.list_objects(Bucket=bucket_name, Prefix=projid, Delimiter='')
-        filepaths = [item['Key'] for item in filepaths['Contents'] if len(item['Key'].split('.')) > 1]
-        print(filepaths)
+        filepaths = [item['Key'] for item in filepaths['Contents'] 
+                     if len(item['Key'].split('.')) > 1 and item['Key'].split('/')[0] == projid
+                     and item['Key'].split('/')[1] == 'prediction']
+
 
         # to get aspect_ratio
         project = classes.Project.query.filter_by(project_id=projid).first()
@@ -383,8 +413,6 @@ def predict(projid):
         # to get number of training labels
         labels = classes.Label.query.filter_by(project_id=projid).all()
         print(len(labels))
-
-        # predict(project_id=projid, paths=filepaths, aspect_r=aspect_ratio, n_training_labels=len(labels))
         
         # figure out issue with labels
         # label history
@@ -393,7 +421,6 @@ def predict(projid):
             filename = secure_filename(f.filename)
             file_content = f.stream.read()
 
-            
             s3_connection = boto.connect_s3(
                 aws_access_key_id='AKIAIQRI4EE5ENXNW6LQ',
                 aws_secret_access_key='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')
@@ -402,6 +429,9 @@ def predict(projid):
             k = Key(bucket)
             k.key = '/'.join([str(projid), 'prediction', filename])
             k.set_contents_from_string(file_content)
+
+        # Miguel's predict function
+        ml.predict(project_id=projid, paths=filepaths, aspect_r=aspect_ratio, n_training_labels=len(labels))
 
     return render_template('predict.html', projnm=projnm,
                            pred_lab=pred_lab, form=form, projid=projid)
@@ -436,8 +466,16 @@ def status(projid):
             user_proj = classes.User_Project(user_id, projid)
             db.session.add(user_proj)
             db.session.commit()
+            users_with_new = []
+            userids_with_new_of_one_project = classes.User_Project\
+                .query.filter_by(project_id=projid).all()
+            for user_proj_new in userids_with_new_of_one_project:
+                users_with_new.append(
+                    classes.User.query.filter_by(
+                        id=user_proj_new.user_id).first().username
+                )
             return render_template('status.html', projnm=projnm, 
-                           users=users, projid=projid)
+                           users=users_with_new, projid=projid)
     return render_template('status.html', projnm=projnm, 
                            users=users, projid=projid)
 
