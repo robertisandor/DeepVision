@@ -205,9 +205,9 @@ def projects():
 
             # TODO: find a way to bulk insert
             # insert all of the labels that the user entered
-            for label in labels:
+            for label_idx, label in enumerate(labels):
                 db.session.add(classes.Label(most_recent_project.project_id,
-                                             label))
+                                             label, label_idx))
 
             most_recent_project_labels = classes.Label.query.filter_by(project_id=most_recent_project.project_id)
 
@@ -393,7 +393,17 @@ def predict(projid):
         client = boto3.client('s3', aws_access_key_id='AKIAIQRI4EE5ENXNW6LQ',
                 aws_secret_access_key='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')
         bucket_name = 'msds603-deep-vision'
+
         filepaths = client.list_objects(Bucket=bucket_name, Prefix=projid, Delimiter='')
+        print([element['Prefix'] for element in filepaths['CommonPrefixes']])
+
+        try: 
+            has_models = f'{projnm}/model/' in [element['Prefix'] for element in filepaths['CommonPrefixes']]
+        except: 
+            return 
+            has_models = False
+        
+
         filepaths = [item['Key'] for item in filepaths['Contents'] 
                      if len(item['Key'].split('.')) > 1 and item['Key'].split('/')[0] == projid
                      and item['Key'].split('/')[1] == 'prediction']
@@ -427,10 +437,23 @@ def predict(projid):
             k.set_contents_from_string(file_content)
 
         # Miguel's predict function
-        ml.predict_ml(project_id=projid, paths=filepaths, aspect_r=aspect_ratio, n_training_labels=len(labels))
+        # ml.predict_ml(project_id=projid, paths=filepaths, aspect_r=aspect_ratio, n_training_labels=len(labels))
+        # predictions = ml.predict(project_id=projid, paths=filepaths, aspect_r=aspect_ratio, n_training_labels=len(labels))
+        predictions = [0 for i in range(len(files))]
+        
+        labels = classes.Label.query(project_id=projid).all()
+        print(labels)
+        label_dict = {label.index:label.name for label in labels}
+        print(label_dict)
+
+        prediction_labels = [label_dict[prediction] for prediction in predictions if prediction in list(label_dict.keys())]
+        print(prediction_labels)
+        # query labels for labelnames of project given the indices returned (predictions) and the project id
+        # create list comprehension that maps labels from indexes given
+
 
     return render_template('predict.html', projnm=projnm,
-                           pred_lab=pred_lab, form=form, projid=projid)
+                           pred_lab=prediction_labels, form=form, projid=projid)
 
 
 @application.route('/status/<projid>', methods=['GET', 'POST'])
