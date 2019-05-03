@@ -136,7 +136,7 @@
                     {% for proj in projects %}
                     <tr class="row100 body">
                       <td class="cell100 column1">{{ proj.project_name }}</td>
-                      
+                      <!-- upload by label -->
                       <td class="cell100 column2">
                         <div class="dropdown">
                           <button class="dropbtn" type="button">Choose label</button>
@@ -144,21 +144,21 @@
                         {% for lab in proj_labs[proj.project_id] %}
                             <a href="{{ url_for('upload', labid = lab.label_id ) }}">{{ lab.label_name }}</a>
                         {% endfor %}
+                          </div>
                         </div>
-                      </div>
                       </td>
-
-
+                      <!-- train -->
                       <td class="cell100 column3">
                         <!-- <button onclick="popupClickButton()" class="button button-light" type="button">Train</button> -->
-                        <button class="button button-light" type="submit">
-                          <a href="{{ url_for('train', projid = proj.project_id) }}">Train</a></button>
+                        <a href="{{ url_for('train', projid = proj.project_id) }}"><button class="button button-light" type="submit">
+                          Train</button></a>
                         <!-- <script>
                           function popupClickButton() {
                             alert("Your model is being trained! Please wait...");
                           }
                         </script> -->
-
+                        
+                        <!-- predict -->
                         <button type="submit" class="button button-light">
                           <a href="{{ url_for('predict', projid = proj.project_id) }}">Predict</button></a>
 
