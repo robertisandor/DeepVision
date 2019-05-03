@@ -635,12 +635,20 @@ def train_model(n_epochs, model, train_dl, n_lbls, best_loss, valid_dl=None, max
 
 # sending email
 
-def send_notification(receiver_name, receiver_email, subject_line, email_text):
+def send_notification(receiver_name, receiver_email, subject_line, email_body):
     """
     A general function to send notification emails to users.
     Subject line and content of the notification can be customized.
     """
-    message = f'Subject: {subject_line}\n\n{email_text}'
+    Text = f"""Hello {receiver_name.title()},
+
+        {email_body}
+
+        Best,
+        Deep Vision Team
+        """
+
+    message = f'Subject: {subject_line}\n\n{Text}'
 
     # Create a secure SSL context
     context = ssl.create_default_context()
@@ -659,6 +667,7 @@ def send_notification(receiver_name, receiver_email, subject_line, email_text):
         print(e)
     finally:
         server.quit()
+
 
 def send_email(receiver_name, receiver_email):
 
