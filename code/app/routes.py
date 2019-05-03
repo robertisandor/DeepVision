@@ -384,7 +384,7 @@ def predict(projid):
 
     # check if there is a model
     filepaths = client.list_objects(Bucket=bucket_name, Prefix=projid, Delimiter='')
-    if f'{projnm}/model/' not in [element['Prefix'] for element in filepaths['CommonPrefixes']]:
+    if f'{projid}/model/' not in [element['Prefix'] for element in filepaths['CommonPrefixes']]:
         return "A model has to be trained before predicting."
 
     projnm = classes.Project.query.filter_by(project_id=projid) \
