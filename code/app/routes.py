@@ -33,6 +33,7 @@ from flask_login import current_user, login_user, login_required, logout_user
 from boto.s3.key import Key
 import boto
 from collections import Counter
+import time
 
 # for prediction
 import numpy as np
@@ -341,7 +342,8 @@ def upload(labid):
             # to be fixed with paramiko
             bucket = s3_connection.get_bucket(bucket_name)
             k = Key(bucket)
-            k.key = '/'.join([str(projid), str(labid), filename])
+            ts = round(time.time())
+            k.key = '/'.join([str(projid), str(labid), str(ts)+"_"+filename])
             k.set_contents_from_string(file_content)
 
         muploaded = len(aspect_ratios_newfs)
