@@ -431,7 +431,11 @@ def predict(projid):
             k.set_contents_from_string(file_content)
 
         # Miguel's predict function
-        ml.predict(project_id=projid, paths=filepaths, aspect_r=aspect_ratio, n_training_labels=len(labels))
+        predictions = ml.predict(project_id=projid, paths=filepaths, aspect_r=aspect_ratio, n_training_labels=len(labels))
+        
+
+        # query labels for labelnames of project given the indices returned (predictions) and the project id
+        # create list comprehension that maps labels from indexes given
 
     return render_template('predict.html', projnm=projnm,
                            pred_lab=pred_lab, form=form, projid=projid)
