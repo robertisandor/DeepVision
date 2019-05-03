@@ -367,7 +367,7 @@ def train(projid):
     print('before training', lbl2idx)
     train_ml(projid, last_asp_ratio, proj_owner_name, proj_owner_email, lbl2idx)
 
-    return render_template(url_for('projects'))
+    return redirect(url_for('projects'))
 
 
 
