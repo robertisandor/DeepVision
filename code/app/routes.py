@@ -369,17 +369,23 @@ def train(projid):
     # TODO: Frontend handeling this
     folders = CLIENT.list_objects(Bucket=BUCKET_NAME, Prefix=f'{projid}/', Delimiter="/")
 
-    if 'CommonPrefixes' in folders:
-        dirs = [di['Prefix'] for di in folders['CommonPrefixes'] if
-                di['Prefix'] not in [f'{projid}/prediction/', f'{projid}/model/']]
+    # if 'CommonPrefixes' in folders:
+    dirs = [di['Prefix'] for di in folders['CommonPrefixes'] if
+            di['Prefix'] not in [f'{projid}/prediction/', f'{projid}/model/']]
+    if len(dirs)>0:
         for di in dirs:
             files = CLIENT.list_objects(Bucket=BUCKET_NAME, Prefix=di, Delimiter="")
+
             if 'Contents' in files:
                 files = [f['Key'] for f in files['Contents'][1:]]
-                if len(files) < MIN_IMG_LBL: return f"Upload at least {MIN_IMG_LBL} images for {files[0].split('/')[1]}"
+                if len(files) < MIN_IMG_LBL:
+                    lbl_id = di.split('/')[1]
+                    lbl_name = classes.Label.query.filter_by(project_id=projid, label_id=lbl_id).first().label_name
+                    return f"Upload at least {MIN_IMG_LBL} images for {lbl_name}"
             else: return "Upload images for {di.split('/')[1]} before starting training"
 
-    else: return "Upload images before starting training"
+
+    else: return f"Upload {MIN_IMG_LBL} images for each label before start training"
 
 
     print('Enters training route')
