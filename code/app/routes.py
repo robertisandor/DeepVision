@@ -381,13 +381,14 @@ def train(projid):
 
     else: return "Upload images before starting training"
 
-    # folders = CLIENT.list_objects(Bucket=BUCKET_NAME, Prefix=f'{projid}/', Delimiter="/")
-
 
     print('Enters training route')
-    proj = classes.Project.query.filter_by(project_id=projid).first()
+    max_asp_ratio = classes.Aspect_Ratio.query.filter_by(project_id=projid).order_by(classes.Aspect_Ratio.count.desc()).first()
+
     # proj_name = proj.project_name
-    last_asp_ratio = proj.last_train_asp_ratio
+
+
+    # last_asp_ratio = proj.last_train_asp_ratio
     
     project_owner_id = proj.project_owner_id
     proj_owner = classes.User.query.filter_by(id=project_owner_id).first() 
@@ -400,7 +401,7 @@ def train(projid):
 
     # call the train function from ml module
     print('before training', lbl2idx)
-    train_ml(projid, last_asp_ratio, proj_owner_name, proj_owner_email, lbl2idx)
+    train_ml(projid, max_asp_ratio, proj_owner_name, proj_owner_email, lbl2idx)
 
     return redirect(url_for('projects'))
 
