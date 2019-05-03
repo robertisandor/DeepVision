@@ -361,6 +361,7 @@ def train(projid):
     proj_owner_email = proj_owner.email
 
     labels = classes.Label.query.filter_by(project_id=projid).all()
+    print(labels)
     lbl2idx = {label.label_name: label.label_index for label in labels}
 
     # call the train function from ml module
