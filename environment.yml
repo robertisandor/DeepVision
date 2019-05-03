@@ -2,9 +2,9 @@ name: deepVision
 channels:
   - pytorch
   - derickl
+  - conda-forge
   - anaconda
   - defaults
-  - conda-forge
 dependencies:
   - alabaster=0.7.12
   - asn1crypto=0.24.0
@@ -18,6 +18,7 @@ dependencies:
   - chardet=3.0.4
   - click=7.0
   - cryptography=2.6.1
+  - cudatoolkit=10.0.130
   - docutils=0.14
   - dominate=2.3.5
   - flask=1.0.2
@@ -38,10 +39,13 @@ dependencies:
   - libcblas=3.8.0
   - libedit=3.1.20181209
   - libffi=3.2.1
+  - libgcc-ng=8.2.0
+  - libgfortran-ng=7.3.0
   - liblapack=3.8.0
   - libpng=1.6.37
   - libpq=11.2
   - libsodium=1.0.16
+  - libstdcxx-ng=8.2.0
   - libtiff=4.0.10
   - lz4=2.1.6
   - lz4-c=1.8.3
@@ -54,7 +58,7 @@ dependencies:
   - numpy=1.16.3
   - numpy-base=1.16.3
   - olefile=0.46
-  - openssl=1.1.1b
+  - openssl=1.1.1
   - packaging=19.0
   - pandas=0.24.2
   - paramiko=2.4.2
@@ -77,6 +81,8 @@ dependencies:
   - readline=7.0
   - requests=2.21.0
   - s3transfer=0.2.0
+  - scikit-learn=0.20.3
+  - scipy=1.2.1
   - selenium=3.141.0
   - setuptools=40.8.0
   - simplejson=3.16.0
@@ -151,5 +157,5 @@ dependencies:
     - webencodings==0.5.1
     - wget==3.2
     - widgetsnbextension==3.4.2
-prefix: /anaconda3/envs/deepVision
+prefix: /opt/conda/envs/deepVision
 
