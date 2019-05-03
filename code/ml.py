@@ -746,23 +746,24 @@ def predict(project_id, paths, aspect_r, n_training_labels):
 
 
 if __name__=='__main__':
+    pass
 
-    loop = asyncio.get_event_loop()
-
-    project_name = 'Oxford-IIIT-Pet'
-    aspect_r = .8
-    D = {'pomeranian': 0,
-         'pug': 1,
-         'saint_bernard': 2,
-         'samoyed': 3,
-         'scottish_terrier': 4,
-         'shiba_inu': 5}
-    user = 'Miguel'
-    email = 'mromerocalvo@dons.usfca.edu'
-
-    loop.run_until_complete(train(project_name, aspect_r, user , email, D))
-
-    print("It's working Dude!")
+    # loop = asyncio.get_event_loop()
+    #
+    # project_name = 'Oxford-IIIT-Pet'
+    # aspect_r = .8
+    # D = {'pomeranian': 0,
+    #      'pug': 1,
+    #      'saint_bernard': 2,
+    #      'samoyed': 3,
+    #      'scottish_terrier': 4,
+    #      'shiba_inu': 5}
+    # user = 'Miguel'
+    # email = 'mromerocalvo@dons.usfca.edu'
+    #
+    # loop.run_until_complete(train(project_name, aspect_r, user , email, D))
+    #
+    # print("It's working Dude!")
 
 
 
