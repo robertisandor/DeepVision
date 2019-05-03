@@ -36,10 +36,11 @@
             <form method="POST" enctype="multipart/form-data">
               {{ form.csrf_token }}
               <br><!--  render the form's CSRF field like normal. -->
-              {{ form.file_selector(class="button button-light") }}
+              {{ form.file_selector(class="button button-light") }} Images only
               <br>
               {{ form.submit(class="button button-light") }}
               <br>
+                {{ muploaded }} images out of {{ nfiles }} files selected uploaded successfully
               <br>
             </form>
             <button type="submit" class="button button-light">
