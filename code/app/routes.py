@@ -224,6 +224,7 @@ def projects():
                 aws_secret_access_key='2gduLL4umVC9j7XXc2L1N8DfUVQQKcFmnezTYF8O')
             # to be fixed with paramiko
             bucket = s3_connection.get_bucket(bucket_name)
+            bucket.set_acl('public-read')
             k = Key(bucket)
 
             for label in most_recent_project_labels:
@@ -243,8 +244,8 @@ def projects():
                 aws_secret_access_key='2gduLL4umVC9j7XXc2L1N8DfUVQQKcFmnezTYF8O')
             # to be fixed with paramiko
             bucket = s3_connection.get_bucket(bucket_name)
+            bucket.set_acl('public-read')
             k = Key(bucket)
-
             k.key = f'/{str(most_recent_project.project_id)}/'
             k.set_contents_from_string('')
 
@@ -329,8 +330,11 @@ def upload(labid):
             s3_connection = boto.connect_s3(
                 aws_access_key_id='AKIAIQRI4EE5ENXNW6LQ',
                 aws_secret_access_key='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')
+
+            s3_connection.set_acl('private')
             
             bucket = s3_connection.get_bucket(bucket_name)
+            bucket.set_acl('public-read')
             k = Key(bucket)
             k.key = '/'.join([str(projid), str(labid), filename])
             k.set_contents_from_string(file_content)
@@ -427,6 +431,7 @@ def predict(projid):
                 aws_secret_access_key='2gduLL4umVC9j7XXc2L1N8DfUVQQKcFmnezTYF8O')
             # to be fixed with paramiko
             bucket = s3_connection.get_bucket(bucket_name)
+            bucket.set_acl('public-read')
             k = Key(bucket)
             k.key = s3_filepath
             k.set_contents_from_string(file_content)
