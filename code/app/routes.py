@@ -157,6 +157,10 @@ def projects():
         project_ids = [user_project.project_id for user_project in users_projects]
         projects = classes.Project.query.filter(classes.Project.project_id.in_(project_ids))
 
+        proj_owners = {}
+        for proj in projects:
+            proj_owners[proj.project_id] = classes.User.query.filter_by(id=proj.project_owner_id).first().username
+
         # return objects to easily call by attribute names,
         # rather than by indexes, please keep
         proj_labs = {}
@@ -167,7 +171,7 @@ def projects():
         # more secure than by indexes, please keep
 
         return render_template('projects.html', projects=projects,
-                               proj_labs=proj_labs)
+                               proj_labs=proj_labs, proj_owners=proj_owners)
 
     elif request.method == 'POST':
         project_name = request.form['project_name']
@@ -265,13 +269,17 @@ def projects():
             project_ids = [user_project.project_id for user_project in users_projects]
             projects = classes.Project.query.filter(classes.Project.project_id.in_(project_ids))
             
+            proj_owners = {}
+            for proj in projects:
+                proj_owners[proj.project_id] = classes.User.query.filter_by(id=proj.project_owner_id).first().username
+            
             proj_labs = {}
             for proj in projects:
                 proj_labs[proj.project_id] = classes.Label.query.filter_by(
                     project_id=proj.project_id).all()
 
             return render_template('projects.html', projects=projects,
-                                   proj_labs=proj_labs)
+                                   proj_labs=proj_labs, proj_owners=proj_owners)
 
 
 class UploadFileForm(FlaskForm):
