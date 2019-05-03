@@ -390,7 +390,7 @@ def train(projid):
 
     # last_asp_ratio = proj.last_train_asp_ratio
     
-    project_owner_id = proj.project_owner_id
+    project_owner_id = classes.Project.query.filter_by(project_id=projid).first().project_owner_id
     proj_owner = classes.User.query.filter_by(id=project_owner_id).first() 
     proj_owner_name = proj_owner.username
     proj_owner_email = proj_owner.email
