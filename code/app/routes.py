@@ -15,6 +15,7 @@ import matplotlib.image as mpimg
 import tempfile
 from wtforms import SubmitField
 from werkzeug import secure_filename
+import ml
 
 # for building forms
 from flask_wtf import FlaskForm  # RecaptchaField
@@ -388,8 +389,10 @@ def predict(projid):
                 aws_secret_access_key='2gduLL4umVC9j7XXc2L1N8DfUVQQKcFmnezTYF8O')
         bucket_name = 'msds603-deep-vision'
         filepaths = client.list_objects(Bucket=bucket_name, Prefix=projid, Delimiter='')
-        filepaths = [item['Key'] for item in filepaths['Contents'] if len(item['Key'].split('.')) > 1]
-        print(filepaths)
+        filepaths = [item['Key'] for item in filepaths['Contents'] 
+                     if len(item['Key'].split('.')) > 1 and item['Key'].split('/')[0] == projid
+                     and item['Key'].split('/')[1] == 'prediction']
+
 
         # to get aspect_ratio
         project = classes.Project.query.filter_by(project_id=projid).first()
@@ -401,8 +404,6 @@ def predict(projid):
         # to get number of training labels
         labels = classes.Label.query.filter_by(project_id=projid).all()
         print(len(labels))
-
-        # predict(project_id=projid, paths=filepaths, aspect_r=aspect_ratio, n_training_labels=len(labels))
         
         # figure out issue with labels
         # label history
@@ -411,7 +412,6 @@ def predict(projid):
             filename = secure_filename(f.filename)
             file_content = f.stream.read()
 
-            
             s3_connection = boto.connect_s3(
                 aws_access_key_id='AKIAIQRI4EE5ENXNW6LQ',
                 aws_secret_access_key='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')
@@ -420,6 +420,9 @@ def predict(projid):
             k = Key(bucket)
             k.key = '/'.join([str(projid), 'prediction', filename])
             k.set_contents_from_string(file_content)
+
+        # Miguel's predict function
+        ml.predict(project_id=projid, paths=filepaths, aspect_r=aspect_ratio, n_training_labels=len(labels))
 
     return render_template('predict.html', projnm=projnm,
                            pred_lab=pred_lab, form=form, projid=projid)
