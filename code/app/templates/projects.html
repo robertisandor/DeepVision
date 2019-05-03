@@ -150,14 +150,15 @@
                       <!-- train -->
                       <td class="cell100 column3">
                         <!-- <button onclick="popupClickButton()" class="button button-light" type="button">Train</button> -->
-                        <a href="{{ url_for('train', projid = proj.project_id) }}"><button class="button button-light" type="submit">
-                          Train</button></a>
+                        <!-- <button class="button button-light" type="submit">
+                          <a href="{{ url_for('train', projid = proj.project_id) }}">Train</a></button> -->
+                          
+                          <a href="{{ url_for('train', projid = proj.project_id) }}" class="button button-light" type="submit">Train</a>
                         <!-- <script>
                           function popupClickButton() {
                             alert("Your model is being trained! Please wait...");
                           }
                         </script> -->
-                        
                         <!-- predict -->
                         <button type="submit" class="button button-light">
                           <a href="{{ url_for('predict', projid = proj.project_id) }}">Predict</button></a>
