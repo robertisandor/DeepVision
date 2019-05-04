@@ -514,7 +514,10 @@ def status(projid):
     """
     This route provides project status, 
     including the prediction results and users of this project.
-    :return: model prediction results and users of the project.
+    At this route, a user can also add other users to their project,
+    one user at a time.
+    Added users will also receive an email notifying them that they are
+    added.
     """
     projnm = classes.Project.query.filter_by(project_id=projid) \
         .first().project_name
@@ -528,13 +531,23 @@ def status(projid):
 
     if request.method == "POST":
         added_username = request.form['username']
+        if len(added_username.split()) > 1:
+            flash("You can only add one user at a time.")
+            render_template('status.html', projnm=projnm,
+                            users=users, projid=projid)
+
         found_users = classes.User.query.filter_by(username=added_username).all()
+
         if len(found_users) == 0:
             flash('User does not exist.')
+            render_template('status.html', projnm=projnm,
+                            users=users, projid=projid)
+
         elif added_username in users:
             flash(added_username + ' already has access to the project.')
-        elif len(found_users) > 1:
-            flash("You can only add one user at a time.")
+            render_template('status.html', projnm=projnm,
+                            users=users, projid=projid)
+
         else:
             user = classes.User.query.filter_by(username=added_username).first()
             user_id = user.id
