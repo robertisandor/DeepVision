@@ -393,6 +393,7 @@ def train(projid):
     # if 'CommonPrefixes' in folders:
     dirs = [di['Prefix'] for di in folders['CommonPrefixes'] if
             di['Prefix'] not in [f'{projid}/prediction/', f'{projid}/model/']]
+
     if len(dirs)>0:
         for di in dirs:
             files = CLIENT.list_objects(Bucket=BUCKET_NAME, Prefix=di, Delimiter="")
@@ -402,11 +403,16 @@ def train(projid):
                 if len(files) < MIN_IMG_LBL:
                     lbl_id = di.split('/')[1]
                     lbl_name = classes.Label.query.filter_by(project_id=projid, label_id=lbl_id).first().label_name
-                    return f"Upload at least {MIN_IMG_LBL} images for {lbl_name}"
-            else: return "Upload images for {di.split('/')[1]} before starting training"
+                    message = (f"You currently have uploaded {len(files)}, you are missing" +
+                               f" {MIN_IMG_LBL - len(files)} to reach the minimum amount of images ({MIN_IMG_LBL}) for label {lbl_name}")
+
+            else:
+                lbl_id = di.split('/')[1]
+                lbl_name = classes.Label.query.filter_by(project_id=projid, label_id=lbl_id).first().label_name
+                message = f"Upload {MIN_IMG_LBL} images for {lbl_name} before starting training"
 
 
-    else: return f"Upload {MIN_IMG_LBL} images for each label before start training"
+    else: message = f"Upload {MIN_IMG_LBL} images for each label before start training"
 
 
     print('Enters training route')
@@ -428,11 +434,14 @@ def train(projid):
 
     # call the train function from ml module
     print('before training', lbl2idx)
-    t = Thread(target=train_ml, args=(projid, max_asp_ratio, proj_owner_name, proj_owner_email, lbl2idx))
-    t.start()
+    try:
+        t = Thread(target=train_ml, args=(projid, max_asp_ratio, proj_owner_name, proj_owner_email, lbl2idx))
+        t.start()
+        message = "Your model is training now. You will receive an email once it's reday."
+    except: message = "There has been an error training your model. Please contact our support email at info.deep.vision.co@gmail.com"
     #train_ml(projid, max_asp_ratio, proj_owner_name, proj_owner_email, lbl2idx)
     print("Model initiated in another thread.")
-    return redirect(url_for('projects'))
+    return redirect(url_for('projects'), message=message)
 
 
 
