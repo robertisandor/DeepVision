@@ -462,7 +462,10 @@ def predict(projid):
 
     # check if there is a model
     filepaths = client.list_objects(Bucket=bucket_name, Prefix=projid, Delimiter='')
-    if f'{projid}/model/' not in [element['Key'] for element in filepaths['Contents']]:
+    filepaths = [item['Key'] for item in filepaths['Contents']
+                  if len(item['Key'].split('.')) > 1 and item['Key'].split('/')[0] == projid
+              and item['Key'].split('/')[1] == 'prediction']
+    if f'{projid}/model/' not in filepaths:
         return "A model has to be trained before predicting."
 
     form = UploadFileForm()
@@ -515,7 +518,9 @@ def predict(projid):
         
         labels = classes.Label.query.filter_by(project_id=projid).all()
         projid='Oxford-IIIT-Pet'
-
+        labels = list(range(6))
+        aspect_ratio=0.8
+        print(filepaths)
         # Miguel's predict function
         predictions = predict_ml(project_id=projid, paths=filepaths, aspect_r=aspect_ratio, n_training_labels=len(labels))
         
