@@ -19,13 +19,24 @@
     <!--===========================CSS File for TABLE=====================================-->
     <link rel="stylesheet" href="{{ url_for('static', filename='addcss/main.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='addcss/util.css') }}">
-
-    <!--===============================================================================================-->
+    <link rel="stylesheet" href="{{ url_for('static', filename='addcss/popup.css') }}">
+    <script src="{{ url_for('static', filename='addjs/popup_jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='addjs/popup.js') }}"></script>
+    <!-- =============================================================================================== -->
 </head>
 
 
 <!--================ Offer section start =================-->
 <section class="section-margin">
+    <div class="hover_bkgr_fricc">
+        <span class="helper"></span>
+        <div>
+            <div class="popupCloseButton">x</div>
+            <br>
+            <h6>Your image is being predicted!<br />
+            <br>Please go to the project status page to see prediction result!</h6>
+        </div>
+    </div>
     <div class="container">
         <form method="POST" enctype="multipart/form-data">
             <h2 class="section-intro__title">Predict New Picture's Label for Project {{ projnm }}</h2>
@@ -37,23 +48,28 @@
                         {{ form.csrf_token }}
                         <br><!--  render the form's CSRF field like normal. -->
                         {{ form.file_selector(class="button button-light") }}
+                        <br />
+                        <!-- {{ form.submit(class="button button-light", onclick="popupClickButton()") }} -->
+                        {{ form.submit(class="button button-light") }}
                         <br>
-                        {{ form.submit(class="button button-light", onclick="popupClickButton()") }}
-                        <br>
-                        
-                        <script>
+                        <br />
+                        <button type="button" class="button button-light">
+                            <a href="#" class="trigger_popup_fricc" type="submit">Predict</a></button>
+                        <!-- <script>
                             function popupClickButton() {
                                 alert("Your image is being predited. Go to the status page to check predition results.");
                             }
-                        </script>
+                        </script> -->
                         <br>
                         <br>
+                        <div class="form-group text-center text-md-right mt-3">
                         <button type="submit" class="button button-light">
                             <a href="{{ url_for('status', projid=projid) }}">Go to Status Page</a></button>
                         <br />
                         <br>
                         <button type="submit" class="button button-light">
                             <a href="{{ url_for('projects') }}">Back to Project List Page</a></button>
+                        </div>
                         <br />
                         <br>
                     </center>
