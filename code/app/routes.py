@@ -384,6 +384,7 @@ def train(projid):
     This route triggered when a user clicks "Train" button in a project.
     After training is done, the user will receive an notification email.
     """
+    error = None
     # query inputs for to train the model
 
     # Check that minimum amount of images are uploaded
@@ -405,14 +406,17 @@ def train(projid):
                     lbl_name = classes.Label.query.filter_by(project_id=projid, label_id=lbl_id).first().label_name
                     message = (f"You currently have uploaded {len(files)}, you are missing" +
                                f" {MIN_IMG_LBL - len(files)} to reach the minimum amount of images ({MIN_IMG_LBL}) for label {lbl_name}")
+                    return redirect(url_for('projects'), message=message)
 
             else:
                 lbl_id = di.split('/')[1]
                 lbl_name = classes.Label.query.filter_by(project_id=projid, label_id=lbl_id).first().label_name
                 message = f"Upload {MIN_IMG_LBL} images for {lbl_name} before starting training"
+                return redirect(url_for('projects'), message=message)
 
-
-    else: message = f"Upload {MIN_IMG_LBL} images for each label before start training"
+    else:
+        message = f"Upload {MIN_IMG_LBL} images for each label before start training"
+        return redirect(url_for('projects'), message=message)
 
 
     print('Enters training route')
