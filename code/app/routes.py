@@ -444,6 +444,105 @@ def train(projid):
     return redirect(url_for('projects'), message=message)
 
 
+@application.route('/training/<projid>', methods=['GET', 'POST'])
+@login_required
+def training(projid):
+    """
+    This route triggered when a user clicks "Train" button in a project.
+    After training is done, the user will receive an notification email.
+    """
+    projnm = classes.Project.query.filter_by(project_id=projid) \
+            .first().project_name
+
+    error = None
+    # query inputs for to train the model
+
+    # Check that minimum amount of images are uploaded
+    # TODO: Frontend handeling this
+    folders = CLIENT.list_objects(Bucket=BUCKET_NAME, Prefix=f'{projid}/', Delimiter="/")
+
+    # if 'CommonPrefixes' in folders:
+    dirs = [di['Prefix'] for di in folders['CommonPrefixes'] if
+            di['Prefix'] not in [f'{projid}/prediction/', f'{projid}/model/']]
+    label_with_img_num = []
+    # CALCULATE THE NUM OF IMGS FOR EACH LABEL
+    all_labels = classes.Label.query.filter_by(project_id=projid).all()
+    all_labels = [lb.label_name for lb in all_labels]
+    
+    if request.method=='GET':
+        if len(dirs)>0:
+            for di in dirs:
+                files = CLIENT.list_objects(Bucket=BUCKET_NAME, Prefix=di, Delimiter="")
+                lbl_id = di.split('/')[1]
+                lbl_name = classes.Label.query.filter_by(project_id=projid, label_id=lbl_id).first().label_name
+
+                if 'Contents' in files:
+                    files = [f['Key'] for f in files['Contents'][1:]]
+                    num_files_with_lbl = len(files)
+                    if num_files_with_lbl < MIN_IMG_LBL:
+                        # lbl_id = di.split('/')[1]
+                        # lbl_name = classes.Label.query.filter_by(project_id=projid, label_id=lbl_id).first().label_name
+                        message = (f"You currently have uploaded {len(files)}, you are missing" +
+                                f" {MIN_IMG_LBL - len(files)} to reach the minimum amount of images ({MIN_IMG_LBL}) for label {lbl_name}")
+                        # return redirect(url_for('projects'), message=message)
+                        label_with_img_num.append((lbl_name, num_files_with_lbl))
+                        for lb in all_labels:
+                            if lb not in [i[0] for i in label_with_img_num]:
+                                label_with_img_num.append((lb, 0))
+                        return render_template('training.html', projnm=projnm, message=message, projid=projid, \
+                            label_with_img_num=label_with_img_num)
+                    else:
+                        label_with_img_num.append((lbl_name, num_files_with_lbl))
+                else:
+                    # lbl_id = di.split('/')[1]
+                    # lbl_name = classes.Label.query.filter_by(project_id=projid, label_id=lbl_id).first().label_name
+                    message = f"Upload {MIN_IMG_LBL} images for {lbl_name} before starting training"
+                    num_files_with_lbl = 0
+                    label_with_img_num.append((lbl_name, num_files_with_lbl))
+                    for lb in all_labels:
+                        if lb not in [i[0] for i in label_with_img_num]:
+                            label_with_img_num.append((lb, 0))
+                    return render_template('training.html', projnm=projnm, message=message, projid=projid, \
+                        label_with_img_num=label_with_img_num)
+
+        else:
+            message = f"Upload {MIN_IMG_LBL} images for each label before start training"
+            # return redirect(url_for('projects'), message=message)
+            for lb in all_labels:
+                if lb not in [i[0] for i in label_with_img_num]:
+                    label_with_img_num.append((lb, 0))
+            return render_template('training.html', projnm=projnm, message=message, \
+                projid=projid, label_with_img_num=label_with_img_num)
+
+        print('Enters training route')
+        max_asp_ratio = float(classes.Aspect_Ratio.query.filter_by(project_id=projid).\
+            order_by(classes.Aspect_Ratio.count.desc()).first().aspect_ratio)
+
+        # proj_name = proj.project_name
+        # last_asp_ratio = proj.last_train_asp_ratio
+        project_owner_id = classes.Project.query.filter_by(project_id=projid).first().project_owner_id
+        proj_owner = classes.User.query.filter_by(id=project_owner_id).first() 
+        proj_owner_name = proj_owner.username
+        proj_owner_email = proj_owner.email
+
+        labels = classes.Label.query.filter_by(project_id=projid).all()
+        print(labels)
+        lbl2idx = {str(label.label_id): (label.label_index if label.label_index else i) for i, label in enumerate(labels)}
+
+        # call the train function from ml module
+        print('before training', lbl2idx)
+        try:
+            t = Thread(target=train_ml, args=(projid, max_asp_ratio, proj_owner_name, proj_owner_email, lbl2idx))
+            t.start()
+            message = "Your model is training now. You will receive an email once it's reday."
+        except: message = "There has been an error training your model. Please contact our support email at info.deep.vision.co@gmail.com"
+        #train_ml(projid, max_asp_ratio, proj_owner_name, proj_owner_email, lbl2idx)
+        print("Model initiated in another thread.")
+        # return redirect(url_for('projects'), message=message)
+
+        return render_template('training.html', projnm=projnm, message=message, \
+            projid=projid, label_with_img_num=label_with_img_num)
+
 
 @application.route('/predict/<projid>', methods=['GET', 'POST'])
 @login_required
