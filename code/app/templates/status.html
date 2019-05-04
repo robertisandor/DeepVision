@@ -82,13 +82,13 @@
     <section class="hero-banner hero-banner--sm mb-30px">
         <div class="container">
             <div class="hero-banner--sm__content">
-                <h1>Project Status</h1>
+                <h1>{{projnm}} Status</h1>
                 <nav aria-label="breadcrumb" class="banner-breadcrumb">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item">{{ projnm }}</a></li>
-                        <li class="breadcrumb-item active" aria-current="page"><a href="#predictions">Prediction</a>
+                         <li class="breadcrumb-item active" aria-current="page"><a href="#predictions">Prediction</a>
                         </li>
                         <li class="breadcrumb-item active" aria-current="page"><a href="#users">Users</a></li>
+                        <li class="breadcrumb-item active" aria-current="page"><a href="{{url_for('projects')}}">All Projects</a></li>
                     </ol>
                 </nav>
             </div>
@@ -142,10 +142,12 @@
         <div class="container" id="users">
             <div class="section-intro pb-75px text-center">
                 <h2 class="section-intro__title">Current Users of {{ projnm }}</h2>
+                <h3>Project owner: {{proj_owner}}</h3>
             </div>
             <div class="row">
                 <div class="col-lg-7">
                     <div class="card card-feature text-center text-lg-left mb-4 mb-lg-0">
+
                         {% for user in users %}
                         <h3 class="card-feature__title">
                             {{ user }} &nbsp;&nbsp;&nbsp;&nbsp;

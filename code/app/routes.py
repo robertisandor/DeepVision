@@ -521,8 +521,12 @@ def status(projid):
     Added users will also receive an email notifying them that they are
     added.
     """
-    projnm = classes.Project.query.filter_by(project_id=projid) \
-        .first().project_name
+    proj = classes.Project.query.filter_by(project_id=projid) \
+        .first()
+
+    projnm = proj.project_name
+    proj_owner = classes.User.query.filter_by(id=proj.project_owner_id).first().username
+
     userids_of_one_project = classes.User_Project.query \
         .filter_by(project_id=projid).all()
     users = []
@@ -530,7 +534,7 @@ def status(projid):
         users.append(classes.User.query.filter_by(
             id=user_proj.user_id).first().username)
 
-
+    # add user functionality
     if request.method == "POST":
         added_username = request.form['username']
         if len(added_username.split()) > 1:
@@ -574,9 +578,9 @@ def status(projid):
                         id=user_proj_new.user_id).first().username
                 )
 
-            return render_template('status.html', projnm=projnm, 
+            return render_template('status.html', projnm=projnm, proj_owner=proj_owner,
                            users=users_with_new, projid=projid)
-    return render_template('status.html', projnm=projnm, 
+    return render_template('status.html', projnm=projnm, proj_owner=proj_owner,
                            users=users, projid=projid)
 
 
