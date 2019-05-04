@@ -53,6 +53,8 @@ def get_deepVision_bucket():
     s3_connection = boto.connect_s3(
         aws_access_key_id='AKIAIQRI4EE5ENXNW6LQ',
         aws_secret_access_key='2gduLL4umVC9j7XXc2L1N8DfUVQQKcFmnezTYF8O')
+    # to be replaced: os.environ['AWS_ACCESS_KEY_ID'], ['AWS_SECRET_ACCESS_KEY']
+    # rob's key store in .sh file, paramiko to run
     return s3_connection.get_bucket(bucket_name)
 
 
@@ -345,12 +347,6 @@ def upload(labid):
             aspect_ratios_newfs.append(str(aspect_ratio))
 
             # send file to s3 one by one
-            # bucket_name = 'msds603-deep-vision'
-            # s3_connection = boto.connect_s3(
-            #     aws_access_key_id='AKIAIQRI4EE5ENXNW6LQ',
-            #     aws_secret_access_key='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')
-            # # to be fixed with paramiko
-            # bucket = s3_connection.get_bucket(bucket_name)
             bucket = get_deepVision_bucket()
             k = Key(bucket)
             ts = round(time.time())
@@ -474,12 +470,16 @@ def predict(projid):
 
     if form.validate_on_submit():
         files = form.file_selector.data
+        accepts = ['bmp', 'dib', 'jpeg', 'jpg', 'jpe', 'jp2', 'png', 'webp',
+                   'pbm', 'pgm', 'ppm', 'sr', 'ras', 'tiff', 'tif']
 
         # Get aspect_ratio
         project = classes.Project.query.filter_by(project_id=projid).first()
         aspect_ratio = project.last_train_asp_ratio
 
         # remove and create the tmp sub directory for that project
+        if not os.path.exists("/home/ec2-user/product-analytics-group-project-deepvision/code/app/static/tmp"):
+            os.mkdir("/home/ec2-user/product-analytics-group-project-deepvision/code/app/static/tmp/")
         if os.path.exists(f"/home/ec2-user/product-analytics-group-project-deepvision/code/app/static/tmp/{projid}"): shutil.rmtree(f"/home/ec2-user/product-analytics-group-project-deepvision/code/app/static/tmp/{projid}")
         os.mkdir(f"/home/ec2-user/product-analytics-group-project-deepvision/code/app/static/tmp/{projid}")
 
@@ -487,7 +487,10 @@ def predict(projid):
         s3_filepaths = []
         ec2_filepaths = []
         for f in files:
-            filename = secure_filename(f.filename)
+            if f.filename.split('.')[-1].strip().lower() not in accepts:
+                continue
+            ts = time.time()
+            filename = str(round(ts)) + secure_filename(f.filename)
             s3_filepath = '/'.join([str(projid), 'prediction', filename])
             ec2_filepath = '/'.join(['/home/ec2-user/product-analytics-group-project-deepvision/code/app/static/tmp', str(projid), filename])
 
@@ -495,7 +498,8 @@ def predict(projid):
             s3_connection = boto.connect_s3(
                 aws_access_key_id='AKIAIQRI4EE5ENXNW6LQ',
                 aws_secret_access_key='2gduLL4umVC9j7XXc2L1N8DfUVQQKcFmnezTYF8O')
-            # to be fixed with paramiko
+            # to be replaced: os.environ['AWS_ACCESS_KEY_ID'], ['AWS_SECRET_ACCESS_KEY']
+            # rob's key store in .sh file, paramiko to run
             bucket = s3_connection.get_bucket(bucket_name)
             # bucket.set_acl('public-read')
             k = Key(bucket)
