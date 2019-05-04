@@ -490,7 +490,7 @@ def predict(projid):
             if f.filename.split('.')[-1].strip().lower() not in accepts:
                 continue
             ts = time.time()
-            filename = str(round(ts)) + secure_filename(f.filename)
+            filename = str(round(ts)) +"_"+ secure_filename(f.filename)
             s3_filepath = '/'.join([str(projid), 'prediction', filename])
             ec2_filepath = '/'.join(['/home/ec2-user/product-analytics-group-project-deepvision/code/app/static/tmp', str(projid), filename])
 
