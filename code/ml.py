@@ -2,6 +2,7 @@ import asyncio
 import ssl
 import smtplib
 from sklearn.metrics import roc_auc_score, f1_score
+from sklearn.model_selection import train_test_split
 import boto3
 import numpy as np
 from functools import partial
@@ -713,11 +714,14 @@ def train_ml(proj_id, aspect_r, name, email, lbl2idx):
     print('Creating data sets/ loaders ...')
     # datasets declaration
     transforms = [RandomRotation(arc_width=30), Flip(), RandomCrop(R_PIX)]
-
     df = get_project_df(CLIENT, proj_id, BUCKET_RESIZE)
-    idx = np.random.rand(len(df)) < .9
-    train_df = df[idx]
-    valid_df = df[~idx]
+
+    train_X, valid_X, train_Y, valid_Y = train_test_split(df.path.values, df.label.values, test_size=.1)
+    train_df = pd.DataFrame({'path':train_X, 'label': train_Y})
+    valid_df = pd.DataFrame({'path':valid_X, 'label': valid_Y})
+    #idx = np.random.rand(len(df)) < .9
+    #train_df = df[idx]
+    #valid_df = df[~idx]
 
     train_ds = Transform(ProjectDS(train_df, lbl2idx, CLIENT, proj_id, BUCKET_RESIZE),
                          transforms=transforms, normalize=False, r_pix=R_PIX)
@@ -752,7 +756,7 @@ def train_ml(proj_id, aspect_r, name, email, lbl2idx):
     best_loss = train_model(MAX_EPOCHS, model, best_loss=best_loss,  train_dl=train_dl, valid_dl=valid_dl,
                             max_lr=.01, wd=0, project_name=proj_id, n_lbls=n_lbls,
                             save_path=save_path, unfreeze_during_loop=(.1, .2))
-
+    print('sending email to', email)
     send_email(receiver_name=name, receiver_email=email)
 
 

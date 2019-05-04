@@ -34,7 +34,7 @@ from boto.s3.key import Key
 import boto
 from collections import Counter
 import time
-
+from threading import Thread 
 # for prediction
 import numpy as np
 from ml import train_ml, predict_ml, send_notification
@@ -420,8 +420,10 @@ def train(projid):
 
     # call the train function from ml module
     print('before training', lbl2idx)
-    train_ml(projid, max_asp_ratio, proj_owner_name, proj_owner_email, lbl2idx)
-
+    t = Thread(target=train_ml, args=(projid, max_asp_ratio, proj_owner_name, proj_owner_email, lbl2idx))
+    t.start()
+    #train_ml(projid, max_asp_ratio, proj_owner_name, proj_owner_email, lbl2idx)
+    print("Model initiated in another thread.")
     return redirect(url_for('projects'))
 
 
