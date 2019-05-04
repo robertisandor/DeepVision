@@ -82,13 +82,13 @@
     <section class="hero-banner hero-banner--sm mb-30px">
         <div class="container">
             <div class="hero-banner--sm__content">
-                <h1>{{projnm}} Status</h1>
+                <h1>Project Status</h1>
                 <nav aria-label="breadcrumb" class="banner-breadcrumb">
                     <ol class="breadcrumb">
-                         <li class="breadcrumb-item active" aria-current="page"><a href="#predictions">Prediction</a>
+                        <li class="breadcrumb-item">{{ projnm }}</a></li>
+                        <li class="breadcrumb-item active" aria-current="page"><a href="#predictions">Prediction</a>
                         </li>
                         <li class="breadcrumb-item active" aria-current="page"><a href="#users">Users</a></li>
-                        <li class="breadcrumb-item active" aria-current="page"><a href="{{url_for('projects')}}">All Projects</a></li>
                     </ol>
                 </nav>
             </div>
@@ -142,45 +142,79 @@
         <div class="container" id="users">
             <div class="section-intro pb-75px text-center">
                 <h2 class="section-intro__title">Current Users of {{ projnm }}</h2>
-                <h3>Project owner: {{proj_owner}}</h3>
             </div>
             <div class="row">
                 <div class="col-lg-7">
-                    <div class="card card-feature text-center text-lg-left mb-4 mb-lg-0">
-
-                        {% for user in users %}
-                        <h3 class="card-feature__title">
-                            {{ user }} &nbsp;&nbsp;&nbsp;&nbsp;
-                        </h3>
-                        {% endfor %}
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="card card-feature text-center text-lg-left mb-4 mb-lg-0">
+                                        <h3 class="card-feature__title">Project Owner:</h3>
+                                    </div>
+                                </div>
+                                <div class="col-lg-12 scrollable">
+                                    <div class="card card-feature text-center text-lg-center mb-4 mb-lg-0">
+                                        <br />
+                                        <h4>{{ proj_owner }}</h4>
+                                        <br />
+                                        <br />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="card card-feature text-center text-lg-left mb-4 mb-lg-0">
+                                        <!-- <div class="scrollable"> -->
+                                        <h3 class="card-feature__title">All project users: </h3>
+                                    </div>
+                                </div>
+                                <div class="col-lg-12 scrollable1">
+                                    <div class="card card-feature text-center text-lg-left mb-4 mb-lg-0">
+                                        {% for user in users %}
+                                        <p class="card-feature__subtitle">
+                                            {{ user }} &nbsp;&nbsp;&nbsp;&nbsp;
+                                        </p>
+                                        {% endfor %}
+                                        <!-- </div> -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-
                 </div>
                 <div class="col-lg-5">
-                    <div class="card card-feature text-center text-lg-left mb-4 mb-lg-0">
-                        {% extends "flash.html" %}
-                        {% block body %}
-                        <form action="" class="form-contact contact_form" id="addUser" method="POST"
-                            novalidate="novalidate">
-                            <input type="text" name="username" id="username" placeholder="Username"
-                                value="{{ request.form.username }}" size="50" required />
-                            <div class="form-group text-center text-md-right mt-3">
-                                <button type="submit" class="button button-contactForm">
-                                    <a href="{{ url_for('status', projid = projid) }}"><strong>Add
-                                            User</strong></a></button>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="card card-feature text-center text-lg-left mb-4 mb-lg-0">
+                                <h3 class="card-feature__title">Add new user for this project: </h3>
                             </div>
-                        </form>
-                        {% endblock %}
+                        </div>
+                        <div class="col-lg-12 scrollable">
+                            <div class="card card-feature text-center text-lg-left mb-4 mb-lg-0">
+                                {% extends "flash.html" %}
+                                {% block body %}
+                                <form action="" class="form-contact contact_form" id="addUser" method="POST"
+                                    novalidate="novalidate">
+                                    <input type="text" name="username" id="username" placeholder="Username"
+                                        value="{{ request.form.username }}" size="45" required />
+                                    <div class="form-group text-center text-md-right mt-3">
+                                        <button type="submit" class="button button-contactForm">
+                                            <a href="{{ url_for('status', projid = projid) }}"><strong>Add
+                                                    User</strong></a></button>
+                                        <br />
+                                    </div>
+                                </form>
+                                {% endblock %}
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
-
-
 </body>
-
-
-
 
 </html>
