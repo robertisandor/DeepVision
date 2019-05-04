@@ -166,9 +166,9 @@ def projects():
         project_ids = [user_project.project_id for user_project in users_projects]
         projects = classes.Project.query.filter(classes.Project.project_id.in_(project_ids))
 
-        proj_owners = {}
-        for proj in projects:
-            proj_owners[proj.project_id] = classes.User.query.filter_by(id=proj.project_owner_id).first().username
+        # proj_owners = {}
+        # for proj in projects:
+        #     proj_owners[proj.project_id] = classes.User.query.filter_by(id=proj.project_owner_id).first().username
 
         # return objects to easily call by attribute names,
         # rather than by indexes, please keep
@@ -180,7 +180,9 @@ def projects():
         # more secure than by indexes, please keep
 
         return render_template('projects.html', projects=projects,
-                               proj_labs=proj_labs, proj_owners=proj_owners)
+                               proj_labs=proj_labs
+                               # , proj_owners=proj_owners
+                               )
 
     elif request.method == 'POST':
         project_name = request.form['project_name']
@@ -208,6 +210,10 @@ def projects():
             return f"<h1> A project with the name: {project_name}" + \
                    " already exists. Please choose another " \
                    "name for your project.</h1>"
+            # flash("A project with the same name already exists."
+            #       "Please choose another name.")
+            # return url_for('projects')
+
         else:
             # insert into the Project table
             db.session.add(classes.Project(project_name, int(current_user.id)))
@@ -282,7 +288,9 @@ def projects():
                     project_id=proj.project_id).all()
 
             return render_template('projects.html', projects=projects,
-                                   proj_labs=proj_labs, proj_owners=proj_owners)
+                                   proj_labs=proj_labs
+                                   # , proj_owners=proj_owners
+                                   )
 
 
 class UploadFileForm(FlaskForm):

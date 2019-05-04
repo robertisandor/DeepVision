@@ -124,7 +124,7 @@
                     <th class="cell100 column1">Project Name</th>
                     <th class="cell100 column2">Upload Data</th>
                     <th class="cell100 column3">Model Action</th>
-                    <th class="cell100 column4">Project Owner</th>
+{#                    <th class="cell100 column4">Project Owner</th>#}
                   </tr>
                 </thead>
               </table>
@@ -154,7 +154,7 @@
                           <a class="button button-light" href="{{ url_for('predict', projid = proj.project_id) }}">Predict</a>
                           <a class="button button-light" href="{{ url_for('status', projid = proj.project_id) }}">Status</a>
                       </td>
-                      <td class="cell100 column4">{{ proj_owners[proj.project_id] }}</td>
+{#                      <td class="cell100 column4">{{ proj_owners[proj.project_id] }}</td>#}
                     </tr>
                     {% endfor %}
                   </form>
