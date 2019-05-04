@@ -463,8 +463,7 @@ def predict(projid):
     # check if there is a model
     filepaths = client.list_objects(Bucket=bucket_name, Prefix=projid, Delimiter='')
     filepaths = [item['Key'] for item in filepaths['Contents']
-                  if len(item['Key'].split('.')) > 1 and item['Key'].split('/')[0] == projid
-              and item['Key'].split('/')[1] == 'prediction']
+                  if item['Key'].split('/')[0] == projid]
     if f'{projid}/model/' not in filepaths:
         return "A model has to be trained before predicting."
 
@@ -499,8 +498,8 @@ def predict(projid):
 
             file_content = f.stream.read()
             s3_connection = boto.connect_s3(
-                aws_access_key_id='AKIAIQRI4EE5ENXNW6LQ',
-                aws_secret_access_key='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')
+                aws_access_key_id='AKIAJGAZYBJDBYNQ2LWQ',
+                aws_secret_access_key='H7KOIsPvl7SkwdT6Ote5O+G/DWLYyAfXRc/YXEAt')
             # to be replaced: os.environ['AWS_ACCESS_KEY_ID'], ['AWS_SECRET_ACCESS_KEY']
             # rob's key store in .sh file, paramiko to run
             bucket = s3_connection.get_bucket(bucket_name)

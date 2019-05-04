@@ -28,8 +28,8 @@ TMP_MODEL_FILE = '_tmp_model.pth'
 TMP_IMG_FILE = '_tmp_img.jpg'
 MODEL_W_FOLD_NAME = 'model'
 PREDICTION_FOLDER_NAME = 'prediction'
-CLIENT = boto3.client('s3', aws_access_key_id='AKIAJGAZYBJDBYNQ2LWQ',
-                      aws_secret_access_key='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')
+CLIENT = boto3.client('s3', aws_access_key_id='AKIAIQRI4EE5ENXNW6LQ',
+        aws_secret_access_key='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')
 
 BATCH_SIZE = 8
 R_PIX = 8
