@@ -384,6 +384,7 @@ def train(projid):
     This route triggered when a user clicks "Train" button in a project.
     After training is done, the user will receive an notification email.
     """
+    error = None
     # query inputs for to train the model
 
     # Check that minimum amount of images are uploaded
@@ -402,11 +403,15 @@ def train(projid):
                 if len(files) < MIN_IMG_LBL:
                     lbl_id = di.split('/')[1]
                     lbl_name = classes.Label.query.filter_by(project_id=projid, label_id=lbl_id).first().label_name
-                    return f"Upload at least {MIN_IMG_LBL} images for {lbl_name}"
-            else: return "Upload images for {di.split('/')[1]} before starting training"
+                    error = f"Upload at least {MIN_IMG_LBL} images for {lbl_name}"
+                    # return f"Upload at least {MIN_IMG_LBL} images for {lbl_name}"
+            else:
+                # return f"Upload images for {di.split('/')[1]} before starting training"
+                error = f"Upload images for {di.split('/')[1]} before starting training"
 
-
-    else: return f"Upload {MIN_IMG_LBL} images for each label before start training"
+    else:
+        # return f"Upload {MIN_IMG_LBL} images for each label before start training"
+        error = f"Upload {MIN_IMG_LBL} images for each label before start training"
 
 
     print('Enters training route')
@@ -432,8 +437,10 @@ def train(projid):
     t.start()
     #train_ml(projid, max_asp_ratio, proj_owner_name, proj_owner_email, lbl2idx)
     print("Model initiated in another thread.")
-    return redirect(url_for('projects'))
+    # return redirect(url_for('projects'))
 
+    return render_template('predict.html', projnm=projnm,
+                           pred_lab=prediction_labels, form=form, projid=projid, error=error)
 
 
 @application.route('/predict/<projid>', methods=['GET', 'POST'])
