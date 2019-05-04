@@ -487,9 +487,9 @@ def predict(projid):
             with open(ec2_filepath, 'wb') as data:
                 file_content = f.stream.read()
                 data.write(file_content)
-
-        # To get number of training labels
+        
         labels = classes.Label.query.filter_by(project_id=projid).all()
+        projid='Oxford-IIIT-Pet'
 
         # Miguel's predict function
         predictions = predict_ml(project_id=projid, paths=filepaths, aspect_r=aspect_ratio, n_training_labels=len(labels))

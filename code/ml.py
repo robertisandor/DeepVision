@@ -28,8 +28,8 @@ TMP_MODEL_FILE = '_tmp_model.pth'
 TMP_IMG_FILE = '_tmp_img.jpg'
 MODEL_W_FOLD_NAME = 'model'
 PREDICTION_FOLDER_NAME = 'prediction'
-CLIENT = boto3.client('s3', aws_access_key_id='AKIAIQRI4EE5ENXNW6LQ',
-                      aws_secret_access_key='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')
+CLIENT = boto3.client('s3', aws_access_key_id='AKIAJGAZYBJDBYNQ2LWQ',
+                      aws_secret_access_key='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')
 
 BATCH_SIZE = 8
 R_PIX = 8
@@ -41,6 +41,7 @@ SENDER_EMAIL = 'info.deep.vision.co@gmail.com'
 PASSWORD = 'D33pVisi0nPa55word'
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
 print(f'Using device {device}')
 
 ###### Functions dealing with S3 #########
@@ -347,8 +348,9 @@ def load_model(m, client, project_name, bucket_name=BUCKET_ORIG, tmp_p=TMP_MODEL
         model_ps = sorted([f['Key']
                            for f in model_p_objects['Contents']], reverse=True)
         path = model_ps[0]
+        print(path)
         client.download_file(bucket_name, path, safe_tmp_file)
-        m.load_state_dict(torch.load(safe_tmp_file))
+        m.load_state_dict(torch.load(safe_tmp_file, map_location='cpu'))
         os.remove(safe_tmp_file)
 
 ######### Architecture ############
@@ -765,7 +767,7 @@ def predict_ml(project_id, paths, aspect_r, n_training_labels):
     predictions = []
 
     print('constructing model ...')
-    model = DenseNet(out_size=n_training_labels if n_training_labels!=2 else 1)
+    model = DenseNet(out_size=n_training_labels if n_training_labels!=2 else 1).to(device)
     print('loading model ...')
     load_model(model, CLIENT, project_id, bucket_name=BUCKET_ORIG,
                tmp_p=project_id+TMP_MODEL_FILE)
