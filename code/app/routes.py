@@ -620,20 +620,32 @@ def predict(projid):
         #labels = list(range(6))
         aspect_ratio=0.8
         #print(filepaths)
-        # Miguel's predict function
-        predictions = predict_ml(project_id=projid, paths=s3_filepaths, aspect_r=aspect_ratio, n_training_labels=len(labels))
-        
-        idx2lbls = [0]*len(labels)
-        for label in labels: idx2lbls[int(label.label_index)] = label.label_id
-        prediction_labels = [ idx2lbls[p] for p in predictions ]
-        project_ids = [projid for i in range(len(prediction_labels))]
-        
-        for row in zip(project_ids, ec2_filepaths, prediction_labels):
-            prediction(row[0], row[1], row[2])
+        model = ml.list_items(client, path=f"{projid}/model/",
+                                 only_folders=False, bucket_name=bucket_name)
+        filepaths = [item['Key'] for item in model['Contents']
+                  if len(item['Key'].split('.')) > 1]
+        print(filepaths)
 
-        # TODO: remove print statements after debugging
-        print('prediction_labels', prediction_labels)
-        print('ec2_paths', ec2_filepaths)
+        # if model exists
+        if len(filepaths) == 0:
+            flash("Please train a model before trying to predict.")
+            render_template('predict.html', projnm=projnm,
+                            pred_lab=prediction_labels, form=form, projid=projid)
+        else:
+        # Miguel's predict function
+            predictions = predict_ml(project_id=projid, paths=s3_filepaths, aspect_r=aspect_ratio, n_training_labels=len(labels))
+        
+            idx2lbls = [0]*len(labels)
+            for label in labels: idx2lbls[int(label.label_index)] = label.label_id
+            prediction_labels = [ idx2lbls[p] for p in predictions ]
+            project_ids = [projid for i in range(len(prediction_labels))]
+        
+            for row in zip(project_ids, ec2_filepaths, prediction_labels):
+                prediction(row[0], row[1], row[2])
+
+            # TODO: remove print statements after debugging
+            print('prediction_labels', prediction_labels)
+            print('ec2_paths', ec2_filepaths)
 
     return render_template('predict.html', projnm=projnm,
                            pred_lab=prediction_labels, form=form, projid=projid)

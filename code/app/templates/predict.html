@@ -45,6 +45,8 @@
             <p class="section-intro__subtitle">Upload one image below please </p>
             <p class="section-intro__subtitle">
                 <div class="section-padding--small2 bg-magnolia" id="create project">
+                    {% extends "flash.html" %}
+                    {% block body %}
                     <center>
                         {{ form.csrf_token }}
                         <br><!--  render the form's CSRF field like normal. -->
@@ -74,6 +76,7 @@
                         <br />
                         <br>
                     </center>
+                    {% endblock %}
                 </div>
             </p>
         </form>

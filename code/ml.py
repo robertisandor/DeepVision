@@ -112,14 +112,14 @@ def resize_images(df, aspect_r, client, project_name, org_bucket=BUCKET_ORIG, de
 
 def get_image(client, file_path, show=False, bucket_name=BUCKET_RESIZE):
 
-    tmp = tempfile.NamedTemporaryFile()
+    tmp = tempfile.NamedTemporaryFile(delete=False)
     with open(tmp.name, 'wb') as data:
         print(bucket_name, file_path)
         client.download_fileobj(bucket_name, file_path, data)
     #    await asyncio.sleep(10)
         
+    print(tmp.name)
     img = mpimg.imread(tmp.name)
-
     #with open(tmp.name, 'wb') as tmp.name:
     #    client.download_fileobj(bucket_name, file_path, tmp.name)
     #    img = mpimg.imread(tmp.name)
@@ -343,6 +343,7 @@ def load_model(m, client, project_name, bucket_name=BUCKET_ORIG, tmp_p=TMP_MODEL
     '''Loads the latest model for this project if exists'''
     model_p_objects = list_items(client, path=f"{project_name}/{MODEL_W_FOLD_NAME}/",
                                  only_folders=False, bucket_name=bucket_name)
+    print(model_p_objects)
 
     if 'Contents' in model_p_objects.keys():
         safe_tmp_file = project_name+'_load'+tmp_p
@@ -350,7 +351,11 @@ def load_model(m, client, project_name, bucket_name=BUCKET_ORIG, tmp_p=TMP_MODEL
                            for f in model_p_objects['Contents']], reverse=True)
         path = model_ps[0]
         print(path)
+        print(safe_tmp_file)
         client.download_file(bucket_name, path, safe_tmp_file)
+        with open(safe_tmp_file, 'rb') as test:
+             contents = test.read()
+             print(contents)
         m.load_state_dict(torch.load(safe_tmp_file, map_location='cpu'))
         os.remove(safe_tmp_file)
 
