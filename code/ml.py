@@ -114,9 +114,10 @@ def get_image(client, file_path, show=False, bucket_name=BUCKET_RESIZE):
 
     tmp = tempfile.NamedTemporaryFile()
     with open(tmp.name, 'wb') as data:
+        print(bucket_name, file_path)
         client.download_fileobj(bucket_name, file_path, data)
     #    await asyncio.sleep(10)
-    
+        
     img = mpimg.imread(tmp.name)
 
     #with open(tmp.name, 'wb') as tmp.name:

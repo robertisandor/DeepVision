@@ -620,7 +620,7 @@ def predict(projid):
         aspect_ratio=0.8
         print(filepaths)
         # Miguel's predict function
-        predictions = predict_ml(project_id=projid, paths=filepaths, aspect_r=aspect_ratio, n_training_labels=len(labels))
+        predictions = predict_ml(project_id=projid, paths=s3_filepaths, aspect_r=aspect_ratio, n_training_labels=len(labels))
         
         idx2lbls = [0]*len(labels)
         for label in labels: idx2lbls[int(label.label_index)] = label.label_id
