@@ -82,13 +82,13 @@
     <section class="hero-banner hero-banner--sm mb-30px">
         <div class="container">
             <div class="hero-banner--sm__content">
-                <h1>Project Status</h1>
+                <h1>Project Status of project {{ projnm }} </h1>
                 <nav aria-label="breadcrumb" class="banner-breadcrumb">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item">{{ projnm }}</a></li>
                         <li class="breadcrumb-item active" aria-current="page"><a href="#predictions">Prediction</a>
                         </li>
                         <li class="breadcrumb-item active" aria-current="page"><a href="#users">Users</a></li>
+                        <li class="breadcrumb-item active" aria-current="page"><a href="{{url_for('projects')}}">All Projects</a></li>
                     </ol>
                 </nav>
             </div>
