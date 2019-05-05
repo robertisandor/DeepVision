@@ -615,10 +615,11 @@ def predict(projid):
                 data.write(file_content)
         
         labels = classes.Label.query.filter_by(project_id=projid).all()
-        projid='Oxford-IIIT-Pet'
-        labels = list(range(6))
+        print(labels)
+        #projid='Oxford-IIIT-Pet'
+        #labels = list(range(6))
         aspect_ratio=0.8
-        print(filepaths)
+        #print(filepaths)
         # Miguel's predict function
         predictions = predict_ml(project_id=projid, paths=s3_filepaths, aspect_r=aspect_ratio, n_training_labels=len(labels))
         
