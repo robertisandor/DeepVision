@@ -161,9 +161,12 @@
                       </td>
                       <!-- train -->
                       <td class="cell100 column3">
-                          <a class="button button-light" href="{{ url_for('training', projid = proj.project_id) }}" >Train</a>
-                          <a class="button button-light" href="{{ url_for('predict', projid = proj.project_id) }}">Predict</a>
-                          <a class="button button-light" href="{{ url_for('status', projid = proj.project_id) }}">Status</a>
+                          <a class="button button-light" href="{{ url_for('training', projid = proj.project_id) }}" onclick="gtag('event', 'click', {'event_category' : 'training',
+                              'event_label' : 'training_model', 'value' : 10 });">Train</a>
+                          <a class="button button-light" href="{{ url_for('predict', projid = proj.project_id) }}" onclick="gtag('event', 'click', {'event_category' : 'predicting',
+                              'event_label' : 'predictive_model', 'value' : 10 });">Predict</a>
+                          <a class="button button-light" href="{{ url_for('status', projid = proj.project_id) }}" onclick="gtag('event', 'click', {'event_category' : 'results',
+                              'event_label' : 'predict_results', 'value' : 10 });">Status</a>
                       </td>
 {#                      <td class="cell100 column4">{{ proj_owners[proj.project_id] }}</td>#}
                     </tr>

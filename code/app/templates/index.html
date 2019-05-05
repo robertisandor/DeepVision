@@ -245,7 +245,8 @@
                 <li class="unvalid"><i class="ti-close"></i>Reports and anlytics</li>
               </ul>
               <div class="card-pricing__footer">
-                <button class="button button-light"><a href="{{ url_for('signin') }}">Buy Now</button></a>
+                  <a class="button button-light" href="{{ url_for('signin') }}" onclick="gtag('event', 'click', {'event_category' : 'plan',
+                      'event_label' : 'basic_plan', 'value' : 10 });"> Buy Now </button></a>
               </div>
             </div>
           </div>
@@ -264,7 +265,8 @@
                 <li><i class="ti-check"></i>Reports and anlytics</li>
               </ul>
               <div class="card-pricing__footer">
-                <button class="button button-light"><a href="{{ url_for('signin') }}">Buy Now</button></a>
+                  <a class="button button-light" href="{{ url_for('signin') }}" onclick="gtag('event', 'click', {'event_category' : 'plan',
+                      'event_label' : 'advanced_plan', 'value' : 10 });"> Buy Now </button></a>
               </div>
             </div>
           </div>
@@ -283,7 +285,8 @@
                 <li><i class="ti-check"></i>Reports and anlytics</li>
               </ul>
               <div class="card-pricing__footer">
-                <button class="button button-light"><a href="{{ url_for('signin') }}">Buy Now</button></a>
+                  <a class="button button-light" href="{{ url_for('signin') }}" onclick="gtag('event', 'click', {'event_category' : 'plan',
+                      'event_label' : 'ultimate_plan', 'value' : 10 });"> Buy Now </button></a>
               </div>
             </div>
           </div>
