@@ -589,7 +589,8 @@ def predict(projid):
         ec2_filepaths = []
         for f in files:
             if f.filename.split('.')[-1].strip().lower() not in accepts:
-                continue
+            # if f.split('.')[-1].strip().lower() not in accepts:
+                 continue
             ts = time.time()
             filename = str(round(ts)) +"_"+ secure_filename(f.filename)
             s3_filepath = '/'.join([str(projid), 'prediction', filename])
@@ -602,7 +603,7 @@ def predict(projid):
             # to be replaced: os.environ['AWS_ACCESS_KEY_ID'], ['AWS_SECRET_ACCESS_KEY']
             # rob's key store in .sh file, paramiko to run
             bucket = s3_connection.get_bucket(bucket_name)
-            # bucket.set_acl('public-read')
+            bucket.set_acl('public-read')
             k = Key(bucket)
             k.key = s3_filepath
             k.set_contents_from_string(file_content)
@@ -627,7 +628,8 @@ def predict(projid):
             render_template('predict.html', projnm=projnm,
                             pred_lab=prediction_labels, form=form, projid=projid)
         else:
-        # Miguel's predict function
+            if aspect_ratio is None:
+                aspect_ratio = 1
             predictions = predict_ml(project_id=projid, paths=s3_filepaths, aspect_r=aspect_ratio, n_training_labels=len(labels))
         
             idx2lbls = [0]*len(labels)
@@ -635,12 +637,11 @@ def predict(projid):
             prediction_labels = [ idx2lbls[p] for p in predictions ]
             project_ids = [projid for i in range(len(prediction_labels))]
         
-            for row in zip(project_ids, ec2_filepaths, prediction_labels):
+            for row in zip(project_ids, s3_filepaths, prediction_labels):
                 prediction(row[0], row[1], row[2])
 
             project_predictions = classes.Pred_Results.query.filter_by(project_id=projid).all()
 
-        
             # TODO: remove print statements after debugging
 
     return render_template('predict.html', projnm=projnm,
@@ -660,7 +661,9 @@ def status(projid):
     proj = classes.Project.query.filter_by(project_id=projid) \
         .first()
     project_predictions = classes.Pred_Results.query.filter_by(project_id=projid).all()
-
+    
+    for project in project_predictions:
+       print(project.path_to_img)
     projnm = proj.project_name
     proj_owner = classes.User.query.filter_by(id=proj.project_owner_id).first().username
 
