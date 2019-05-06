@@ -350,12 +350,7 @@ def load_model(m, client, project_name, bucket_name=BUCKET_ORIG, tmp_p=TMP_MODEL
         model_ps = sorted([f['Key']
                            for f in model_p_objects['Contents']], reverse=True)
         path = model_ps[0]
-        print(path)
-        print(safe_tmp_file)
         client.download_file(bucket_name, path, safe_tmp_file)
-        with open(safe_tmp_file, 'rb') as test:
-             contents = test.read()
-             print(contents)
         m.load_state_dict(torch.load(safe_tmp_file, map_location='cpu'))
         os.remove(safe_tmp_file)
 
@@ -779,11 +774,10 @@ def predict_ml(project_id, paths, aspect_r, n_training_labels):
                tmp_p=project_id+TMP_MODEL_FILE)
     print('predicting ...')
     model.eval()
-    for path in paths:
-
+    
+    for idx, path in enumerate(paths):
         x = get_image(CLIENT, path, show=False,
                       bucket_name=BUCKET_ORIG)
-
         x = cv2.resize(x, (250, int(aspect_r*250)))
 
         x = x.astype(np.float32)

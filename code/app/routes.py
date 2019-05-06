@@ -567,7 +567,7 @@ def predict(projid):
         return "A model has to be trained before predicting."
 
     form = UploadFileForm()
-    prediction_labels = []
+    project_predictions = classes.Pred_Results.query.filter_by(project_id=projid).all()
 
     if form.validate_on_submit():
         files = form.file_selector.data
@@ -615,16 +615,11 @@ def predict(projid):
                 data.write(file_content)
         
         labels = classes.Label.query.filter_by(project_id=projid).all()
-        print(labels)
-        #projid='Oxford-IIIT-Pet'
-        #labels = list(range(6))
-        aspect_ratio=0.8
-        #print(filepaths)
         model = ml.list_items(client, path=f"{projid}/model/",
                                  only_folders=False, bucket_name=bucket_name)
         filepaths = [item['Key'] for item in model['Contents']
                   if len(item['Key'].split('.')) > 1]
-        print(filepaths)
+
 
         # if model exists
         if len(filepaths) == 0:
@@ -636,20 +631,20 @@ def predict(projid):
             predictions = predict_ml(project_id=projid, paths=s3_filepaths, aspect_r=aspect_ratio, n_training_labels=len(labels))
         
             idx2lbls = [0]*len(labels)
-            for label in labels: idx2lbls[int(label.label_index)] = label.label_id
+            for label in labels: idx2lbls[int(label.label_index)] = label.label_name
             prediction_labels = [ idx2lbls[p] for p in predictions ]
             project_ids = [projid for i in range(len(prediction_labels))]
         
             for row in zip(project_ids, ec2_filepaths, prediction_labels):
                 prediction(row[0], row[1], row[2])
 
+            project_predictions = classes.Pred_Results.query.filter_by(project_id=projid).all()
+
+        
             # TODO: remove print statements after debugging
-            print('prediction_labels', prediction_labels)
-            print('ec2_paths', ec2_filepaths)
 
     return render_template('predict.html', projnm=projnm,
-                           pred_lab=prediction_labels, form=form, projid=projid)
-
+                           project_predictions=project_predictions, form=form, projid=projid)
 
 @application.route('/status/<projid>', methods=['GET', 'POST'])
 @login_required
@@ -664,6 +659,7 @@ def status(projid):
     """
     proj = classes.Project.query.filter_by(project_id=projid) \
         .first()
+    project_predictions = classes.Pred_Results.query.filter_by(project_id=projid).all()
 
     projnm = proj.project_name
     proj_owner = classes.User.query.filter_by(id=proj.project_owner_id).first().username
@@ -722,7 +718,7 @@ def status(projid):
             return render_template('status.html', projnm=projnm, proj_owner=proj_owner,
                            users=users_with_new, projid=projid)
     return render_template('status.html', projnm=projnm, proj_owner=proj_owner,
-                           users=users, projid=projid)
+                           users=users, projid=projid, project_predictions=project_predictions)
 
 
 @application.route('/logout')
