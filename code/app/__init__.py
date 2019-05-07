@@ -10,6 +10,7 @@ from flask_login import LoginManager
 application = Flask(__name__)
 # bootstrap = Bootstrap(application)
 application.secret_key = os.urandom(24)  # for CSRF
+application.secret_key = bytearray([1] * 24)
 
 # config and initialize a db
 application.config.from_object(Config)
