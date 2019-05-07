@@ -607,8 +607,7 @@ def predict(projid):
             # k = Key(bucket)
             # k.key = s3_filepath
             # k.set_contents_from_string(file_content)
-            client.put_object(Body=file_content, Bucket=BUCKET_NAME, Key=s3_filepath,
-                       ExtraArgs={'ACL': 'public-read'})
+            client.put_object(Body=file_content, Bucket=BUCKET_NAME, Key=s3_filepath,ACL = 'public-read')
 
             s3_filepaths.append(s3_filepath)
             ec2_filepaths.append(ec2_filepath)
