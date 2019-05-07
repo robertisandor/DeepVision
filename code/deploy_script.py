@@ -149,7 +149,7 @@ def launch_application(ssh, server_path='~/' + git_repo_name + '/code'):
     port = get_port(ssh, server_path)
 
     # run the server with the last version
-    command = f"{ENVIRONMENT_PATH}/bin/gunicorn -D -b :{port} --chdir product-analytics-group-project-deepvision/code/ app:application"
+    command = f"{ENVIRONMENT_PATH}/bin/gunicorn -D -b :{port} --timeout 10000 --chdir product-analytics-group-project-deepvision/code/ app:application"
 
     stdin, stdout, stderr = ssh.exec_command(command)
 
