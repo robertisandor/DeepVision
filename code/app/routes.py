@@ -16,7 +16,7 @@ import tempfile
 from wtforms import SubmitField
 from werkzeug import secure_filename
 import shutil
-import ml
+# import ml
 
 # for building forms
 from flask_wtf import FlaskForm  # RecaptchaField
@@ -37,7 +37,7 @@ import time
 from threading import Thread 
 # for prediction
 import numpy as np
-from ml import train_ml, predict_ml, send_notification
+# from ml import train_ml, predict_ml, send_notification
 # for download
 import shutil
 from flask import send_file

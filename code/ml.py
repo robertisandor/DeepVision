@@ -114,11 +114,9 @@ def get_image(client, file_path, show=False, bucket_name=BUCKET_RESIZE):
 
     tmp = tempfile.NamedTemporaryFile(delete=False)
     with open(tmp.name, 'wb') as data:
-        print(bucket_name, file_path)
         client.download_fileobj(bucket_name, file_path, data)
     #    await asyncio.sleep(10)
         
-    print(tmp.name)
     img = mpimg.imread(tmp.name)
     #with open(tmp.name, 'wb') as tmp.name:
     #    client.download_fileobj(bucket_name, file_path, tmp.name)
@@ -148,7 +146,6 @@ class ProjectDS(Dataset):
 
 #         self.lbl2idx, self.idx2lbl = create_mappings(df.label)
         self.lbl2idx = lbl2idx
-        print(lbl2idx)
         self.labels = list(map(lambda x: self.lbl2idx[x], df.label))
 
     def __len__(self): return len(self.labels)
@@ -343,7 +340,6 @@ def load_model(m, client, project_name, bucket_name=BUCKET_ORIG, tmp_p=TMP_MODEL
     '''Loads the latest model for this project if exists'''
     model_p_objects = list_items(client, path=f"{project_name}/{MODEL_W_FOLD_NAME}/",
                                  only_folders=False, bucket_name=bucket_name)
-    print(model_p_objects)
 
     if 'Contents' in model_p_objects.keys():
         safe_tmp_file = project_name+'_load'+tmp_p
