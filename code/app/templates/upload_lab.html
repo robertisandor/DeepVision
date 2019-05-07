@@ -35,14 +35,18 @@
           <center>
             <form method="POST" enctype="multipart/form-data">
               {{ form.csrf_token }}
+              Images only
               <br><!--  render the form's CSRF field like normal. -->
-              {{ form.file_selector(class="button button-light") }} Images only
+              {{ form.file_selector(class="button button-contactForm") }} 
               <br>
-              {{ form.submit(class="button button-light") }}
+              <br />
+              {{ form.submit(class="button button-contactForm") }}
               <br>
                 {{ muploaded }} images out of {{ nfiles }} files selected uploaded successfully
               <br>
             </form>
+            <br>
+            <br />
             <button type="submit" class="button button-light">
               <a href="{{ url_for('projects') }}">Back to Project List Page </button></a>
             <br>

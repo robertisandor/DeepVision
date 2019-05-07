@@ -41,8 +41,7 @@
     <div class="container">
         <form method="POST" enctype="multipart/form-data">
             <h2 class="section-intro__title">Predict New Picture's Label for Project {{ projnm }}</h2>
-            <p class="section-intro__subtitle">Let's guess what your picture is! :P </p>
-            <p class="section-intro__subtitle">Upload one image below please </p>
+            <p class="section-intro__subtitle">Upload images to be predicted below</p>
             <p class="section-intro__subtitle">
                 <div class="section-padding--small2 bg-magnolia" id="create project">
                     {% extends "flash.html" %}
@@ -50,19 +49,17 @@
                     <center>
                         {{ form.csrf_token }}
                         <br><!--  render the form's CSRF field like normal. -->
-                        {{ form.file_selector(class="button button-light") }}
+                        {{ form.file_selector(class="button button-contactForm") }}
                         <br />
+                        <br>
                         <!-- {{ form.submit(class="button button-light", onclick="popupClickButton()") }} -->
-                        {{ form.submit(class="button button-light") }}
+                        {{ form.submit(class="button button-contactForm") }}
                         <br>
                         <br />
                         <button type="button" class="button button-light">
                             <a href="#" class="trigger_popup_fricc" type="submit">Predict</a></button>
-                        <!-- <script>
-                            function popupClickButton() {
-                                alert("Your image is being predited. Go to the status page to check predition results.");
-                            }
-                        </script> -->
+                        <!-- <button type="submit" class="button button-light trigger_popup_fricc">Predict</button> -->
+
                         <br>
                         <br>
                         <div class="form-group text-center text-md-right mt-3">
