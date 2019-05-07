@@ -597,16 +597,18 @@ def predict(projid):
             ec2_filepath = '/'.join(['/home/ec2-user/product-analytics-group-project-deepvision/code/app/static/tmp', str(projid), filename])
 
             file_content = f.stream.read()
-            s3_connection = boto.connect_s3(
-                aws_access_key_id='AKIAJGAZYBJDBYNQ2LWQ',
-                aws_secret_access_key='H7KOIsPvl7SkwdT6Ote5O+G/DWLYyAfXRc/YXEAt')
-            # to be replaced: os.environ['AWS_ACCESS_KEY_ID'], ['AWS_SECRET_ACCESS_KEY']
-            # rob's key store in .sh file, paramiko to run
-            bucket = s3_connection.get_bucket(bucket_name)
-            bucket.set_acl('public-read')
-            k = Key(bucket)
-            k.key = s3_filepath
-            k.set_contents_from_string(file_content)
+            # s3_connection = boto.connect_s3(
+            #     aws_access_key_id='AKIAJGAZYBJDBYNQ2LWQ',
+            #     aws_secret_access_key='H7KOIsPvl7SkwdT6Ote5O+G/DWLYyAfXRc/YXEAt')
+            # # to be replaced: os.environ['AWS_ACCESS_KEY_ID'], ['AWS_SECRET_ACCESS_KEY']
+            # # rob's key store in .sh file, paramiko to run
+            # bucket = s3_connection.get_bucket(bucket_name)
+            # bucket.set_acl('public-read')
+            # k = Key(bucket)
+            # k.key = s3_filepath
+            # k.set_contents_from_string(file_content)
+            client.put_object(Body=file_content, Bucket=BUCKET_NAME, Key=s3_filepath,
+                       ExtraArgs={'ACL': 'public-read'})
 
             s3_filepaths.append(s3_filepath)
             ec2_filepaths.append(ec2_filepath)
