@@ -534,7 +534,7 @@ def training(projid):
         try:
             t = Thread(target=train_ml, args=(projid, max_asp_ratio, proj_owner_name, proj_owner_email, lbl2idx))
             t.start()
-            message = "Your model is training now. You will receive an email once it's reday."
+            message = "Your model is training now. You will receive an email once it's ready."
         except: message = "There has been an error training your model. Please contact our support email at info.deep.vision.co@gmail.com"
         #train_ml(projid, max_asp_ratio, proj_owner_name, proj_owner_email, lbl2idx)
         print("Model initiated in another thread.")
