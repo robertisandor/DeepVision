@@ -38,6 +38,10 @@ from threading import Thread
 # for prediction
 import numpy as np
 from ml import train_ml, predict_ml, send_notification
+# for download
+import shutil
+from flask import send_file
+
 
 CLIENT = boto3.client('s3', aws_access_key_id='AKIAIQRI4EE5ENXNW6LQ',
                       aws_secret_access_key='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')
@@ -648,6 +652,7 @@ def predict(projid):
     return render_template('predict.html', projnm=projnm,
                            project_predictions=project_predictions, form=form, projid=projid)
 
+
 @application.route('/status/<projid>', methods=['GET', 'POST'])
 @login_required
 def status(projid):
@@ -723,6 +728,27 @@ def status(projid):
                            users=users_with_new, projid=projid)
     return render_template('status.html', projnm=projnm, proj_owner=proj_owner,
                            users=users, projid=projid, project_predictions=project_predictions)
+
+
+@application.route('/downloadpred/<projid>', methods=['GET', 'POST'])
+@login_required
+def downloadpred(projid):
+    """
+    rename the files in tmp folder of the project
+    zip all the files, send to user
+    :param projid:
+    :return: send files
+    """
+    preds = classes.Pred_Results.query.filter_by(project_id=projid).all()
+    for p in preds:
+        newnm = p.path_to_img.split('.')[0]+"_"+p.label+"_"+p.path_to_img.split('.')[1]
+        os.rename(p.path_to_img, newnm)
+        # suppose the path in db is absolute
+    projfoder = '/'.join(preds[0].path_to_img.split('/')[:-1])
+    shutil.make_archive(projfoder, 'zip', projfoder)
+
+    return send_file(projfoder+".zip", as_attachment=True,
+                     attachment_filename=str(projid)+".zip")
 
 
 @application.route('/logout')
