@@ -43,8 +43,8 @@ import shutil
 from flask import send_file
 
 
-CLIENT = boto3.client('s3', aws_access_key_id='AKIAIQRI4EE5ENXNW6LQ',
-                      aws_secret_access_key='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')
+CLIENT = boto3.client('s3', aws_access_key_id='',
+                      aws_secret_access_key='')
 
 BUCKET_NAME = 'msds603-deep-vision'
 MIN_IMG_LBL = 5
@@ -55,10 +55,9 @@ MIN_IMG_LBL = 5
 def get_deepVision_bucket():
     bucket_name = 'msds603-deep-vision'
     s3_connection = boto.connect_s3(
-        aws_access_key_id='AKIAIQRI4EE5ENXNW6LQ',
-        aws_secret_access_key='2gduLL4umVC9j7XXc2L1N8DfUVQQKcFmnezTYF8O')
-    # to be replaced: os.environ['AWS_ACCESS_KEY_ID'], ['AWS_SECRET_ACCESS_KEY']
-    # rob's key store in .sh file, paramiko to run
+        aws_access_key_id='',
+        aws_secret_access_key='')
+    
     return s3_connection.get_bucket(bucket_name)
 
 
@@ -262,15 +261,6 @@ def projects():
             k.key = f'/{str(most_recent_project.project_id)}/prediction/'
             k.set_contents_from_string('')
 
-            # # create folder in predict bucket
-            # bucket_name = 'msds603-deep-vision-predict'
-            # s3_connection = boto.connect_s3(
-            #     aws_access_key_id='AKIAIQRI4EE5ENXNW6LQ',
-            #     aws_secret_access_key='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')
-            # # to be fixed with paramiko
-            # bucket = s3_connection.get_bucket(bucket_name)
-
-            # bucket.set_acl('public-read')
             k = Key(bucket)
             k.key = f'/{str(most_recent_project.project_id)}/'
             k.set_contents_from_string('')
@@ -556,8 +546,8 @@ def predict(projid):
     :return: predicted label of the new image, display on the website.
     """
 
-    client = boto3.client('s3', aws_access_key_id='AKIAIQRI4EE5ENXNW6LQ',
-                          aws_secret_access_key='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')
+    client = boto3.client('s3', aws_access_key_id='',
+                          aws_secret_access_key='')
     bucket_name = 'msds603-deep-vision'
 
     projnm = classes.Project.query.filter_by(project_id=projid) \
@@ -591,6 +581,7 @@ def predict(projid):
         # Store imgs to s3 and ec2.
         s3_filepaths = []
         ec2_filepaths = []
+        if len(files) > 0:
         for f in files:
             if f.filename.split('.')[-1].strip().lower() not in accepts:
             # if f.split('.')[-1].strip().lower() not in accepts:
@@ -601,16 +592,7 @@ def predict(projid):
             ec2_filepath = '/'.join(['/home/ec2-user/product-analytics-group-project-deepvision/code/app/static/tmp', str(projid), filename])
 
             file_content = f.stream.read()
-            # s3_connection = boto.connect_s3(
-            #     aws_access_key_id='AKIAJGAZYBJDBYNQ2LWQ',
-            #     aws_secret_access_key='H7KOIsPvl7SkwdT6Ote5O+G/DWLYyAfXRc/YXEAt')
-            # # to be replaced: os.environ['AWS_ACCESS_KEY_ID'], ['AWS_SECRET_ACCESS_KEY']
-            # # rob's key store in .sh file, paramiko to run
-            # bucket = s3_connection.get_bucket(bucket_name)
-            # bucket.set_acl('public-read')
-            # k = Key(bucket)
-            # k.key = s3_filepath
-            # k.set_contents_from_string(file_content)
+            
             client.put_object(Body=file_content, Bucket=BUCKET_NAME, Key=s3_filepath,ACL = 'public-read')
 
             s3_filepaths.append(s3_filepath)
@@ -741,11 +723,12 @@ def downloadpred(projid):
     """
     preds = classes.Pred_Results.query.filter_by(project_id=projid).all()
     for p in preds:
-        newnm = p.path_to_img.split('.')[0]+"_"+p.label+"_"+p.path_to_img.split('.')[1]
+        newnm = p.path_to_img.split('.')[0] + "_" + p.label + "_" + p.path_to_img.split('.')[1]
         os.rename(p.path_to_img, newnm)
         # suppose the path in db is absolute
-    projfoder = '/'.join(preds[0].path_to_img.split('/')[:-1])
-    shutil.make_archive(projfoder, 'zip', projfoder)
+    if len(preds) > 0:
+        projfoder = '/'.join(preds[0].path_to_img.split('/')[:-1])
+        shutil.make_archive(projfoder, 'zip', projfoder)
 
     return send_file(projfoder+".zip", as_attachment=True,
                      attachment_filename=str(projid)+".zip")

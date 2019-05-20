@@ -25,4 +25,13 @@ login_manager.init_app(application)
 from app import routes
 from app import classes
 
+preds = classes.Pred_Results.query.filter_by(path_to_img='20/prediction/1557258655_iStock-5078775151900.jpg').delete()
+preds = classes.Pred_Results.query.filter_by(path_to_img='20/prediction/1557258673_iStock-5078775151900.jpg').delete()
+preds = classes.Pred_Results.query.filter_by(path_to_img='20/prediction/1557258864_iStock-5078775151900.jpg').delete()
+preds = classes.Pred_Results.query.filter_by(path_to_img='20/prediction/1557261814_download_6.jpeg').delete()
+preds = classes.Pred_Results.query.filter_by(path_to_img='20/prediction/1557263056_glass.jpg').delete()
+db.session.commit()
+preds = classes.Pred_Results.query.all()
+for pred in preds:
+    print(pred.project_id, pred.path_to_img, pred.label)
 # kill -9 `ps aux |grep gunicorn |grep app | awk '{ print $2 }'`

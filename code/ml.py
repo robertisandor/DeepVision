@@ -28,8 +28,8 @@ TMP_MODEL_FILE = '_tmp_model.pth'
 TMP_IMG_FILE = '_tmp_img.jpg'
 MODEL_W_FOLD_NAME = 'model'
 PREDICTION_FOLDER_NAME = 'prediction'
-CLIENT = boto3.client('s3', aws_access_key_id='AKIAIQRI4EE5ENXNW6LQ',
-        aws_secret_access_key='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')
+CLIENT = boto3.client('s3', aws_access_key_id='',
+        aws_secret_access_key='')
 
 BATCH_SIZE = 8
 R_PIX = 8
@@ -111,7 +111,7 @@ def resize_images(df, aspect_r, client, project_name, org_bucket=BUCKET_ORIG, de
 
 
 def get_image(client, file_path, show=False, bucket_name=BUCKET_RESIZE):
-
+    print(type(client), client)
     tmp = tempfile.NamedTemporaryFile(delete=False)
     with open(tmp.name, 'wb') as data:
         client.download_fileobj(bucket_name, file_path, data)
@@ -772,6 +772,7 @@ def predict_ml(project_id, paths, aspect_r, n_training_labels):
     model.eval()
     
     for idx, path in enumerate(paths):
+        print(CLIENT, path)
         x = get_image(CLIENT, path, show=False,
                       bucket_name=BUCKET_ORIG)
         x = cv2.resize(x, (250, int(aspect_r*250)))
