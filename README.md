@@ -19,14 +19,14 @@ To that end, we have created a *web* and a *mobile* applications for the service
 
 Web Application            |  Mobile Application
 :-------------------------:|:-------------------------:
-<img width=300 height=200 src="https://github.com/risandor/DeepVision/blob/master/images/web_main.png"> |<img width=100 height=200 src="https://github.com/risandor/DeepVision/blob/master/images/mobile_log_in.gif">
+<img width=300 height=200 src="https://github.com/robertisandor/DeepVision/tree/master/images/web_main.png"> |<img width=100 height=200 src="https://github.com/robertisandor/DeepVision/tree/master/images/mobile_log_in.gif">
 
 ## How can someone use it?
 
 After logging in and subscribing for a specific plan a user can start creating projects. A project is meant to be used for a specific task. For instance, classifying types of fruits.
 
 <p align="center">
-  <img width=300 height=200 src="https://github.com/risandor/DeepVision/blob/master/images/web_create_project.png">
+  <img width=300 height=200 src="https://github.com/robertisandor/DeepVision/tree/master/images/web_create_project.png">
 </p>
 
 We break the whole process into three main components.
@@ -38,7 +38,7 @@ We break the whole process into three main components.
 * **Evaluate**: Once the model has been trained the user can now use it. They can do so through the mobile app or through the web app depending on their needs. If they need predictions in the field we recommend the mobile app while the web app is better if you want, for example, to classify data that is in your computer.
 
 <p align="center">
-  <img src="https://github.com/risandor/DeepVision/blob/master/images/components.png">
+  <img src="https://github.com/robertisandor/DeepVision/tree/master/images/components.png">
 </p>
 
 Once the project has been created the owner can add collaborators and they can start collecting data or using the model at the same time.
@@ -46,7 +46,7 @@ Once the project has been created the owner can add collaborators and they can s
 Let's go through the first bit of the user-flow. When a user logs-in, the first thing they will see is the list of projects that they have or they are collaborating in.
 
 <p align="center">
-  <img src="https://github.com/risandor/DeepVision/blob/master/images/web_project_list.png">
+  <img src="https://github.com/robertisandor/DeepVision/tree/master/images/web_project_list.png">
 </p>
 
 When a project is clicked they can, then, choose what they want to do: Upload it, train it or use it.
@@ -58,7 +58,7 @@ When a project is clicked they can, then, choose what they want to do: Upload it
 You may think that it can get complex for the user. Let's look at one of the functionalities to see if that might be the case. Let's choose to upload for example.
 
 <p align="center">
-  <img src="https://github.com/risandor/DeepVision/blob/master/images/mobile_upload.gif">
+  <img src="https://github.com/robertisandor/DeepVision/tree/master/images/mobile_upload.gif">
 </p>
 
 ## Additional benefits & Future work
@@ -66,7 +66,7 @@ You may think that it can get complex for the user. Let's look at one of the fun
 We believe that the project is still far from being complete. Some of the components we would like to integrate on the future are:
 
 <p align="center">
-  <img src="https://github.com/risandor/DeepVision/blob/master/images/future_work.png">
+  <img src="https://github.com/robertisandor/DeepVision/tree/master/images/future_work.png">
 </p>
 
 We also think that there are additional benefits to that project. If an individual or an organization collect a reach and variate data-set we could be an intermediary between the AI community and the individual to benefit both through commerce. 
